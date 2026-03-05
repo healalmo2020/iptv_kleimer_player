@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../domain/entities/live_stream.dart';
+import '../../providers/favorites_provider.dart';
 import '../../providers/live_provider.dart';
 
 class LiveScreen extends ConsumerWidget {
@@ -12,6 +14,7 @@ class LiveScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final categories = ref.watch(liveCategoriesProvider);
     final streams = ref.watch(liveStreamsProvider);
+    final favorites = ref.watch(favoritesProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Live TV')),
@@ -44,6 +47,7 @@ class LiveScreen extends ConsumerWidget {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final stream = items[index];
+                  final isFavorite = favorites.contains(stream.id);
                   return InkWell(
                     onTap: () => context.push('/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}'),
                     child: Card(
@@ -71,6 +75,14 @@ class LiveScreen extends ConsumerWidget {
                               ),
                             ),
                           ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: _FavoriteButton(
+                              stream: stream,
+                              isFavorite: isFavorite,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -82,6 +94,31 @@ class LiveScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _FavoriteButton extends ConsumerWidget {
+  const _FavoriteButton({
+    required this.stream,
+    required this.isFavorite,
+  });
+
+  final LiveStream stream;
+  final bool isFavorite;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Colors.black54,
+        shape: BoxShape.circle,
+      ),
+      child: IconButton(
+        icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+        color: isFavorite ? const Color(0xFFFF5252) : Colors.white,
+        onPressed: () => ref.read(favoritesProvider.notifier).toggle(stream),
       ),
     );
   }
