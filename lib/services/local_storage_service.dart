@@ -73,6 +73,26 @@ class LocalStorageService {
     return value is String ? value : null;
   }
 
+  bool isParentalEnabled() {
+    return _settings.get('parental_enabled', defaultValue: false) as bool;
+  }
+
+  Future<void> setParentalEnabled(bool value) async {
+    await _settings.put('parental_enabled', value);
+  }
+
+  String getParentalPin() {
+    return _settings.get('parental_pin', defaultValue: '0000') as String;
+  }
+
+  Future<void> setParentalPin(String pin) async {
+    await _settings.put('parental_pin', pin);
+  }
+
+  bool validateParentalPin(String pin) {
+    return getParentalPin() == pin;
+  }
+
   Future<void> saveHistoryItem(Map<String, dynamic> item) async {
     final existing = _history.get('items', defaultValue: <Map<String, dynamic>>[]) as List<dynamic>;
     final mutable = existing.map((e) => Map<String, dynamic>.from(e as Map)).toList();

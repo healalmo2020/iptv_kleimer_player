@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../providers/favorites_provider.dart';
 import '../../providers/live_provider.dart';
+import '../../providers/parental_provider.dart';
 import '../../widgets/stitch_content_card.dart';
 
 class LiveScreen extends ConsumerWidget {
@@ -14,6 +15,7 @@ class LiveScreen extends ConsumerWidget {
     final categories = ref.watch(liveCategoriesProvider);
     final streams = ref.watch(liveStreamsProvider);
     final favorites = ref.watch(favoritesProvider);
+    final parental = ref.watch(parentalProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Live TV')),
@@ -35,7 +37,12 @@ class LiveScreen extends ConsumerWidget {
           ),
           Expanded(
             child: streams.when(
-              data: (items) => GridView.builder(
+              data: (items) {
+                final filteredItems = parental.enabled
+                    ? items.where((e) => !_isAdultContent(e.name)).toList(growable: false)
+                    : items;
+
+                return GridView.builder(
                 padding: const EdgeInsets.all(12),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
@@ -43,9 +50,9 @@ class LiveScreen extends ConsumerWidget {
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
-                itemCount: items.length,
+                itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
-                  final stream = items[index];
+                  final stream = filteredItems[index];
                   final isFavorite = favorites.contains(stream.id);
                   return StitchContentCard(
                     title: stream.name,
@@ -58,7 +65,8 @@ class LiveScreen extends ConsumerWidget {
                     ),
                   );
                 },
-              ),
+              );
+              },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => Center(child: Text('Error streams: $error')),
             ),
@@ -66,5 +74,10 @@ class LiveScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  bool _isAdultContent(String title) {
+    final value = title.toLowerCase();
+    return value.contains('adult') || value.contains('xxx') || value.contains('+18');
   }
 }

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../providers/library_provider.dart';
 import '../providers/live_provider.dart';
+import '../providers/parental_provider.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -20,6 +21,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final liveAsync = ref.watch(liveStreamsProvider);
     final favorites = ref.watch(favoritesItemsProvider);
     final history = ref.watch(historyItemsProvider);
+    final parental = ref.watch(parentalProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Search')),
@@ -85,6 +87,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
                 final filtered = unique.values
                     .where((e) => _query.isEmpty || e.title.toLowerCase().contains(_query))
+                  .where((e) => !parental.enabled || !_isAdultContent(e.title))
                     .toList(growable: false);
 
                 if (filtered.isEmpty) {
@@ -125,6 +128,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       default:
         return Icons.live_tv;
     }
+  }
+
+  bool _isAdultContent(String title) {
+    final value = title.toLowerCase();
+    return value.contains('adult') || value.contains('xxx') || value.contains('+18');
   }
 }
 
