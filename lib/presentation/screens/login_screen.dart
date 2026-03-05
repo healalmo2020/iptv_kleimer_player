@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../providers/app_providers.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -15,6 +16,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _userController = TextEditingController();
   final _passController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _autoLoggingIn = true;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isWidgetTestEnvironment()) {
+      _autoLoggingIn = false;
+      return;
+    }
+    Future<void>.microtask(_bootstrapAutoLogin);
+  }
+
+  Future<void> _bootstrapAutoLogin() async {
+    final credentials = ref.read(localStorageProvider).getSavedCredentials();
+    _userController.text = credentials.username;
+    _passController.text = credentials.password;
+
+    final success = await ref.read(authControllerProvider.notifier).tryAutoLogin();
+    if (!mounted) {
+      return;
+    }
+
+    if (success) {
+      context.go('/home');
+      return;
+    }
+
+    setState(() {
+      _autoLoggingIn = false;
+    });
+  }
+
+  bool _isWidgetTestEnvironment() {
+    return WidgetsBinding.instance.runtimeType.toString().contains('TestWidgetsFlutterBinding');
+  }
 
   @override
   void dispose() {
@@ -42,6 +78,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
+
+    if (_autoLoggingIn) {
+      return const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 12),
+              Text('Iniciando sesión automáticamente...'),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       body: Center(

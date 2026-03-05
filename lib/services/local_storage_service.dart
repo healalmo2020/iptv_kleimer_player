@@ -21,6 +21,27 @@ class LocalStorageService {
     await _settings.put('player_engine', engine == PlayerEngine.mediaKit ? 'media_kit' : 'vlc');
   }
 
+  Future<void> saveCredentials({
+    required String username,
+    required String password,
+  }) async {
+    await _settings.put('username', username);
+    await _settings.put('password', password);
+  }
+
+  ({String username, String password}) getSavedCredentials() {
+    try {
+      final username = _settings.get('username', defaultValue: AppConstants.defaultUsername) as String;
+      final password = _settings.get('password', defaultValue: AppConstants.defaultPassword) as String;
+      return (username: username, password: password);
+    } catch (_) {
+      return (
+        username: AppConstants.defaultUsername,
+        password: AppConstants.defaultPassword,
+      );
+    }
+  }
+
   Future<void> saveFavorite(String streamId, Map<String, dynamic> payload) async {
     await _favorites.put(streamId, payload);
   }
