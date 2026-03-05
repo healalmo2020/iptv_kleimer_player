@@ -73,7 +73,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   }
 
   Future<void> _saveHistoryEntry() async {
-    await ref.read(localStorageProvider).saveHistoryItem({
+    final storage = ref.read(localStorageProvider);
+    await storage.saveLastChannel(widget.streamId);
+    await storage.saveHistoryItem({
       'id': widget.streamId,
       'title': widget.title,
       'updatedAt': DateTime.now().toIso8601String(),

@@ -53,6 +53,26 @@ class LocalStorageService {
     return null;
   }
 
+  Map<String, Map<String, dynamic>> getAllPlaybackProgress() {
+    final result = <String, Map<String, dynamic>>{};
+    for (final key in _playback.keys) {
+      final value = _playback.get(key);
+      if (key is String && value is Map) {
+        result[key] = Map<String, dynamic>.from(value);
+      }
+    }
+    return result;
+  }
+
+  Future<void> saveLastChannel(String streamId) async {
+    await _settings.put('last_channel', streamId);
+  }
+
+  String? getLastChannel() {
+    final value = _settings.get('last_channel');
+    return value is String ? value : null;
+  }
+
   Future<void> saveHistoryItem(Map<String, dynamic> item) async {
     final existing = _history.get('items', defaultValue: <Map<String, dynamic>>[]) as List<dynamic>;
     final mutable = existing.map((e) => Map<String, dynamic>.from(e as Map)).toList();
