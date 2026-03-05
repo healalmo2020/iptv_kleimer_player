@@ -33,7 +33,9 @@ class _StitchContentCardState extends State<StitchContentCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        transform: _focused ? (Matrix4.identity()..scale(1.1)) : Matrix4.identity(),
+        transform: _focused
+          ? (Matrix4.identity()..scaleByDouble(1.1, 1.1, 1.0, 1.0))
+          : Matrix4.identity(),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: _focused ? Border.all(color: const Color(0xFF40C4FF), width: 3) : null,
@@ -61,14 +63,14 @@ class _StitchContentCardState extends State<StitchContentCard> {
                     CachedNetworkImage(
                       imageUrl: widget.imageUrl!,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) {
+                      placeholder: (_, _) {
                         return Shimmer.fromColors(
                           baseColor: const Color(0xFF162544),
                           highlightColor: const Color(0xFF2A3E68),
                           child: const ColoredBox(color: Color(0xFF162544)),
                         );
                       },
-                      errorWidget: (_, __, ___) => const ColoredBox(color: Color(0xFF162544)),
+                      errorWidget: (_, _, _) => const ColoredBox(color: Color(0xFF162544)),
                     )
                   else
                     const ColoredBox(color: Color(0xFF162544)),

@@ -19,11 +19,11 @@ GoRouter createAppRouter(Ref ref) {
   return GoRouter(
     initialLocation: '/login',
     routes: [
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
-      GoRoute(path: '/live', builder: (_, __) => const LiveScreen()),
-      GoRoute(path: '/movies', builder: (_, __) => const MoviesScreen()),
-      GoRoute(path: '/series', builder: (_, __) => const SeriesScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+      GoRoute(path: '/live', builder: (_, _) => const LiveScreen()),
+      GoRoute(path: '/movies', builder: (_, _) => const MoviesScreen()),
+      GoRoute(path: '/series', builder: (_, _) => const SeriesScreen()),
       GoRoute(
         path: '/series/details',
         builder: (_, state) => SeriesDetailScreen(
@@ -31,12 +31,12 @@ GoRouter createAppRouter(Ref ref) {
           title: state.uri.queryParameters['title'] ?? 'Series',
         ),
       ),
-      GoRoute(path: '/search', builder: (_, __) => const SearchScreen()),
-      GoRoute(path: '/favorites', builder: (_, __) => const FavoritesScreen()),
-      GoRoute(path: '/continue', builder: (_, __) => const ContinueWatchingScreen()),
-      GoRoute(path: '/history', builder: (_, __) => const HistoryScreen()),
-      GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
-      GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+      GoRoute(path: '/search', builder: (_, _) => const SearchScreen()),
+      GoRoute(path: '/favorites', builder: (_, _) => const FavoritesScreen()),
+      GoRoute(path: '/continue', builder: (_, _) => const ContinueWatchingScreen()),
+      GoRoute(path: '/history', builder: (_, _) => const HistoryScreen()),
+      GoRoute(path: '/settings', builder: (_, _) => const SettingsScreen()),
+      GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
       GoRoute(
         path: '/player',
         builder: (_, state) => PlayerScreen(

@@ -75,7 +75,7 @@ class HomeScreen extends ConsumerWidget {
                   () => context.push('/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=live'),
             ),
             loading: () => const _HomeLoadingRow(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           const SizedBox(height: 20),
           _SectionTitle(title: 'Popular Movies', route: '/movies'),
@@ -89,7 +89,7 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             loading: () => const _HomeLoadingRow(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           const SizedBox(height: 20),
           _SectionTitle(title: 'Popular Series', route: '/series'),
@@ -103,7 +103,7 @@ class HomeScreen extends ConsumerWidget {
               aspectRatio: 2 / 3,
             ),
             loading: () => const _HomeLoadingRow(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           const SizedBox(height: 20),
           _SectionTitle(title: 'Recently Added', route: '/movies'),
@@ -117,7 +117,7 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             loading: () => const _HomeLoadingRow(),
-            error: (_, __) => const SizedBox.shrink(),
+            error: (_, _) => const SizedBox.shrink(),
           ),
           const SizedBox(height: 20),
           _SectionTitle(title: 'Favorites', route: '/favorites'),
@@ -228,7 +228,7 @@ class _HomeEntityRow<T> extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
           return SizedBox(
@@ -270,7 +270,7 @@ class _HomeMapRow extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final item = items[index];
           return SizedBox(

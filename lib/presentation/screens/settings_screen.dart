@@ -20,25 +20,25 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           Text('Reproductor preferido', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          RadioListTile<PlayerEngine>(
-            value: PlayerEngine.vlc,
+          RadioGroup<PlayerEngine>(
             groupValue: engine,
-            title: const Text('VLC Player'),
             onChanged: (value) {
               if (value != null) {
                 ref.read(playerEngineProvider.notifier).setEngine(value);
               }
             },
-          ),
-          RadioListTile<PlayerEngine>(
-            value: PlayerEngine.mediaKit,
-            groupValue: engine,
-            title: const Text('Media Kit'),
-            onChanged: (value) {
-              if (value != null) {
-                ref.read(playerEngineProvider.notifier).setEngine(value);
-              }
-            },
+            child: const Column(
+              children: [
+                RadioListTile<PlayerEngine>(
+                  value: PlayerEngine.vlc,
+                  title: Text('VLC Player'),
+                ),
+                RadioListTile<PlayerEngine>(
+                  value: PlayerEngine.mediaKit,
+                  title: Text('Media Kit'),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Text('Control parental', style: Theme.of(context).textTheme.titleMedium),

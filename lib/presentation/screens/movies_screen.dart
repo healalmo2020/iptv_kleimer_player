@@ -39,7 +39,7 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.all(12),
                   itemCount: categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  separatorBuilder: (_, _) => const SizedBox(width: 8),
                   itemBuilder: (context, index) {
                     final category = categories[index];
                     final selected = category.id == _selectedCategoryId;
