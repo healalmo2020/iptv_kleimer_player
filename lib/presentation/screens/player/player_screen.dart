@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:floating/floating.dart';
 import 'package:go_router/go_router.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -41,6 +43,7 @@ class PlayerScreen extends ConsumerStatefulWidget {
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   static const _maxReconnectAttempts = 5;
+  static const _stalledThreshold = Duration(seconds: 20);
 
   int _playerInstanceNonce = 0;
   int _urlIndex = 0;
@@ -50,20 +53,30 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   String? _lastError;
   Timer? _saveTimer;
   Timer? _reconnectTimer;
+  Timer? _stallWatchdog;
   bool _autoplayTriggered = false;
   Player? _mediaKitPlayer;
+  final _floating = Floating();
+  final _random = Random();
+  DateTime _lastProgressAt = DateTime.now();
+  int _lastPositionMs = 0;
+  int _activeUrlsCount = 2;
 
   @override
   void initState() {
     super.initState();
     _startPersistenceLoop();
+    _startStallWatchdog();
     unawaited(_saveHistoryEntry());
+    unawaited(_enableAutoPiPOnLeave());
   }
 
   @override
   void dispose() {
     _saveTimer?.cancel();
     _reconnectTimer?.cancel();
+    _stallWatchdog?.cancel();
+    unawaited(_floating.cancelOnLeavePiP());
     unawaited(_persistProgress());
     super.dispose();
   }
@@ -71,6 +84,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   void _startPersistenceLoop() {
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       unawaited(_persistProgress());
+    });
+  }
+
+  void _startStallWatchdog() {
+    _stallWatchdog = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (!mounted || _currentDuration <= Duration.zero) {
+        return;
+      }
+      if (_reconnectTimer?.isActive ?? false) {
+        return;
+      }
+      final elapsed = DateTime.now().difference(_lastProgressAt);
+      if (elapsed >= _stalledThreshold) {
+        _scheduleReconnect('Buffering estancado, reconectando...', _activeUrlsCount);
+      }
     });
   }
 
@@ -102,6 +130,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     _currentPosition = position;
     _currentDuration = duration;
 
+    final currentMs = position.inMilliseconds;
+    if (currentMs > _lastPositionMs) {
+      _lastPositionMs = currentMs;
+      _lastProgressAt = DateTime.now();
+    }
+
     final hasNextEpisode = widget.contentType == 'series' &&
         (widget.nextEpisodeId?.isNotEmpty ?? false) &&
         !_autoplayTriggered;
@@ -131,14 +165,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     if (_reconnectAttempts >= _maxReconnectAttempts) {
       if (mounted) {
         setState(() {
-          _lastError = message;
+          _lastError = '$message (límite de reintentos alcanzado)';
         });
       }
       return;
     }
 
-    final backoff = Duration(seconds: 2 + (_reconnectAttempts * 2));
+    final baseSeconds = 2 * (1 << _reconnectAttempts);
+    final jitterMs = _random.nextInt(800);
+    final backoff = Duration(seconds: baseSeconds.clamp(2, 20), milliseconds: jitterMs);
     _reconnectTimer?.cancel();
+    if (mounted) {
+      setState(() {
+        _lastError = '$message • reintento ${_reconnectAttempts + 1}/$_maxReconnectAttempts';
+      });
+    }
     _reconnectTimer = Timer(backoff, () {
       if (!mounted) {
         return;
@@ -190,6 +231,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         ),
     };
     final currentUrl = urls[_urlIndex % urls.length];
+    _activeUrlsCount = urls.length;
 
     final savedProgress = ref.read(localStorageProvider).getPlaybackProgress(widget.streamId);
     final initialPosition = Duration(milliseconds: savedProgress?['positionMs'] as int? ?? 0);
@@ -263,9 +305,19 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 ),
                 if (_lastError != null) ...[
                   const SizedBox(height: 6),
-                  Text(
-                    'Reintentando stream... $_lastError',
-                    style: const TextStyle(color: Color(0xFFFF5252)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _lastError!,
+                          style: const TextStyle(color: Color(0xFFFF5252)),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _retryNow,
+                        child: const Text('Reintentar ahora'),
+                      ),
+                    ],
                   ),
                 ],
               ],
@@ -285,6 +337,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                   icon: Icons.graphic_eq,
                   label: 'Audio',
                   onTap: () => _openAudioSelector(engine),
+                ),
+                _PlayerAction(
+                  icon: Icons.picture_in_picture_alt_outlined,
+                  label: 'PiP',
+                  onTap: _enterPiP,
                 ),
                 const _PlayerAction(icon: Icons.high_quality, label: 'Auto'),
                 const _PlayerAction(icon: Icons.fullscreen, label: 'Fullscreen'),
@@ -388,6 +445,46 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _enableAutoPiPOnLeave() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return;
+    }
+
+    final available = await _floating.isPipAvailable;
+    if (!available) {
+      return;
+    }
+    await _floating.enable(const OnLeavePiP(aspectRatio: Rational.landscape()));
+  }
+
+  Future<void> _enterPiP() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      _showHint('PiP disponible solo en Android.');
+      return;
+    }
+
+    final available = await _floating.isPipAvailable;
+    if (!available) {
+      _showHint('PiP no está disponible en este dispositivo.');
+      return;
+    }
+
+    await _floating.enable(const ImmediatePiP(aspectRatio: Rational.landscape()));
+  }
+
+  void _retryNow() {
+    if (!mounted) {
+      return;
+    }
+    _reconnectTimer?.cancel();
+    setState(() {
+      _urlIndex = (_urlIndex + 1) % _activeUrlsCount;
+      _playerInstanceNonce += 1;
+      _lastError = null;
+      _lastProgressAt = DateTime.now();
+    });
   }
 }
 
