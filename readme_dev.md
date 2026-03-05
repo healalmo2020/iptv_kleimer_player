@@ -259,3 +259,6 @@ Implementar Shimmer en color surfaceBlue mientras las imágenes de cached_networ
 "Copilot, basándote en la sección 16 del readme_dev.md, genera el widget StitchContentCard. Debe manejar el estado de foco para Smart TV, escalar un 10% cuando esté seleccionado y mostrar un borde cian neón. Usa CachedNetworkImage para el poster."
 
 Nota: en la plantilla anterior, donde dice "sección 16" debe entenderse como "sección 14" en esta versión del documento.
+
+## 16) Pendientes (Backlog rápido)
+- [ ] Player: agregar feedback háptico (vibración suave) al usar saltos `-10s/+10s` en móvil/tablet para mejorar la respuesta táctil.
