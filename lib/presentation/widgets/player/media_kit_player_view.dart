@@ -11,12 +11,14 @@ class MediaKitPlayerView extends StatefulWidget {
     required this.onProgress,
     required this.onError,
     this.initialPosition,
+    this.onPlayerCreated,
   });
 
   final String url;
   final void Function(Duration position, Duration duration) onProgress;
   final void Function(String message) onError;
   final Duration? initialPosition;
+  final void Function(Player player)? onPlayerCreated;
 
   @override
   State<MediaKitPlayerView> createState() => _MediaKitPlayerViewState();
@@ -36,6 +38,7 @@ class _MediaKitPlayerViewState extends State<MediaKitPlayerView> {
     super.initState();
     _player = Player();
     _videoController = VideoController(_player);
+    widget.onPlayerCreated?.call(_player);
 
     _positionSub = _player.stream.position.listen((position) {
       widget.onProgress(position, _lastDuration);

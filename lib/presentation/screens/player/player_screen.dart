@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:media_kit/media_kit.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/xtream_stream_url_builder.dart';
@@ -50,6 +51,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   Timer? _saveTimer;
   Timer? _reconnectTimer;
   bool _autoplayTriggered = false;
+  Player? _mediaKitPlayer;
 
   @override
   void initState() {
@@ -236,6 +238,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                           initialPosition: initialPosition,
                           onProgress: _onProgress,
                           onError: (message) => _scheduleReconnect(message, urls.length),
+                          onPlayerCreated: (player) => _mediaKitPlayer = player,
                         ),
                 ),
               ),
@@ -268,15 +271,23 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               ],
             ),
           ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _PlayerAction(icon: Icons.closed_caption, label: 'Subtítulos'),
-                _PlayerAction(icon: Icons.graphic_eq, label: 'Audio'),
-                _PlayerAction(icon: Icons.high_quality, label: 'Calidad'),
-                _PlayerAction(icon: Icons.fullscreen, label: 'Fullscreen'),
+                _PlayerAction(
+                  icon: Icons.closed_caption,
+                  label: 'Subtítulos',
+                  onTap: () => _openSubtitleSelector(engine),
+                ),
+                _PlayerAction(
+                  icon: Icons.graphic_eq,
+                  label: 'Audio',
+                  onTap: () => _openAudioSelector(engine),
+                ),
+                const _PlayerAction(icon: Icons.high_quality, label: 'Auto'),
+                const _PlayerAction(icon: Icons.fullscreen, label: 'Fullscreen'),
               ],
             ),
           ),
@@ -299,18 +310,105 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     }
     return '$minutes:$seconds';
   }
+
+  Future<void> _openAudioSelector(PlayerEngine engine) async {
+    if (engine != PlayerEngine.mediaKit || _mediaKitPlayer == null) {
+      _showHint('Selección de audio disponible en modo Media Kit.');
+      return;
+    }
+
+    final tracks = _mediaKitPlayer!.state.tracks.audio;
+    if (tracks.isEmpty || !mounted) {
+      _showHint('No hay pistas de audio disponibles.');
+      return;
+    }
+
+    final selected = await showModalBottomSheet<AudioTrack>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => ListView.builder(
+        itemCount: tracks.length,
+        itemBuilder: (context, index) {
+          final track = tracks[index];
+          final label = track.title?.isNotEmpty == true ? track.title! : 'Audio ${index + 1}';
+          return ListTile(
+            title: Text(label),
+            subtitle: Text(track.language ?? ''),
+            onTap: () => Navigator.of(context).pop(track),
+          );
+        },
+      ),
+    );
+
+    if (selected != null) {
+      await _mediaKitPlayer!.setAudioTrack(selected);
+    }
+  }
+
+  Future<void> _openSubtitleSelector(PlayerEngine engine) async {
+    if (engine != PlayerEngine.mediaKit || _mediaKitPlayer == null) {
+      _showHint('Selección de subtítulos disponible en modo Media Kit.');
+      return;
+    }
+
+    final tracks = _mediaKitPlayer!.state.tracks.subtitle;
+    if (!mounted) {
+      return;
+    }
+
+    final selected = await showModalBottomSheet<SubtitleTrack>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) => ListView(
+        children: [
+          ListTile(
+            title: const Text('Desactivar subtítulos'),
+            onTap: () => Navigator.of(context).pop(SubtitleTrack.no()),
+          ),
+          ...List.generate(tracks.length, (index) {
+            final track = tracks[index];
+            final label = track.title?.isNotEmpty == true ? track.title! : 'Subtítulo ${index + 1}';
+            return ListTile(
+              title: Text(label),
+              subtitle: Text(track.language ?? ''),
+              onTap: () => Navigator.of(context).pop(track),
+            );
+          }),
+        ],
+      ),
+    );
+
+    if (selected != null) {
+      await _mediaKitPlayer!.setSubtitleTrack(selected);
+    }
+  }
+
+  void _showHint(String message) {
+    if (!mounted) {
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
 }
 
 class _PlayerAction extends StatelessWidget {
-  const _PlayerAction({required this.icon, required this.label});
+  const _PlayerAction({required this.icon, required this.label, this.onTap});
 
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [Icon(icon), const SizedBox(height: 6), Text(label)],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          children: [Icon(icon), const SizedBox(height: 6), Text(label)],
+        ),
+      ),
     );
   }
 }
