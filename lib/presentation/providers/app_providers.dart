@@ -6,6 +6,7 @@ import '../../data/datasources/xtream_remote_datasource.dart';
 import '../../data/repositories/iptv_repository_impl.dart';
 import '../../domain/repositories/iptv_repository.dart';
 import '../../domain/usecases/get_live_categories_usecase.dart';
+import '../../domain/usecases/get_live_epg_usecase.dart';
 import '../../domain/usecases/get_live_streams_usecase.dart';
 import '../../domain/usecases/get_series_info_usecase.dart';
 import '../../domain/usecases/get_series_usecase.dart';
@@ -37,6 +38,10 @@ final getLiveCategoriesUseCaseProvider = Provider<GetLiveCategoriesUseCase>((ref
 
 final getLiveStreamsUseCaseProvider = Provider<GetLiveStreamsUseCase>((ref) {
   return GetLiveStreamsUseCase(ref.watch(iptvRepositoryProvider));
+});
+
+final getLiveEpgUseCaseProvider = Provider<GetLiveEpgUseCase>((ref) {
+  return GetLiveEpgUseCase(ref.watch(iptvRepositoryProvider));
 });
 
 final getVodCategoriesUseCaseProvider = Provider<GetVodCategoriesUseCase>((ref) {

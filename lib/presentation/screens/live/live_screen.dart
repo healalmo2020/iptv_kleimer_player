@@ -58,10 +58,20 @@ class LiveScreen extends ConsumerWidget {
                     title: stream.name,
                     imageUrl: stream.iconUrl,
                       onTap: () => context.push('/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live'),
-                    trailing: IconButton(
-                      icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-                      color: isFavorite ? const Color(0xFFFF5252) : Colors.white,
-                      onPressed: () => ref.read(favoritesProvider.notifier).toggle(stream),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.schedule),
+                            color: Colors.white,
+                            onPressed: () => _showEpg(context, ref, stream.id, stream.name),
+                          ),
+                          IconButton(
+                            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                            color: isFavorite ? const Color(0xFFFF5252) : Colors.white,
+                            onPressed: () => ref.read(favoritesProvider.notifier).toggle(stream),
+                          ),
+                        ],
                     ),
                   );
                 },
@@ -79,5 +89,66 @@ class LiveScreen extends ConsumerWidget {
   bool _isAdultContent(String title) {
     final value = title.toLowerCase();
     return value.contains('adult') || value.contains('xxx') || value.contains('+18');
+  }
+
+  Future<void> _showEpg(
+    BuildContext context,
+    WidgetRef ref,
+    String streamId,
+    String streamName,
+  ) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (_) {
+        final epgAsync = ref.watch(liveEpgProvider(streamId));
+        return SizedBox(
+          height: 420,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text('EPG • $streamName', style: Theme.of(context).textTheme.titleMedium),
+              ),
+              Expanded(
+                child: epgAsync.when(
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (error, _) => Center(child: Text('Error EPG: $error')),
+                  data: (events) {
+                    if (events.isEmpty) {
+                      return const Center(child: Text('No hay programación disponible.'));
+                    }
+
+                    return ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      itemCount: events.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final event = events[index];
+                        final start = event.start == null
+                            ? '--:--'
+                            : '${event.start!.hour.toString().padLeft(2, '0')}:${event.start!.minute.toString().padLeft(2, '0')}';
+                        final end = event.end == null
+                            ? '--:--'
+                            : '${event.end!.hour.toString().padLeft(2, '0')}:${event.end!.minute.toString().padLeft(2, '0')}';
+
+                        return ListTile(
+                          tileColor: const Color(0xFF162544),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          title: Text(event.title),
+                          subtitle: Text('$start - $end\n${event.description}'),
+                          isThreeLine: true,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

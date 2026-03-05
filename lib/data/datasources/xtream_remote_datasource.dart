@@ -1,5 +1,6 @@
 import '../../core/network/api_client.dart';
 import '../models/account_model.dart';
+import '../models/epg_event_model.dart';
 import '../models/live_category_model.dart';
 import '../models/live_stream_model.dart';
 import '../models/series_episode_model.dart';
@@ -160,5 +161,31 @@ class XtreamRemoteDataSource {
     });
 
     return episodes;
+  }
+
+  Future<List<EpgEventModel>> getLiveEpg({
+    required String username,
+    required String password,
+    required String streamId,
+  }) async {
+    final response = await _apiClient.getMap(
+      '/player_api.php',
+      query: {
+        'username': username,
+        'password': password,
+        'action': 'get_simple_data_table',
+        'stream_id': streamId,
+      },
+    );
+
+    final epgListings = response['epg_listings'];
+    if (epgListings is! List) {
+      return const [];
+    }
+
+    return epgListings
+        .whereType<Map<String, dynamic>>()
+        .map(EpgEventModel.fromJson)
+        .toList(growable: false);
   }
 }

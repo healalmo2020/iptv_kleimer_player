@@ -1,4 +1,5 @@
 import '../../domain/entities/account.dart';
+import '../../domain/entities/epg_event.dart';
 import '../../domain/entities/live_category.dart';
 import '../../domain/entities/live_stream.dart';
 import '../../domain/entities/series_episode.dart';
@@ -68,6 +69,19 @@ class IptvRepositoryImpl implements IptvRepository {
       username: username,
       password: password,
       seriesId: seriesId,
+    );
+  }
+
+  @override
+  Future<List<EpgEvent>> getLiveEpg({
+    required String username,
+    required String password,
+    required String streamId,
+  }) {
+    return _remote.getLiveEpg(
+      username: username,
+      password: password,
+      streamId: streamId,
     );
   }
 }

@@ -1,4 +1,5 @@
 import '../entities/account.dart';
+import '../entities/epg_event.dart';
 import '../entities/live_category.dart';
 import '../entities/live_stream.dart';
 import '../entities/series_episode.dart';
@@ -38,5 +39,11 @@ abstract class IptvRepository {
     required String username,
     required String password,
     required String seriesId,
+  });
+
+  Future<List<EpgEvent>> getLiveEpg({
+    required String username,
+    required String password,
+    required String streamId,
   });
 }
