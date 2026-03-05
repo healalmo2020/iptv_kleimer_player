@@ -15,13 +15,27 @@ class SeriesScreen extends ConsumerWidget {
     final parental = ref.watch(parentalProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Series')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: const Text('Series'),
+      ),
       body: seriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Error series: $error')),
         data: (items) {
           final filtered = parental.enabled
-              ? items.where((e) => !_isAdultContent(e.name)).toList(growable: false)
+              ? items
+                    .where((e) => !_isAdultContent(e.name))
+                    .toList(growable: false)
               : items;
 
           if (filtered.isEmpty) {
@@ -56,6 +70,8 @@ class SeriesScreen extends ConsumerWidget {
 
   bool _isAdultContent(String title) {
     final value = title.toLowerCase();
-    return value.contains('adult') || value.contains('xxx') || value.contains('+18');
+    return value.contains('adult') ||
+        value.contains('xxx') ||
+        value.contains('+18');
   }
 }

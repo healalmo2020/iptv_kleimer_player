@@ -12,7 +12,19 @@ class ContinueWatchingScreen extends ConsumerWidget {
     final items = ref.watch(continueWatchingProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Continue Watching')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: const Text('Continue Watching'),
+      ),
       body: items.isEmpty
           ? const Center(child: Text('No hay contenido para reanudar.'))
           : GridView.builder(
@@ -35,7 +47,9 @@ class ContinueWatchingScreen extends ConsumerWidget {
                 final progress = (positionMs / durationMs).clamp(0.0, 1.0);
 
                 return InkWell(
-                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext'),
+                  onTap: () => context.push(
+                    '/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext',
+                  ),
                   child: Card(
                     child: Stack(
                       fit: StackFit.expand,

@@ -20,7 +20,19 @@ class SeriesDetailScreen extends ConsumerWidget {
     final episodesAsync = ref.watch(seriesEpisodesProvider(seriesId));
 
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: Text(title),
+      ),
       body: episodesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text('Error episodios: $error')),
@@ -31,7 +43,9 @@ class SeriesDetailScreen extends ConsumerWidget {
 
           final grouped = <int, List<SeriesEpisode>>{};
           for (final episode in episodes) {
-            grouped.putIfAbsent(episode.season, () => <SeriesEpisode>[]).add(episode);
+            grouped
+                .putIfAbsent(episode.season, () => <SeriesEpisode>[])
+                .add(episode);
           }
 
           final seasons = grouped.keys.toList()..sort();
@@ -46,10 +60,13 @@ class SeriesDetailScreen extends ConsumerWidget {
               return Card(
                 child: ExpansionTile(
                   title: Text('Temporada $season'),
-                  children: List.generate(seasonEpisodes.length, (episodeIndex) {
+                  children: List.generate(seasonEpisodes.length, (
+                    episodeIndex,
+                  ) {
                     final episode = seasonEpisodes[episodeIndex];
                     final nextEpisode = _findNextEpisode(episodes, episode);
-                    final episodeTitle = 'T$season E${episode.episodeNumber} - ${episode.title}';
+                    final episodeTitle =
+                        'T$season E${episode.episodeNumber} - ${episode.title}';
 
                     return ListTile(
                       title: Text(episodeTitle),
@@ -74,7 +91,10 @@ class SeriesDetailScreen extends ConsumerWidget {
     );
   }
 
-  SeriesEpisode? _findNextEpisode(List<SeriesEpisode> episodes, SeriesEpisode current) {
+  SeriesEpisode? _findNextEpisode(
+    List<SeriesEpisode> episodes,
+    SeriesEpisode current,
+  ) {
     final index = episodes.indexWhere((e) => e.id == current.id);
     if (index < 0 || index + 1 >= episodes.length) {
       return null;

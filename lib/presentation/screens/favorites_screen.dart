@@ -13,7 +13,19 @@ class FavoritesScreen extends ConsumerWidget {
     final items = ref.watch(favoritesItemsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: const Text('Favorites'),
+      ),
       body: items.isEmpty
           ? const Center(child: Text('Aún no tienes favoritos.'))
           : ListView.separated(
@@ -27,19 +39,22 @@ class FavoritesScreen extends ConsumerWidget {
 
                 return ListTile(
                   tileColor: const Color(0xFF162544),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   title: Text(title),
                   subtitle: Text('Stream ID: $streamId'),
                   trailing: IconButton(
                     icon: const Icon(Icons.favorite, color: Color(0xFFFF5252)),
                     onPressed: () {
-                      ref.read(favoritesProvider.notifier).toggleByPayload(
-                            streamId: streamId,
-                            payload: item,
-                          );
+                      ref
+                          .read(favoritesProvider.notifier)
+                          .toggleByPayload(streamId: streamId, payload: item);
                     },
                   ),
-                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId'),
+                  onTap: () => context.push(
+                    '/player?title=${Uri.encodeComponent(title)}&id=$streamId',
+                  ),
                 );
               },
             ),

@@ -24,7 +24,19 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final parental = ref.watch(parentalProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: const Text('Search'),
+      ),
       body: Column(
         children: [
           Padding(
@@ -35,13 +47,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 prefixIcon: Icon(Icons.search),
                 hintText: 'Buscar en Live, Favoritos e Historial...',
               ),
-              onChanged: (value) => setState(() => _query = value.trim().toLowerCase()),
+              onChanged: (value) =>
+                  setState(() => _query = value.trim().toLowerCase()),
             ),
           ),
           Expanded(
             child: liveAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, _) => Center(child: Text('Error búsqueda: $error')),
+              error: (error, _) =>
+                  Center(child: Text('Error búsqueda: $error')),
               data: (live) {
                 final merged = <_SearchItem>[];
                 merged.addAll(
@@ -89,8 +103,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 }
 
                 final filtered = unique.values
-                    .where((e) => _query.isEmpty || e.title.toLowerCase().contains(_query))
-                  .where((e) => !parental.enabled || !_isAdultContent(e.title))
+                    .where(
+                      (e) =>
+                          _query.isEmpty ||
+                          e.title.toLowerCase().contains(_query),
+                    )
+                    .where(
+                      (e) => !parental.enabled || !_isAdultContent(e.title),
+                    )
                     .toList(growable: false);
 
                 if (filtered.isEmpty) {
@@ -105,7 +125,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     final item = filtered[index];
                     return ListTile(
                       tileColor: const Color(0xFF162544),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       leading: Icon(_iconForType(item.type)),
                       title: Text(item.title),
                       subtitle: Text(item.subtitle),
@@ -137,7 +159,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   bool _isAdultContent(String title) {
     final value = title.toLowerCase();
-    return value.contains('adult') || value.contains('xxx') || value.contains('+18');
+    return value.contains('adult') ||
+        value.contains('xxx') ||
+        value.contains('+18');
   }
 }
 

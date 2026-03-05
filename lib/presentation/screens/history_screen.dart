@@ -12,7 +12,19 @@ class HistoryScreen extends ConsumerWidget {
     final items = ref.watch(historyItemsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              return;
+            }
+            context.go('/home');
+          },
+        ),
+        title: const Text('History'),
+      ),
       body: items.isEmpty
           ? const Center(child: Text('No hay historial todavía.'))
           : ListView.separated(
@@ -28,11 +40,15 @@ class HistoryScreen extends ConsumerWidget {
                 final ext = item['ext']?.toString() ?? '';
                 return ListTile(
                   tileColor: const Color(0xFF162544),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   title: Text(title),
                   subtitle: Text(updatedAt),
                   trailing: const Icon(Icons.play_arrow),
-                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext'),
+                  onTap: () => context.push(
+                    '/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext',
+                  ),
                 );
               },
             ),
