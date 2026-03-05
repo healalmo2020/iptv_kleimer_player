@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/xtream_stream_url_builder.dart';
@@ -18,10 +19,20 @@ class PlayerScreen extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.streamId,
+    this.contentType = 'live',
+    this.extension,
+    this.nextEpisodeId,
+    this.nextEpisodeTitle,
+    this.nextEpisodeExtension,
   });
 
   final String title;
   final String streamId;
+  final String contentType;
+  final String? extension;
+  final String? nextEpisodeId;
+  final String? nextEpisodeTitle;
+  final String? nextEpisodeExtension;
 
   @override
   ConsumerState<PlayerScreen> createState() => _PlayerScreenState();
@@ -38,6 +49,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   String? _lastError;
   Timer? _saveTimer;
   Timer? _reconnectTimer;
+  bool _autoplayTriggered = false;
 
   @override
   void initState() {
@@ -79,13 +91,38 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       'id': widget.streamId,
       'title': widget.title,
       'updatedAt': DateTime.now().toIso8601String(),
-      'type': 'live',
+      'type': widget.contentType,
+      'ext': widget.extension,
     });
   }
 
   void _onProgress(Duration position, Duration duration) {
     _currentPosition = position;
     _currentDuration = duration;
+
+    final hasNextEpisode = widget.contentType == 'series' &&
+        (widget.nextEpisodeId?.isNotEmpty ?? false) &&
+        !_autoplayTriggered;
+
+    if (!hasNextEpisode) {
+      return;
+    }
+
+    if (_currentDuration > const Duration(seconds: 1) &&
+        _currentPosition >= _currentDuration - const Duration(seconds: 2)) {
+      _autoplayTriggered = true;
+      final nextTitle = widget.nextEpisodeTitle ?? 'Siguiente episodio';
+      final nextExt = widget.nextEpisodeExtension ?? '';
+      final nextId = widget.nextEpisodeId!;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!mounted) {
+          return;
+        }
+        context.go(
+          '/player?title=${Uri.encodeComponent(nextTitle)}&id=$nextId&type=series&ext=$nextExt',
+        );
+      });
+    }
   }
 
   void _scheduleReconnect(String message, int urlsCount) {
@@ -128,12 +165,28 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       );
     }
 
-    final urls = XtreamStreamUrlBuilder.liveUrls(
-      baseUrl: AppConstants.baseUrl,
-      username: session.username,
-      password: session.password,
-      streamId: widget.streamId,
-    );
+    final urls = switch (widget.contentType) {
+      'vod' => XtreamStreamUrlBuilder.vodUrls(
+          baseUrl: AppConstants.baseUrl,
+          username: session.username,
+          password: session.password,
+          streamId: widget.streamId,
+          extension: widget.extension,
+        ),
+      'series' => XtreamStreamUrlBuilder.seriesEpisodeUrls(
+          baseUrl: AppConstants.baseUrl,
+          username: session.username,
+          password: session.password,
+          episodeId: widget.streamId,
+          extension: widget.extension,
+        ),
+      _ => XtreamStreamUrlBuilder.liveUrls(
+          baseUrl: AppConstants.baseUrl,
+          username: session.username,
+          password: session.password,
+          streamId: widget.streamId,
+        ),
+    };
     final currentUrl = urls[_urlIndex % urls.length];
 
     final savedProgress = ref.read(localStorageProvider).getPlaybackProgress(widget.streamId);

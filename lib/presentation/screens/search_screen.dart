@@ -51,6 +51,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       title: e.name,
                       type: 'live',
                       subtitle: 'Live TV',
+                      extension: null,
                     ),
                   ),
                 );
@@ -62,6 +63,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       title: e['name']?.toString() ?? 'Favorito',
                       type: 'favorite',
                       subtitle: 'Favorito',
+                      extension: e['ext']?.toString(),
                     ),
                   ),
                 );
@@ -71,8 +73,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     (e) => _SearchItem(
                       id: e['id']?.toString() ?? '',
                       title: e['title']?.toString() ?? 'Historial',
-                      type: 'history',
+                      type: e['type']?.toString() ?? 'history',
                       subtitle: 'Historial',
+                      extension: e['ext']?.toString(),
                     ),
                   ),
                 );
@@ -107,7 +110,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       title: Text(item.title),
                       subtitle: Text(item.subtitle),
                       trailing: const Icon(Icons.play_arrow),
-                      onTap: () => context.push('/player?title=${Uri.encodeComponent(item.title)}&id=${item.id}'),
+                      onTap: () => context.push(
+                        '/player?title=${Uri.encodeComponent(item.title)}&id=${item.id}&type=${item.playerType}&ext=${item.extension ?? ''}',
+                      ),
                     );
                   },
                 );
@@ -142,10 +147,23 @@ class _SearchItem {
     required this.title,
     required this.type,
     required this.subtitle,
+    this.extension,
   });
 
   final String id;
   final String title;
   final String type;
   final String subtitle;
+  final String? extension;
+
+  String get playerType {
+    switch (type) {
+      case 'vod':
+      case 'series':
+      case 'live':
+        return type;
+      default:
+        return 'live';
+    }
+  }
 }

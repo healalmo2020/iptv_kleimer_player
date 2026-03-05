@@ -12,6 +12,7 @@ import '../screens/player/player_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/search_screen.dart';
 import '../screens/series_screen.dart';
+import '../screens/series_detail_screen.dart';
 import '../screens/settings_screen.dart';
 
 GoRouter createAppRouter(Ref ref) {
@@ -23,6 +24,13 @@ GoRouter createAppRouter(Ref ref) {
       GoRoute(path: '/live', builder: (_, __) => const LiveScreen()),
       GoRoute(path: '/movies', builder: (_, __) => const MoviesScreen()),
       GoRoute(path: '/series', builder: (_, __) => const SeriesScreen()),
+      GoRoute(
+        path: '/series/details',
+        builder: (_, state) => SeriesDetailScreen(
+          seriesId: state.uri.queryParameters['id'] ?? '',
+          title: state.uri.queryParameters['title'] ?? 'Series',
+        ),
+      ),
       GoRoute(path: '/search', builder: (_, __) => const SearchScreen()),
       GoRoute(path: '/favorites', builder: (_, __) => const FavoritesScreen()),
       GoRoute(path: '/continue', builder: (_, __) => const ContinueWatchingScreen()),
@@ -34,6 +42,11 @@ GoRouter createAppRouter(Ref ref) {
         builder: (_, state) => PlayerScreen(
           title: state.uri.queryParameters['title'] ?? 'Reproducción',
           streamId: state.uri.queryParameters['id'] ?? 'unknown',
+          contentType: state.uri.queryParameters['type'] ?? 'live',
+          extension: state.uri.queryParameters['ext'],
+          nextEpisodeId: state.uri.queryParameters['nextId'],
+          nextEpisodeTitle: state.uri.queryParameters['nextTitle'],
+          nextEpisodeExtension: state.uri.queryParameters['nextExt'],
         ),
       ),
     ],

@@ -57,7 +57,7 @@ class LiveScreen extends ConsumerWidget {
                   return StitchContentCard(
                     title: stream.name,
                     imageUrl: stream.iconUrl,
-                    onTap: () => context.push('/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}'),
+                      onTap: () => context.push('/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live'),
                     trailing: IconButton(
                       icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
                       color: isFavorite ? const Color(0xFFFF5252) : Colors.white,

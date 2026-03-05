@@ -7,6 +7,10 @@ import '../../data/repositories/iptv_repository_impl.dart';
 import '../../domain/repositories/iptv_repository.dart';
 import '../../domain/usecases/get_live_categories_usecase.dart';
 import '../../domain/usecases/get_live_streams_usecase.dart';
+import '../../domain/usecases/get_series_info_usecase.dart';
+import '../../domain/usecases/get_series_usecase.dart';
+import '../../domain/usecases/get_vod_categories_usecase.dart';
+import '../../domain/usecases/get_vod_streams_usecase.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../services/local_storage_service.dart';
 import '../navigation/app_router.dart';
@@ -33,6 +37,22 @@ final getLiveCategoriesUseCaseProvider = Provider<GetLiveCategoriesUseCase>((ref
 
 final getLiveStreamsUseCaseProvider = Provider<GetLiveStreamsUseCase>((ref) {
   return GetLiveStreamsUseCase(ref.watch(iptvRepositoryProvider));
+});
+
+final getVodCategoriesUseCaseProvider = Provider<GetVodCategoriesUseCase>((ref) {
+  return GetVodCategoriesUseCase(ref.watch(iptvRepositoryProvider));
+});
+
+final getVodStreamsUseCaseProvider = Provider<GetVodStreamsUseCase>((ref) {
+  return GetVodStreamsUseCase(ref.watch(iptvRepositoryProvider));
+});
+
+final getSeriesUseCaseProvider = Provider<GetSeriesUseCase>((ref) {
+  return GetSeriesUseCase(ref.watch(iptvRepositoryProvider));
+});
+
+final getSeriesInfoUseCaseProvider = Provider<GetSeriesInfoUseCase>((ref) {
+  return GetSeriesInfoUseCase(ref.watch(iptvRepositoryProvider));
 });
 
 final localStorageProvider = Provider<LocalStorageService>((ref) {

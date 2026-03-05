@@ -24,13 +24,15 @@ class HistoryScreen extends ConsumerWidget {
                 final streamId = item['id']?.toString() ?? '';
                 final title = item['title']?.toString() ?? 'Contenido';
                 final updatedAt = item['updatedAt']?.toString() ?? '';
+                final type = item['type']?.toString() ?? 'live';
+                final ext = item['ext']?.toString() ?? '';
                 return ListTile(
                   tileColor: const Color(0xFF162544),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   title: Text(title),
                   subtitle: Text(updatedAt),
                   trailing: const Icon(Icons.play_arrow),
-                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId'),
+                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext'),
                 );
               },
             ),

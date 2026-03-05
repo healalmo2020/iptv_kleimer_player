@@ -28,12 +28,14 @@ class ContinueWatchingScreen extends ConsumerWidget {
                 final item = items[index];
                 final streamId = item['id']?.toString() ?? '';
                 final title = item['title']?.toString() ?? 'Contenido';
+                final type = item['type']?.toString() ?? 'live';
+                final ext = item['ext']?.toString() ?? '';
                 final positionMs = (item['positionMs'] as int?) ?? 0;
                 final durationMs = (item['durationMs'] as int?) ?? 1;
                 final progress = (positionMs / durationMs).clamp(0.0, 1.0);
 
                 return InkWell(
-                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId'),
+                  onTap: () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$streamId&type=$type&ext=$ext'),
                   child: Card(
                     child: Stack(
                       fit: StackFit.expand,

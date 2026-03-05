@@ -2,6 +2,10 @@ import '../../core/network/api_client.dart';
 import '../models/account_model.dart';
 import '../models/live_category_model.dart';
 import '../models/live_stream_model.dart';
+import '../models/series_episode_model.dart';
+import '../models/series_item_model.dart';
+import '../models/vod_category_model.dart';
+import '../models/vod_stream_model.dart';
 
 class XtreamRemoteDataSource {
   XtreamRemoteDataSource(this._apiClient);
@@ -56,5 +60,105 @@ class XtreamRemoteDataSource {
         .whereType<Map<String, dynamic>>()
         .map(LiveStreamModel.fromJson)
         .toList(growable: false);
+  }
+
+  Future<List<VodCategoryModel>> getVodCategories({
+    required String username,
+    required String password,
+  }) async {
+    final response = await _apiClient.getList(
+      '/player_api.php',
+      query: {
+        'username': username,
+        'password': password,
+        'action': 'get_vod_categories',
+      },
+    );
+
+    return response
+        .whereType<Map<String, dynamic>>()
+        .map(VodCategoryModel.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<VodStreamModel>> getVodStreams({
+    required String username,
+    required String password,
+  }) async {
+    final response = await _apiClient.getList(
+      '/player_api.php',
+      query: {
+        'username': username,
+        'password': password,
+        'action': 'get_vod_streams',
+      },
+    );
+
+    return response
+        .whereType<Map<String, dynamic>>()
+        .map(VodStreamModel.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<SeriesItemModel>> getSeries({
+    required String username,
+    required String password,
+  }) async {
+    final response = await _apiClient.getList(
+      '/player_api.php',
+      query: {
+        'username': username,
+        'password': password,
+        'action': 'get_series',
+      },
+    );
+
+    return response
+        .whereType<Map<String, dynamic>>()
+        .map(SeriesItemModel.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<SeriesEpisodeModel>> getSeriesInfo({
+    required String username,
+    required String password,
+    required String seriesId,
+  }) async {
+    final response = await _apiClient.getMap(
+      '/player_api.php',
+      query: {
+        'username': username,
+        'password': password,
+        'action': 'get_series_info',
+        'series_id': seriesId,
+      },
+    );
+
+    final episodesMap = response['episodes'];
+    if (episodesMap is! Map) {
+      return const [];
+    }
+
+    final episodes = <SeriesEpisodeModel>[];
+    for (final entry in episodesMap.entries) {
+      final season = int.tryParse(entry.key.toString()) ?? 0;
+      final rawEpisodes = entry.value;
+      if (rawEpisodes is List) {
+        for (final raw in rawEpisodes) {
+          if (raw is Map<String, dynamic>) {
+            episodes.add(SeriesEpisodeModel.fromJson(raw, season: season));
+          }
+        }
+      }
+    }
+
+    episodes.sort((a, b) {
+      if (a.season != b.season) {
+        return a.season.compareTo(b.season);
+      }
+      return a.episodeNumber.compareTo(b.episodeNumber);
+    });
+
+    return episodes;
   }
 }
