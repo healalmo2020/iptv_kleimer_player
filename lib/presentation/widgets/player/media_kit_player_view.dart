@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -37,13 +38,21 @@ class _MediaKitPlayerViewState extends State<MediaKitPlayerView> {
   void initState() {
     super.initState();
     _player = Player();
-    _videoController = VideoController(_player);
+    final videoControllerConfig =
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.linux
+        ? const VideoControllerConfiguration(enableHardwareAcceleration: false)
+        : const VideoControllerConfiguration();
+    _videoController = VideoController(
+      _player,
+      configuration: videoControllerConfig,
+    );
     widget.onPlayerCreated?.call(_player);
 
     _positionSub = _player.stream.position.listen((position) {
       widget.onProgress(position, _lastDuration);
 
-      if (!_seekApplied && (widget.initialPosition ?? Duration.zero) > Duration.zero) {
+      if (!_seekApplied &&
+          (widget.initialPosition ?? Duration.zero) > Duration.zero) {
         _seekApplied = true;
         _player.seek(widget.initialPosition!);
       }

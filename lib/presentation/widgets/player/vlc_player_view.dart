@@ -7,12 +7,14 @@ class VlcPlayerView extends StatefulWidget {
     required this.url,
     required this.onProgress,
     required this.onError,
+    this.onControllerCreated,
     this.initialPosition,
   });
 
   final String url;
   final void Function(Duration position, Duration duration) onProgress;
   final void Function(String message) onError;
+  final void Function(VlcPlayerController controller)? onControllerCreated;
   final Duration? initialPosition;
 
   @override
@@ -33,12 +35,15 @@ class _VlcPlayerViewState extends State<VlcPlayerView> {
       hwAcc: HwAcc.auto,
       options: VlcPlayerOptions(),
     );
+    widget.onControllerCreated?.call(_controller);
 
     _controller.addListener(() {
       final value = _controller.value;
       widget.onProgress(value.position, value.duration);
 
-      if (!_seekApplied && value.isInitialized && (widget.initialPosition ?? Duration.zero) > Duration.zero) {
+      if (!_seekApplied &&
+          value.isInitialized &&
+          (widget.initialPosition ?? Duration.zero) > Duration.zero) {
         _seekApplied = true;
         _controller.seekTo(widget.initialPosition!);
       }
@@ -52,7 +57,13 @@ class _VlcPlayerViewState extends State<VlcPlayerView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    try {
+      _controller.dispose();
+    } catch (error) {
+      if (!error.toString().contains('LateInitializationError')) {
+        rethrow;
+      }
+    }
     super.dispose();
   }
 
