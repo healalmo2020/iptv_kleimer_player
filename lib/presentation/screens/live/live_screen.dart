@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/utils/channel_logo_resolver.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/live_provider.dart';
 import '../../providers/parental_provider.dart';
@@ -148,7 +149,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                     final isFavorite = favorites.contains(stream.id);
                     return StitchContentCard(
                       title: stream.name,
-                      imageUrl: stream.iconUrl,
+                      imageUrl: resolveChannelLogoUrl(
+                        channelName: stream.name,
+                        primaryIconUrl: stream.iconUrl,
+                      ),
                       onTap: () => context.push(
                         '/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live',
                       ),

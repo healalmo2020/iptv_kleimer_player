@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/utils/channel_logo_resolver.dart';
 import '../providers/library_provider.dart';
 import '../providers/live_provider.dart';
 import '../providers/series_provider.dart';
@@ -24,28 +28,13 @@ class HomeScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Container(
-            height: MediaQuery.sizeOf(context).height * 0.7,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF162544), Color(0xFF0B1426)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
+          vodAsync.when(
+            data: (items) => _HeroBannerCarousel(items: items),
+            loading: () => _HeroBannerSkeleton(
+              height: MediaQuery.sizeOf(context).height * 0.7,
             ),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Hero Banner', style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(height: 8),
-                  const Text('Destacados para continuar viendo y descubrir nuevo contenido.'),
-                ],
-              ),
+            error: (_, _) => _HeroBannerSkeleton(
+              height: MediaQuery.sizeOf(context).height * 0.7,
             ),
           ),
           const SizedBox(height: 16),
@@ -61,7 +50,9 @@ class HomeScreen extends ConsumerWidget {
               final title = item['title']?.toString() ?? 'Contenido';
               final type = item['type']?.toString() ?? 'live';
               final ext = item['ext']?.toString() ?? '';
-              return () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$id&type=$type&ext=$ext');
+              return () => context.push(
+                '/player?title=${Uri.encodeComponent(title)}&id=$id&type=$type&ext=$ext',
+              );
             },
           ),
           const SizedBox(height: 20),
@@ -70,9 +61,14 @@ class HomeScreen extends ConsumerWidget {
             data: (items) => _HomeEntityRow(
               items: items.take(20).toList(growable: false),
               titleBuilder: (item) => item.name,
-              imageBuilder: (item) => item.iconUrl,
+              imageBuilder: (item) => resolveChannelLogoUrl(
+                channelName: item.name,
+                primaryIconUrl: item.iconUrl,
+              ),
               onTapBuilder: (item) =>
-                  () => context.push('/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=live'),
+                  () => context.push(
+                    '/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=live',
+                  ),
             ),
             loading: () => const _HomeLoadingRow(),
             error: (_, _) => const SizedBox.shrink(),
@@ -84,9 +80,10 @@ class HomeScreen extends ConsumerWidget {
               items: items.take(20).toList(growable: false),
               titleBuilder: (item) => item.name,
               imageBuilder: (item) => item.coverUrl,
-              onTapBuilder: (item) => () => context.push(
-                '/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=vod&ext=${item.containerExtension ?? ''}',
-              ),
+              onTapBuilder: (item) =>
+                  () => context.push(
+                    '/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=vod&ext=${item.containerExtension ?? ''}',
+                  ),
             ),
             loading: () => const _HomeLoadingRow(),
             error: (_, _) => const SizedBox.shrink(),
@@ -99,7 +96,9 @@ class HomeScreen extends ConsumerWidget {
               titleBuilder: (item) => item.name,
               imageBuilder: (item) => item.coverUrl,
               onTapBuilder: (item) =>
-                  () => context.push('/series/details?id=${item.id}&title=${Uri.encodeComponent(item.name)}'),
+                  () => context.push(
+                    '/series/details?id=${item.id}&title=${Uri.encodeComponent(item.name)}',
+                  ),
               aspectRatio: 2 / 3,
             ),
             loading: () => const _HomeLoadingRow(),
@@ -112,9 +111,10 @@ class HomeScreen extends ConsumerWidget {
               items: items.take(12).toList(growable: false),
               titleBuilder: (item) => item.name,
               imageBuilder: (item) => item.coverUrl,
-              onTapBuilder: (item) => () => context.push(
-                '/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=vod&ext=${item.containerExtension ?? ''}',
-              ),
+              onTapBuilder: (item) =>
+                  () => context.push(
+                    '/player?title=${Uri.encodeComponent(item.name)}&id=${item.id}&type=vod&ext=${item.containerExtension ?? ''}',
+                  ),
             ),
             loading: () => const _HomeLoadingRow(),
             error: (_, _) => const SizedBox.shrink(),
@@ -128,10 +128,193 @@ class HomeScreen extends ConsumerWidget {
             onTapBuilder: (item) {
               final id = item['id']?.toString() ?? '';
               final title = item['name']?.toString() ?? 'Favorito';
-              return () => context.push('/player?title=${Uri.encodeComponent(title)}&id=$id&type=live');
+              return () => context.push(
+                '/player?title=${Uri.encodeComponent(title)}&id=$id&type=live',
+              );
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeroBannerSkeleton extends StatelessWidget {
+  const _HeroBannerSkeleton({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF162544), Color(0xFF0B1426)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hero Banner',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Destacados para continuar viendo y descubrir nuevo contenido.',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroBannerCarousel extends StatefulWidget {
+  const _HeroBannerCarousel({required this.items});
+
+  final List<dynamic> items;
+
+  @override
+  State<_HeroBannerCarousel> createState() => _HeroBannerCarouselState();
+}
+
+class _HeroBannerCarouselState extends State<_HeroBannerCarousel> {
+  late final PageController _pageController;
+  Timer? _autoSlide;
+  int _index = 0;
+
+  List<dynamic> get _selected {
+    final withCover = widget.items
+        .where((item) => (item.coverUrl?.toString().isNotEmpty ?? false))
+        .toList(growable: false);
+    final movies2026 = withCover
+        .where((item) => item.name.toString().contains('2026'))
+        .toList(growable: false);
+    final source = movies2026.isNotEmpty ? movies2026 : withCover;
+    if (source.isEmpty) {
+      return widget.items.take(10).toList(growable: false);
+    }
+    return source.take(10).toList(growable: false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    _autoSlide = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (!mounted) {
+        return;
+      }
+      final items = _selected;
+      if (items.length <= 1 || !_pageController.hasClients) {
+        return;
+      }
+      final next = (_index + 1) % items.length;
+      _pageController.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _autoSlide?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = _selected;
+    final height = MediaQuery.sizeOf(context).height * 0.7;
+
+    if (items.isEmpty) {
+      return _HeroBannerSkeleton(height: height);
+    }
+
+    return SizedBox(
+      height: height,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            PageView.builder(
+              controller: _pageController,
+              itemCount: items.length,
+              onPageChanged: (value) {
+                setState(() {
+                  _index = value;
+                });
+              },
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: item.coverUrl.toString(),
+                      fit: BoxFit.cover,
+                      errorWidget: (_, _, _) =>
+                          const ColoredBox(color: Color(0xFF162544)),
+                    ),
+                    Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0x1A000000), Color(0xFF0B1426)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 24,
+              child: Builder(
+                builder: (context) {
+                  final current = items[_index.clamp(0, items.length - 1)];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        current.name.toString(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 10),
+                      FilledButton.icon(
+                        onPressed: () => context.push(
+                          '/player?title=${Uri.encodeComponent(current.name.toString())}&id=${current.id}&type=vod&ext=${current.containerExtension ?? ''}',
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('Reproducir ahora'),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -184,7 +367,10 @@ class _SectionTitle extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: Theme.of(context).textTheme.titleMedium),
-        TextButton(onPressed: () => context.go(route), child: const Text('Ver más')),
+        TextButton(
+          onPressed: () => context.go(route),
+          child: const Text('Ver más'),
+        ),
       ],
     );
   }
@@ -220,7 +406,10 @@ class _HomeEntityRow<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const SizedBox(height: 60, child: Center(child: Text('Sin contenido')));
+      return const SizedBox(
+        height: 60,
+        child: Center(child: Text('Sin contenido')),
+      );
     }
 
     return SizedBox(
@@ -262,7 +451,10 @@ class _HomeMapRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const SizedBox(height: 60, child: Center(child: Text('Sin contenido')));
+      return const SizedBox(
+        height: 60,
+        child: Center(child: Text('Sin contenido')),
+      );
     }
 
     return SizedBox(
