@@ -276,7 +276,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final initialPosition = Duration(
       milliseconds: savedProgress?['positionMs'] as int? ?? 0,
     );
-    final canSeek = _currentDuration > Duration.zero;
+    final isLiveContent = widget.contentType == 'live';
+    final canSeek = !isLiveContent && _currentDuration > Duration.zero;
 
     return Scaffold(
       appBar: AppBar(
@@ -363,53 +364,84 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               children: [
-                Slider(
-                  min: 0,
-                  max:
-                      (_currentDuration.inMilliseconds <= 0
+                if (isLiveContent)
+                  Row(
+                    children: [
+                      const Expanded(child: LinearProgressIndicator(value: 1)),
+                      const SizedBox(width: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF5252),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Text(
+                          'LIVE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Slider(
+                    min: 0,
+                    max:
+                        (_currentDuration.inMilliseconds <= 0
+                                ? 1
+                                : _currentDuration.inMilliseconds)
+                            .toDouble(),
+                    value: (_isSeeking ? _dragPosition : _currentPosition)
+                        .inMilliseconds
+                        .clamp(
+                          0,
+                          _currentDuration.inMilliseconds <= 0
                               ? 1
-                              : _currentDuration.inMilliseconds)
-                          .toDouble(),
-                  value: (_isSeeking ? _dragPosition : _currentPosition)
-                      .inMilliseconds
-                      .clamp(
-                        0,
-                        _currentDuration.inMilliseconds <= 0
-                            ? 1
-                            : _currentDuration.inMilliseconds,
-                      )
-                      .toDouble(),
-                  onChanged: _currentDuration <= Duration.zero
-                      ? null
-                      : (value) {
-                          setState(() {
-                            _isSeeking = true;
-                            _dragPosition = Duration(
-                              milliseconds: value.round(),
+                              : _currentDuration.inMilliseconds,
+                        )
+                        .toDouble(),
+                    onChanged: _currentDuration <= Duration.zero
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _isSeeking = true;
+                              _dragPosition = Duration(
+                                milliseconds: value.round(),
+                              );
+                            });
+                          },
+                    onChangeEnd: _currentDuration <= Duration.zero
+                        ? null
+                        : (value) {
+                            unawaited(
+                              _seekTo(
+                                engine,
+                                Duration(milliseconds: value.round()),
+                              ),
                             );
-                          });
-                        },
-                  onChangeEnd: _currentDuration <= Duration.zero
-                      ? null
-                      : (value) {
-                          unawaited(
-                            _seekTo(
-                              engine,
-                              Duration(milliseconds: value.round()),
-                            ),
-                          );
-                        },
-                ),
+                          },
+                  ),
                 const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _formatDuration(
-                        _isSeeking ? _dragPosition : _currentPosition,
+                    if (isLiveContent)
+                      const Text('En vivo')
+                    else
+                      Text(
+                        _formatDuration(
+                          _isSeeking ? _dragPosition : _currentPosition,
+                        ),
                       ),
-                    ),
-                    Text(_formatDuration(_currentDuration)),
+                    if (isLiveContent)
+                      const Text('')
+                    else
+                      Text(_formatDuration(_currentDuration)),
                   ],
                 ),
                 const SizedBox(height: 6),
