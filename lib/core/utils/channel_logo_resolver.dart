@@ -58,7 +58,12 @@ String _normalizeChannelName(String value) {
   });
 
   result = result
-      .replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|la|mx|es|us)\b'), ' ')
+      .replaceAll(
+        RegExp(
+          r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b',
+        ),
+        ' ',
+      )
       .replaceAll(RegExp(r'[^a-z0-9]+'), ' ')
       .replaceAll(RegExp(r'\s+'), ' ')
       .trim();
@@ -75,11 +80,17 @@ const Map<String, String> _logoPathByChannelKey = {
   'axn': 'countries/spain/axn-es.png',
   'adrenalina': 'countries/mexico/adrenalina-sports-network-mx.png',
   'aztecaclic': 'countries/mexico/azteca-clic-mx.png',
+  'aztecadeportes': 'countries/world-latin-america/azteca-international-lam.png',
   'aztecacinema': 'countries/world-latin-america/azteca-cinema-lam.png',
   'aztecacorazon': 'countries/mexico/corazon-mx.png',
   'a3series': 'countries/spain/atreseries-es.png',
   'a3seriesint': 'countries/spain/atreseries-es.png',
   'forotv': 'countries/mexico/n-plus-foro-mx.png',
+  'bandamax': 'countries/mexico/bandamax-mx.png',
+  'bitme': 'countries/mexico/bitme-mx.png',
+  'canal22': 'countries/mexico/canal-22-mx.png',
+  'canalonce': 'countries/mexico/canal-once-mx.png',
+  'babytv': 'countries/united-states/baby-tv-us.png',
   'nplusforo': 'countries/mexico/n-plus-foro-mx.png',
   'nmas': 'countries/mexico/n-mas-mx.png',
   'espn': 'countries/united-states/espn-us.png',
@@ -94,6 +105,15 @@ const Map<String, String> _logoPathByChannelKey = {
   'canal5': 'countries/mexico/canal-5-mx.png',
   'lasestrellas': 'countries/mexico/las-estrellas-mx.png',
   'antena3': 'countries/spain/antena-3-es.png',
+  'antena3int': 'countries/spain/antena-3-es.png',
+  'comedycentral': 'countries/argentina/comedy-central-ar.png',
+  'discoveryhomeandhealth':
+      'countries/world-latin-america/discovery-home-and-health-lam.png',
+  'eentertainment': 'countries/united-states/e-entertainment-us.png',
+  'eentertaiment': 'countries/united-states/e-entertainment-us.png',
+  'elgourmet': 'countries/world-latin-america/el-gourmet-lam.png',
+  'foodnetwork': 'countries/argentina/food-network-ar.png',
+  'galavision': 'countries/united-states/galavision-us.png',
 };
 
 String? _inferLogoPathByKey(String key) {
@@ -118,11 +138,20 @@ const List<_KeywordLogoMatcher> _keywordLogoMatchers = [
     'adrenalina',
     'countries/mexico/adrenalina-sports-network-mx.png',
   ),
+  _KeywordLogoMatcher('bandamax', 'countries/mexico/bandamax-mx.png'),
+  _KeywordLogoMatcher('bitme', 'countries/mexico/bitme-mx.png'),
+  _KeywordLogoMatcher('canal22', 'countries/mexico/canal-22-mx.png'),
+  _KeywordLogoMatcher('canalonce', 'countries/mexico/canal-once-mx.png'),
+  _KeywordLogoMatcher('babytv', 'countries/united-states/baby-tv-us.png'),
   _KeywordLogoMatcher('axn', 'countries/spain/axn-es.png'),
   _KeywordLogoMatcher('aztecaclic', 'countries/mexico/azteca-clic-mx.png'),
   _KeywordLogoMatcher(
     'aztecacinema',
     'countries/world-latin-america/azteca-cinema-lam.png',
+  ),
+  _KeywordLogoMatcher(
+    'aztecadeportes',
+    'countries/world-latin-america/azteca-international-lam.png',
   ),
   _KeywordLogoMatcher('corazon', 'countries/mexico/corazon-mx.png'),
   _KeywordLogoMatcher('a3series', 'countries/spain/atreseries-es.png'),
@@ -131,6 +160,22 @@ const List<_KeywordLogoMatcher> _keywordLogoMatchers = [
   _KeywordLogoMatcher('canaldelasestrellas', 'countries/mexico/las-estrellas-mx.png'),
   _KeywordLogoMatcher('elnueve', 'countries/mexico/canal-9-mx.png'),
   _KeywordLogoMatcher('forotv', 'countries/mexico/n-plus-foro-mx.png'),
+  _KeywordLogoMatcher('antena3int', 'countries/spain/antena-3-es.png'),
+  _KeywordLogoMatcher('antena3', 'countries/spain/antena-3-es.png'),
+  _KeywordLogoMatcher('comedycentral', 'countries/argentina/comedy-central-ar.png'),
+  _KeywordLogoMatcher(
+    'discoveryhomeandhealth',
+    'countries/world-latin-america/discovery-home-and-health-lam.png',
+  ),
+  _KeywordLogoMatcher(
+    'discoveryhomehealth',
+    'countries/world-latin-america/discovery-home-and-health-lam.png',
+  ),
+  _KeywordLogoMatcher('eentertainment', 'countries/united-states/e-entertainment-us.png'),
+  _KeywordLogoMatcher('eentertaiment', 'countries/united-states/e-entertainment-us.png'),
+  _KeywordLogoMatcher('elgourmet', 'countries/world-latin-america/el-gourmet-lam.png'),
+  _KeywordLogoMatcher('foodnetwork', 'countries/argentina/food-network-ar.png'),
+  _KeywordLogoMatcher('galavision', 'countries/united-states/galavision-us.png'),
   _KeywordLogoMatcher('imagen', 'countries/mexico/imagen-television-mx.png'),
   _KeywordLogoMatcher('tvazteca', 'countries/mexico/azteca-uno-mx.png'),
   _KeywordLogoMatcher('aztecauno', 'countries/mexico/azteca-uno-mx.png'),

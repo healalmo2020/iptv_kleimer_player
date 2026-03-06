@@ -39,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     if (success) {
-      context.go('/home');
+      context.go('/warmup');
       return;
     }
 
@@ -71,7 +71,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final state = ref.read(authControllerProvider);
     if (state.hasValue && mounted) {
-      context.go('/home');
+      context.go('/warmup');
     }
   }
 

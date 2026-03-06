@@ -16,11 +16,8 @@ class LiveScreen extends ConsumerStatefulWidget {
 }
 
 class _LiveScreenState extends ConsumerState<LiveScreen> {
-  static const int _initialPageSize = 12;
-  static const int _pageSizeStep = 12;
   final ScrollController _categoriesScrollController = ScrollController();
   String? _selectedCategoryId;
-  int _visibleItemsCount = _initialPageSize;
 
   @override
   void dispose() {
@@ -85,7 +82,6 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                     }
                     setState(() {
                       _selectedCategoryId = data.first.id;
-                      _visibleItemsCount = _initialPageSize;
                     });
                   });
                 }
@@ -119,7 +115,6 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                               onSelected: (_) {
                                 setState(() {
                                   _selectedCategoryId = category.id;
-                                  _visibleItemsCount = _initialPageSize;
                                 });
                               },
                             );
@@ -164,86 +159,68 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   );
                 }
 
-                final visibleCount = _visibleItemsCount.clamp(
-                  0,
-                  filteredItems.length,
-                );
-
-                return NotificationListener<ScrollNotification>(
-                  onNotification: (notification) {
-                    final nearBottom =
-                        notification.metrics.pixels >=
-                        notification.metrics.maxScrollExtent - 420;
-                    if (nearBottom && visibleCount < filteredItems.length) {
-                      setState(() {
-                        _visibleItemsCount =
-                            (_visibleItemsCount + _pageSizeStep).clamp(
-                              0,
-                              filteredItems.length,
-                            );
-                      });
-                    }
-                    return false;
+                return GridView.builder(
+                  cacheExtent: 120,
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        childAspectRatio: 16 / 9,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                  itemCount: filteredItems.length,
+                  itemBuilder: (context, index) {
+                    final stream = filteredItems[index];
+                    final isFavorite = favorites.contains(stream.id);
+                    final repositoryLogo = resolveChannelLogoRepositoryUrl(
+                      channelName: stream.name,
+                    );
+                    final primaryLogo =
+                        repositoryLogo.isEmpty ? stream.iconUrl : repositoryLogo;
+                    final fallbackLogo =
+                        repositoryLogo.isEmpty ? null : stream.iconUrl;
+                    return StitchContentCard(
+                      title: stream.name,
+                      imageUrl: primaryLogo,
+                      fallbackImageUrl: fallbackLogo,
+                      imageCacheWidth: 320,
+                      imageCacheHeight: 180,
+                      imageFit: BoxFit.contain,
+                      useShimmerPlaceholder: false,
+                      onTap: () => context.push(
+                        '/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live',
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.schedule),
+                            color: Colors.white,
+                            onPressed: () => _showEpg(
+                              context,
+                              ref,
+                              stream.id,
+                              stream.name,
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                            ),
+                            color: isFavorite
+                                ? const Color(0xFFFF5252)
+                                : Colors.white,
+                            onPressed: () => ref
+                                .read(favoritesProvider.notifier)
+                                .toggle(stream),
+                          ),
+                        ],
+                      ),
+                    );
                   },
-                  child: GridView.builder(
-                    cacheExtent: 120,
-                    padding: const EdgeInsets.all(12),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          childAspectRatio: 16 / 9,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                        ),
-                    itemCount: visibleCount,
-                    itemBuilder: (context, index) {
-                      final stream = filteredItems[index];
-                      final isFavorite = favorites.contains(stream.id);
-                      final repositoryLogo = resolveChannelLogoRepositoryUrl(
-                        channelName: stream.name,
-                      );
-                      final primaryLogo =
-                          repositoryLogo.isEmpty ? stream.iconUrl : repositoryLogo;
-                      final fallbackLogo =
-                          repositoryLogo.isEmpty ? null : stream.iconUrl;
-                      return StitchContentCard(
-                        title: stream.name,
-                        imageUrl: primaryLogo,
-                        fallbackImageUrl: fallbackLogo,
-                        onTap: () => context.push(
-                          '/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live',
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.schedule),
-                              color: Colors.white,
-                              onPressed: () => _showEpg(
-                                context,
-                                ref,
-                                stream.id,
-                                stream.name,
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                              ),
-                              color: isFavorite
-                                  ? const Color(0xFFFF5252)
-                                  : Colors.white,
-                              onPressed: () => ref
-                                  .read(favoritesProvider.notifier)
-                                  .toggle(stream),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),

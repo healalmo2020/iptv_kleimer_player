@@ -14,12 +14,14 @@ import '../screens/search_screen.dart';
 import '../screens/series_screen.dart';
 import '../screens/series_detail_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/warmup_screen.dart';
 
 GoRouter createAppRouter(Ref ref) {
   return GoRouter(
     initialLocation: '/login',
     routes: [
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/warmup', builder: (_, _) => const WarmupScreen()),
       GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
       GoRoute(path: '/live', builder: (_, _) => const LiveScreen()),
       GoRoute(path: '/movies', builder: (_, _) => const MoviesScreen()),

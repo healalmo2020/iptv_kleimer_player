@@ -8,6 +8,10 @@ class StitchContentCard extends StatefulWidget {
     required this.title,
     this.imageUrl,
     this.fallbackImageUrl,
+    this.imageCacheWidth,
+    this.imageCacheHeight,
+    this.imageFit = BoxFit.cover,
+    this.useShimmerPlaceholder = true,
     required this.onTap,
     this.aspectRatio = 16 / 9,
     this.trailing,
@@ -16,6 +20,10 @@ class StitchContentCard extends StatefulWidget {
   final String title;
   final String? imageUrl;
   final String? fallbackImageUrl;
+  final int? imageCacheWidth;
+  final int? imageCacheHeight;
+  final BoxFit imageFit;
+  final bool useShimmerPlaceholder;
   final VoidCallback onTap;
   final double aspectRatio;
   final Widget? trailing;
@@ -37,6 +45,40 @@ class _StitchContentCardState extends State<StitchContentCard> {
     }
   }
 
+  Widget _buildMissingImagePlaceholder(BuildContext context) {
+    final normalized = widget.title
+        .replaceAll(RegExp(r'[^A-Za-z0-9 ]+'), ' ')
+        .trim();
+    final parts = normalized
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList(growable: false);
+
+    final letters = parts.isEmpty
+        ? 'TV'
+        : parts.take(2).map((part) => part[0].toUpperCase()).join();
+
+    return ColoredBox(
+      color: const Color(0xFF162544),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.tv_rounded, color: Color(0xFFB0BEC5), size: 28),
+            const SizedBox(height: 6),
+            Text(
+              letters,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: const Color(0xFFB0BEC5),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String? get _resolvedImageUrl {
     final primary = widget.imageUrl?.trim();
     final fallback = widget.fallbackImageUrl?.trim();
@@ -53,6 +95,10 @@ class _StitchContentCardState extends State<StitchContentCard> {
   Widget build(BuildContext context) {
     final imageUrl = _resolvedImageUrl;
     final fallbackUrl = widget.fallbackImageUrl?.trim();
+    final defaultWidth = widget.aspectRatio == 2 / 3 ? 420 : 520;
+    final defaultHeight = widget.aspectRatio == 2 / 3 ? 630 : 292;
+    final cacheWidth = widget.imageCacheWidth ?? defaultWidth;
+    final cacheHeight = widget.imageCacheHeight ?? defaultHeight;
 
     return FocusableActionDetector(
       onShowFocusHighlight: (value) => setState(() => _focused = value),
@@ -89,18 +135,19 @@ class _StitchContentCardState extends State<StitchContentCard> {
                   if (imageUrl != null && imageUrl.isNotEmpty)
                     CachedNetworkImage(
                       imageUrl: imageUrl,
-                      fit: BoxFit.cover,
+                      fit: widget.imageFit,
                       filterQuality: FilterQuality.low,
                       fadeInDuration: Duration.zero,
                       fadeOutDuration: Duration.zero,
                       placeholderFadeInDuration: Duration.zero,
-                      memCacheWidth: widget.aspectRatio == 2 / 3 ? 420 : 520,
-                      memCacheHeight: widget.aspectRatio == 2 / 3 ? 630 : 292,
-                      maxWidthDiskCache: widget.aspectRatio == 2 / 3 ? 420 : 520,
-                      maxHeightDiskCache: widget.aspectRatio == 2 / 3
-                          ? 630
-                          : 292,
+                        memCacheWidth: cacheWidth,
+                        memCacheHeight: cacheHeight,
+                        maxWidthDiskCache: cacheWidth,
+                        maxHeightDiskCache: cacheHeight,
                       placeholder: (_, _) {
+                          if (!widget.useShimmerPlaceholder) {
+                            return _buildMissingImagePlaceholder(context);
+                          }
                         return Shimmer.fromColors(
                           baseColor: const Color(0xFF162544),
                           highlightColor: const Color(0xFF2A3E68),
@@ -131,11 +178,11 @@ class _StitchContentCardState extends State<StitchContentCard> {
                           );
                         }
 
-                        return const ColoredBox(color: Color(0xFF162544));
+                        return _buildMissingImagePlaceholder(context);
                       },
                     )
                   else
-                    const ColoredBox(color: Color(0xFF162544)),
+                    _buildMissingImagePlaceholder(context),
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: Container(
