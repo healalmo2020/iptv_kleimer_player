@@ -7,6 +7,7 @@ class StitchContentCard extends StatefulWidget {
     super.key,
     required this.title,
     this.imageUrl,
+    this.fallbackImageUrl,
     required this.onTap,
     this.aspectRatio = 16 / 9,
     this.trailing,
@@ -14,6 +15,7 @@ class StitchContentCard extends StatefulWidget {
 
   final String title;
   final String? imageUrl;
+  final String? fallbackImageUrl;
   final VoidCallback onTap;
   final double aspectRatio;
   final Widget? trailing;
@@ -24,9 +26,34 @@ class StitchContentCard extends StatefulWidget {
 
 class _StitchContentCardState extends State<StitchContentCard> {
   bool _focused = false;
+  bool _usingFallbackImage = false;
+
+  @override
+  void didUpdateWidget(covariant StitchContentCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.imageUrl != widget.imageUrl ||
+        oldWidget.fallbackImageUrl != widget.fallbackImageUrl) {
+      _usingFallbackImage = false;
+    }
+  }
+
+  String? get _resolvedImageUrl {
+    final primary = widget.imageUrl?.trim();
+    final fallback = widget.fallbackImageUrl?.trim();
+    if (!_usingFallbackImage && primary != null && primary.isNotEmpty) {
+      return primary;
+    }
+    if (fallback != null && fallback.isNotEmpty) {
+      return fallback;
+    }
+    return primary;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = _resolvedImageUrl;
+    final fallbackUrl = widget.fallbackImageUrl?.trim();
+
     return FocusableActionDetector(
       onShowFocusHighlight: (value) => setState(() => _focused = value),
       mouseCursor: SystemMouseCursors.click,
@@ -59,10 +86,20 @@ class _StitchContentCardState extends State<StitchContentCard> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  if (widget.imageUrl != null && widget.imageUrl!.isNotEmpty)
+                  if (imageUrl != null && imageUrl.isNotEmpty)
                     CachedNetworkImage(
-                      imageUrl: widget.imageUrl!,
+                      imageUrl: imageUrl,
                       fit: BoxFit.cover,
+                      filterQuality: FilterQuality.low,
+                      fadeInDuration: Duration.zero,
+                      fadeOutDuration: Duration.zero,
+                      placeholderFadeInDuration: Duration.zero,
+                      memCacheWidth: widget.aspectRatio == 2 / 3 ? 420 : 520,
+                      memCacheHeight: widget.aspectRatio == 2 / 3 ? 630 : 292,
+                      maxWidthDiskCache: widget.aspectRatio == 2 / 3 ? 420 : 520,
+                      maxHeightDiskCache: widget.aspectRatio == 2 / 3
+                          ? 630
+                          : 292,
                       placeholder: (_, _) {
                         return Shimmer.fromColors(
                           baseColor: const Color(0xFF162544),
@@ -70,7 +107,32 @@ class _StitchContentCardState extends State<StitchContentCard> {
                           child: const ColoredBox(color: Color(0xFF162544)),
                         );
                       },
-                      errorWidget: (_, _, _) => const ColoredBox(color: Color(0xFF162544)),
+                      errorWidget: (_, __, ___) {
+                        final canUseFallback =
+                            !_usingFallbackImage &&
+                            fallbackUrl != null &&
+                            fallbackUrl.isNotEmpty &&
+                            fallbackUrl != imageUrl;
+
+                        if (canUseFallback) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (!mounted) {
+                              return;
+                            }
+                            setState(() {
+                              _usingFallbackImage = true;
+                            });
+                          });
+
+                          return Shimmer.fromColors(
+                            baseColor: const Color(0xFF162544),
+                            highlightColor: const Color(0xFF2A3E68),
+                            child: const ColoredBox(color: Color(0xFF162544)),
+                          );
+                        }
+
+                        return const ColoredBox(color: Color(0xFF162544));
+                      },
                     )
                   else
                     const ColoredBox(color: Color(0xFF162544)),

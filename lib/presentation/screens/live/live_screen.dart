@@ -16,8 +16,11 @@ class LiveScreen extends ConsumerStatefulWidget {
 }
 
 class _LiveScreenState extends ConsumerState<LiveScreen> {
+  static const int _initialPageSize = 12;
+  static const int _pageSizeStep = 12;
   final ScrollController _categoriesScrollController = ScrollController();
   String? _selectedCategoryId;
+  int _visibleItemsCount = _initialPageSize;
 
   @override
   void dispose() {
@@ -44,7 +47,9 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(liveCategoriesProvider);
-    final streams = ref.watch(liveStreamsProvider);
+    final streams = ref.watch(
+      liveStreamsByCategoryProvider(_selectedCategoryId),
+    );
     final favorites = ref.watch(favoritesProvider);
     final parental = ref.watch(parentalProvider);
 
@@ -67,48 +72,68 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
           SizedBox(
             height: 72,
             child: categories.when(
-              data: (data) => Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: () => _scrollCategoriesBy(-260),
-                  ),
-                  Expanded(
-                    child: Scrollbar(
-                      controller: _categoriesScrollController,
-                      thumbVisibility: true,
-                      child: ListView.separated(
+              data: (data) {
+                if (data.isEmpty) {
+                  return const Center(child: Text('No hay categorías.'));
+                }
+
+                final selectedExists = data.any((e) => e.id == _selectedCategoryId);
+                if (_selectedCategoryId == null || !selectedExists) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (!mounted) {
+                      return;
+                    }
+                    setState(() {
+                      _selectedCategoryId = data.first.id;
+                      _visibleItemsCount = _initialPageSize;
+                    });
+                  });
+                }
+
+                return Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: () => _scrollCategoriesBy(-260),
+                    ),
+                    Expanded(
+                      child: Scrollbar(
                         controller: _categoriesScrollController,
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 12,
+                        thumbVisibility: true,
+                        child: ListView.separated(
+                          controller: _categoriesScrollController,
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 12,
+                          ),
+                          itemCount: data.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 8),
+                          itemBuilder: (context, index) {
+                            final category = data[index];
+                            final selected =
+                                category.id == _selectedCategoryId;
+                            return ChoiceChip(
+                              selected: selected,
+                              label: Text(category.name),
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedCategoryId = category.id;
+                                  _visibleItemsCount = _initialPageSize;
+                                });
+                              },
+                            );
+                          },
                         ),
-                        itemCount: data.length,
-                        separatorBuilder: (_, _) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          final category = data[index];
-                          _selectedCategoryId ??= data.first.id;
-                          final selected = category.id == _selectedCategoryId;
-                          return ChoiceChip(
-                            selected: selected,
-                            label: Text(category.name),
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedCategoryId = category.id;
-                              });
-                            },
-                          );
-                        },
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: () => _scrollCategoriesBy(260),
-                  ),
-                ],
-              ),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: () => _scrollCategoriesBy(260),
+                    ),
+                  ],
+                );
+              },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) =>
                   Center(child: Text('Error categorías: $error')),
@@ -117,6 +142,10 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
           Expanded(
             child: streams.when(
               data: (items) {
+                if (_selectedCategoryId == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
                 var filteredItems = _selectedCategoryId == null
                     ? items
                     : items
@@ -135,53 +164,86 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                   );
                 }
 
-                return GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    childAspectRatio: 16 / 9,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  itemCount: filteredItems.length,
-                  itemBuilder: (context, index) {
-                    final stream = filteredItems[index];
-                    final isFavorite = favorites.contains(stream.id);
-                    return StitchContentCard(
-                      title: stream.name,
-                      imageUrl: resolveChannelLogoUrl(
-                        channelName: stream.name,
-                        primaryIconUrl: stream.iconUrl,
-                      ),
-                      onTap: () => context.push(
-                        '/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live',
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.schedule),
-                            color: Colors.white,
-                            onPressed: () =>
-                                _showEpg(context, ref, stream.id, stream.name),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              isFavorite
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                            ),
-                            color: isFavorite
-                                ? const Color(0xFFFF5252)
-                                : Colors.white,
-                            onPressed: () => ref
-                                .read(favoritesProvider.notifier)
-                                .toggle(stream),
-                          ),
-                        ],
-                      ),
-                    );
+                final visibleCount = _visibleItemsCount.clamp(
+                  0,
+                  filteredItems.length,
+                );
+
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    final nearBottom =
+                        notification.metrics.pixels >=
+                        notification.metrics.maxScrollExtent - 420;
+                    if (nearBottom && visibleCount < filteredItems.length) {
+                      setState(() {
+                        _visibleItemsCount =
+                            (_visibleItemsCount + _pageSizeStep).clamp(
+                              0,
+                              filteredItems.length,
+                            );
+                      });
+                    }
+                    return false;
                   },
+                  child: GridView.builder(
+                    cacheExtent: 120,
+                    padding: const EdgeInsets.all(12),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          childAspectRatio: 16 / 9,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
+                    itemCount: visibleCount,
+                    itemBuilder: (context, index) {
+                      final stream = filteredItems[index];
+                      final isFavorite = favorites.contains(stream.id);
+                      final repositoryLogo = resolveChannelLogoRepositoryUrl(
+                        channelName: stream.name,
+                      );
+                      final primaryLogo =
+                          repositoryLogo.isEmpty ? stream.iconUrl : repositoryLogo;
+                      final fallbackLogo =
+                          repositoryLogo.isEmpty ? null : stream.iconUrl;
+                      return StitchContentCard(
+                        title: stream.name,
+                        imageUrl: primaryLogo,
+                        fallbackImageUrl: fallbackLogo,
+                        onTap: () => context.push(
+                          '/player?title=${Uri.encodeComponent(stream.name)}&id=${stream.id}&type=live',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.schedule),
+                              color: Colors.white,
+                              onPressed: () => _showEpg(
+                                context,
+                                ref,
+                                stream.id,
+                                stream.name,
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                              ),
+                              color: isFavorite
+                                  ? const Color(0xFFFF5252)
+                                  : Colors.white,
+                              onPressed: () => ref
+                                  .read(favoritesProvider.notifier)
+                                  .toggle(stream),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),

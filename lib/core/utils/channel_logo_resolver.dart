@@ -7,6 +7,10 @@ String resolveChannelLogoUrl({
     return primary;
   }
 
+  return resolveChannelLogoRepositoryUrl(channelName: channelName);
+}
+
+String resolveChannelLogoRepositoryUrl({required String channelName}) {
   final key = _normalizeChannelName(channelName);
   final path = _logoPathByChannelKey[key];
   if (path == null) {
@@ -14,14 +18,28 @@ String resolveChannelLogoUrl({
     if (inferredPath == null) {
       return '';
     }
-    return 'https://raw.githubusercontent.com/tv-logo/tv-logos/main/$inferredPath';
+    return '$_logoRepositoryBaseUrl/$inferredPath';
   }
 
-  return 'https://raw.githubusercontent.com/tv-logo/tv-logos/main/$path';
+  return '$_logoRepositoryBaseUrl/$path';
 }
+
+const String _logoRepositoryBaseUrl =
+    'https://cdn.jsdelivr.net/gh/tv-logo/tv-logos@main';
 
 String _normalizeChannelName(String value) {
   var result = value.toLowerCase().trim();
+
+  if (result.contains('|')) {
+    final segments = result
+        .split('|')
+        .map((segment) => segment.trim())
+        .where((segment) => segment.isNotEmpty)
+        .toList(growable: false);
+    if (segments.isNotEmpty) {
+      result = segments.last;
+    }
+  }
 
   const replacements = {
     'á': 'a',
@@ -32,6 +50,7 @@ String _normalizeChannelName(String value) {
     'ü': 'u',
     'ñ': 'n',
     '&': ' and ',
+    '+': ' plus ',
   };
 
   replacements.forEach((from, to) {
@@ -48,6 +67,21 @@ String _normalizeChannelName(String value) {
 }
 
 const Map<String, String> _logoPathByChannelKey = {
+  'aande': 'countries/united-states/a-and-e-us.png',
+  'amas': 'countries/mexico/a-mas-mx.png',
+  'aplus': 'countries/mexico/a-mas-mx.png',
+  'amc': 'countries/united-states/amc-us.png',
+  'animalplanet': 'countries/united-states/animal-planet-us.png',
+  'axn': 'countries/spain/axn-es.png',
+  'adrenalina': 'countries/mexico/adrenalina-sports-network-mx.png',
+  'aztecaclic': 'countries/mexico/azteca-clic-mx.png',
+  'aztecacinema': 'countries/world-latin-america/azteca-cinema-lam.png',
+  'aztecacorazon': 'countries/mexico/corazon-mx.png',
+  'a3series': 'countries/spain/atreseries-es.png',
+  'a3seriesint': 'countries/spain/atreseries-es.png',
+  'forotv': 'countries/mexico/n-plus-foro-mx.png',
+  'nplusforo': 'countries/mexico/n-plus-foro-mx.png',
+  'nmas': 'countries/mexico/n-mas-mx.png',
   'espn': 'countries/united-states/espn-us.png',
   'espn2': 'countries/united-states/espn-2-us.png',
   'discoverychannel': 'countries/united-states/discovery-channel-us.png',
@@ -72,6 +106,40 @@ String? _inferLogoPathByKey(String key) {
 }
 
 const List<_KeywordLogoMatcher> _keywordLogoMatchers = [
+  _KeywordLogoMatcher('aande', 'countries/united-states/a-and-e-us.png'),
+  _KeywordLogoMatcher('aplus', 'countries/mexico/a-mas-mx.png'),
+  _KeywordLogoMatcher('amas', 'countries/mexico/a-mas-mx.png'),
+  _KeywordLogoMatcher('amc', 'countries/united-states/amc-us.png'),
+  _KeywordLogoMatcher(
+    'animalplanet',
+    'countries/united-states/animal-planet-us.png',
+  ),
+  _KeywordLogoMatcher(
+    'adrenalina',
+    'countries/mexico/adrenalina-sports-network-mx.png',
+  ),
+  _KeywordLogoMatcher('axn', 'countries/spain/axn-es.png'),
+  _KeywordLogoMatcher('aztecaclic', 'countries/mexico/azteca-clic-mx.png'),
+  _KeywordLogoMatcher(
+    'aztecacinema',
+    'countries/world-latin-america/azteca-cinema-lam.png',
+  ),
+  _KeywordLogoMatcher('corazon', 'countries/mexico/corazon-mx.png'),
+  _KeywordLogoMatcher('a3series', 'countries/spain/atreseries-es.png'),
+  _KeywordLogoMatcher('nplusforo', 'countries/mexico/n-plus-foro-mx.png'),
+  _KeywordLogoMatcher('nmas', 'countries/mexico/n-mas-mx.png'),
+  _KeywordLogoMatcher('canaldelasestrellas', 'countries/mexico/las-estrellas-mx.png'),
+  _KeywordLogoMatcher('elnueve', 'countries/mexico/canal-9-mx.png'),
+  _KeywordLogoMatcher('forotv', 'countries/mexico/n-plus-foro-mx.png'),
+  _KeywordLogoMatcher('imagen', 'countries/mexico/imagen-television-mx.png'),
+  _KeywordLogoMatcher('tvazteca', 'countries/mexico/azteca-uno-mx.png'),
+  _KeywordLogoMatcher('aztecauno', 'countries/mexico/azteca-uno-mx.png'),
+  _KeywordLogoMatcher('azteca1', 'countries/mexico/azteca-uno-mx.png'),
+  _KeywordLogoMatcher('azteca13', 'countries/mexico/azteca-uno-mx.png'),
+  _KeywordLogoMatcher('canal7', 'countries/mexico/azteca-7-mx.png'),
+  _KeywordLogoMatcher('adn40', 'countries/mexico/adn-noticias-mx.png'),
+  _KeywordLogoMatcher('unicable', 'countries/mexico/unicable-mx.png'),
+  _KeywordLogoMatcher('telemundo', 'countries/united-states/telemundo-us.png'),
   _KeywordLogoMatcher('lasestrellas', 'countries/mexico/las-estrellas-mx.png'),
   _KeywordLogoMatcher('estrellas', 'countries/mexico/las-estrellas-mx.png'),
   _KeywordLogoMatcher('azteca7', 'countries/mexico/azteca-7-mx.png'),

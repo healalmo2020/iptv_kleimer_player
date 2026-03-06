@@ -47,14 +47,21 @@ class XtreamRemoteDataSource {
   Future<List<LiveStreamModel>> getLiveStreams({
     required String username,
     required String password,
+    String? categoryId,
   }) async {
+    final query = <String, String>{
+      'username': username,
+      'password': password,
+      'action': 'get_live_streams',
+    };
+    final normalizedCategoryId = categoryId?.trim();
+    if (normalizedCategoryId != null && normalizedCategoryId.isNotEmpty) {
+      query['category_id'] = normalizedCategoryId;
+    }
+
     final response = await _apiClient.getList(
       '/player_api.php',
-      query: {
-        'username': username,
-        'password': password,
-        'action': 'get_live_streams',
-      },
+      query: query,
     );
 
     return response

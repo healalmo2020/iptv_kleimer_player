@@ -31,8 +31,13 @@ class IptvRepositoryImpl implements IptvRepository {
   Future<List<LiveStream>> getLiveStreams({
     required String username,
     required String password,
+    String? categoryId,
   }) {
-    return _remote.getLiveStreams(username: username, password: password);
+    return _remote.getLiveStreams(
+      username: username,
+      password: password,
+      categoryId: categoryId,
+    );
   }
 
   @override

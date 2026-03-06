@@ -18,6 +18,7 @@ abstract class IptvRepository {
   Future<List<LiveStream>> getLiveStreams({
     required String username,
     required String password,
+    String? categoryId,
   });
 
   Future<List<VodCategory>> getVodCategories({
