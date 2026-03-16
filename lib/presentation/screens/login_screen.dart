@@ -39,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     if (success) {
-      context.go('/warmup');
+      context.go(_postLoginRoute(credentials.username));
       return;
     }
 
@@ -71,8 +71,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     final state = ref.read(authControllerProvider);
     if (state.hasValue && mounted) {
-      context.go('/warmup');
+      final session = state.valueOrNull;
+      if (session != null) {
+        context.go(_postLoginRoute(session.username));
+      }
     }
+  }
+
+  String _postLoginRoute(String username) {
+    final shouldRunWarmup =
+        ref.read(localStorageProvider).shouldRunDailyWarmup(username: username);
+    return shouldRunWarmup ? '/warmup' : '/home';
   }
 
   @override

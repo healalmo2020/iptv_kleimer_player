@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/utils/channel_logo_resolver.dart';
+import '../providers/app_providers.dart';
 import '../providers/auth_provider.dart';
 import '../providers/live_provider.dart';
+import '../providers/search_provider.dart';
 import '../providers/series_provider.dart';
 import '../providers/vod_provider.dart';
 
@@ -43,7 +46,21 @@ class _WarmupScreenState extends ConsumerState<WarmupScreen> {
       return;
     }
 
+    final storage = ref.read(localStorageProvider);
+    if (!storage.shouldRunDailyWarmup(username: session.username)) {
+      _goTo('/home');
+      return;
+    }
+
     final urls = <String>{};
+
+    // Prime the unified search index in the background so Search can
+    // resolve queries locally without a first-open fetch.
+    unawaited(() async {
+      try {
+        await ref.read(searchIndexProvider.future);
+      } catch (_) {}
+    }());
 
     _setPhase('Cargando categorías y canales en vivo...');
     try {
@@ -107,6 +124,8 @@ class _WarmupScreenState extends ConsumerState<WarmupScreen> {
     _setPhase('Optimizando imágenes para inicio rápido...');
     await _precacheInBatches(queue);
 
+    await storage.markDailyWarmupRun(username: session.username);
+
     _goTo('/home');
   }
 
@@ -128,17 +147,16 @@ class _WarmupScreenState extends ConsumerState<WarmupScreen> {
   Future<void> _precacheSingle(String url) async {
     try {
       await precacheImage(
-        NetworkImage(url),
+        CachedNetworkImageProvider(url),
         context,
       ).timeout(const Duration(seconds: 3));
     } catch (_) {
     } finally {
-      if (!mounted) {
-        return;
+      if (mounted) {
+        setState(() {
+          _completed++;
+        });
       }
-      setState(() {
-        _completed++;
-      });
     }
   }
 
@@ -173,8 +191,8 @@ class _WarmupScreenState extends ConsumerState<WarmupScreen> {
   @override
   Widget build(BuildContext context) {
     final progress = _planned <= 0
-      ? 0.0
-      : (_completed / _planned).clamp(0.0, 1.0).toDouble();
+        ? 0.0
+        : (_completed / _planned).clamp(0.0, 1.0).toDouble();
 
     return Scaffold(
       body: Center(

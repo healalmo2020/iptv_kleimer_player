@@ -258,7 +258,58 @@ Implementar Shimmer en color surfaceBlue mientras las imágenes de cached_networ
 ## 15) Plantilla de tarea de diseño para Copilot
 "Copilot, basándote en la sección 16 del readme_dev.md, genera el widget StitchContentCard. Debe manejar el estado de foco para Smart TV, escalar un 10% cuando esté seleccionado y mostrar un borde cian neón. Usa CachedNetworkImage para el poster."
 
+## 16) Siguiente paso natural (contexto actual)
+Tras completar la extracción de lógica de reproducción hacia `player_playback_provider` y estabilizar `player_screen`, el siguiente paso natural es desacoplar el tipo `PlayerEngine` de `local_storage_service.dart`.
+
+Objetivo inmediato:
+- mover `PlayerEngine` a un archivo compartido de dominio (por ejemplo `lib/domain/entities/player_engine.dart`)
+- actualizar imports en providers/screen para depender del tipo de dominio y no del servicio de storage
+- mantener compatibilidad de persistencia en `LocalStorageService` (solo serializa/deserializa el enum)
+
+Criterio de cierre:
+- `flutter analyze` sin issues
+- `flutter test` exitoso
+- smoke run en Windows del flujo Player + Settings (cambio de motor)
+
 Nota: en la plantilla anterior, donde dice "sección 16" debe entenderse como "sección 14" en esta versión del documento.
 
-## 16) Pendientes (Backlog rápido)
-- [ ] Player: agregar feedback háptico (vibración suave) al usar saltos `-10s/+10s` en móvil/tablet para mejorar la respuesta táctil.
+## 17) Pendientes (Backlog rápido)
+- [x] Player: agregar feedback háptico (vibración suave) al usar saltos `-10s/+10s` en móvil/tablet para mejorar la respuesta táctil.
+- [x] Search: implementar índice unificado en memoria (`live + vod + series`) cargado en warmup, con búsqueda local tipo Netflix (debounce + ranking por coincidencia e historial) para evitar petición pesada al abrir Buscar.
+
+## 18) Plan operativo inmediato (Search Netflix-like)
+Objetivo:
+- Reducir el tiempo percibido al abrir `Buscar` y al primer tipeo, evitando dependencias de red en el camino critico.
+
+Alcance funcional:
+- Construir un `search_index` unificado (`live + vod + series`) durante warmup y/o en segundo plano al entrar a Home.
+- Resolver consultas de usuario 100% local con debounce y ranking.
+- Mantener sincronizacion eventual con servidor sin bloquear UI.
+
+Plan por pasos:
+1. Crear entidad de dominio `SearchIndexItem` con campos normalizados (`id`, `title`, `type`, `category`, `popularity`, `lastViewedAt`, `tokens`).
+2. Implementar `search_index_provider` (Riverpod) que construye y mantiene el indice en memoria.
+3. Integrar warmup: poblar indice despues de cargar catálogos (`live`, `vod`, `series`) sin bloquear la transicion de pantalla.
+4. Implementar motor de ranking local:
+   - match exacto de prefijo
+   - match por palabra/token
+   - boost por historial reciente
+   - boost por popularidad
+5. En `SearchScreen`, aplicar debounce (200-300ms) y renderizar secciones: `Top Results`, `Live`, `Movies`, `Series`.
+6. Persistir snapshot opcional del indice en Hive para acelerar cold start (hidratar y luego refrescar en background).
+7. Agregar telemetria basica local (debug logs):
+   - tiempo de construccion del indice
+   - tiempo primer resultado
+   - cantidad de items indexados
+
+Criterio de cierre:
+- Abrir `Buscar` no dispara fetch bloqueante en el primer frame.
+- Primer resultado visible en <300ms para query corta con indice ya cargado.
+- `flutter analyze` sin issues nuevos.
+- `flutter test` exitoso.
+- Smoke run manual en Windows y Android TV (navegacion por foco + typing + abrir resultado).
+
+Riesgos y mitigacion:
+- Memoria alta por indice grande: usar campos minimos y tokenizacion compacta.
+- Warmup lento: construir por lotes y permitir cancelacion/pausa al salir de Home.
+- Resultados poco relevantes: ajustar pesos de ranking con pruebas reales de contenido.

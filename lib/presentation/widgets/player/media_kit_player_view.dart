@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
+import '../../../core/constants/player_buffer_constants.dart';
+
 class MediaKitPlayerView extends StatefulWidget {
   const MediaKitPlayerView({
     super.key,
     required this.url,
+    required this.bufferConfig,
     required this.onProgress,
     required this.onError,
     this.initialPosition,
@@ -16,6 +19,7 @@ class MediaKitPlayerView extends StatefulWidget {
   });
 
   final String url;
+  final PlayerBufferConfig bufferConfig;
   final void Function(Duration position, Duration duration) onProgress;
   final void Function(String message) onError;
   final Duration? initialPosition;
@@ -37,7 +41,11 @@ class _MediaKitPlayerViewState extends State<MediaKitPlayerView> {
   @override
   void initState() {
     super.initState();
-    _player = Player();
+    _player = Player(
+      configuration: PlayerConfiguration(
+        bufferSize: widget.bufferConfig.mediaKitBufferBytes,
+      ),
+    );
     final videoControllerConfig =
         !kIsWeb && defaultTargetPlatform == TargetPlatform.linux
         ? const VideoControllerConfiguration(enableHardwareAcceleration: false)

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Movies Library Grid - IPTV Kleimer Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#102222",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, rgba(13, 242, 242, 0.05) 25%, rgba(13, 242, 242, 0.15) 50%, rgba(13, 242, 242, 0.05) 75%);
+            background-size: 200% 100%;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(13, 242, 242, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Sidebar -->
+<aside class="w-64 border-r border-primary/20 flex flex-col bg-background-light dark:bg-background-dark/50 backdrop-blur-md">
+<div class="p-6 flex items-center gap-3">
+<div class="size-8 text-primary">
+<span class="material-symbols-outlined text-4xl">rocket_launch</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-primary">KLEIMER</h1>
+</div>
+<nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">home</span>
+<span class="font-medium">Home</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">tv_guide</span>
+<span class="font-medium">Live TV</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg bg-primary/20 text-primary border border-primary/30" href="#">
+<span class="material-symbols-outlined fill-1">movie</span>
+<span class="font-medium">Movies</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">subscriptions</span>
+<span class="font-medium">Series</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">favorite</span>
+<span class="font-medium">Favorites</span>
+</a>
+<div class="pt-4 mt-4 border-t border-primary/10">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-primary/10 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</div>
+</nav>
+<div class="p-4 bg-primary/5 m-4 rounded-xl border border-primary/10">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/40 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar futuristic style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCiPNbwC734MbaArxId-R1MUMKBu-4yLM9_v-XJUNpL6dj5_6cSuK45Uklf7Vi5dVDWWksOIdybvTr1zc0T0vewPK_NFRcb42z7g9dTMJe-IF9n1ZZiS4VFu_3506Ed_3fU19dvwVgM3t-0eY-38bzU3id2I6ICYBguHlyVtavvyocKDwKpn2tze1kcAOJmKhZKVol21rwTJqWAFkXUNfGoWVZ5Nyl-C3-oByx2Lw80hsJrOXSUtr7nv09HOialeBRwxA9Ij6HdKA"/>
+</div>
+<div>
+<p class="text-sm font-bold">Commander Deck</p>
+<p class="text-xs text-primary/70">Premium Active</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden relative">
+<!-- Top Navigation Bar -->
+<header class="h-20 flex items-center justify-between px-8 border-b border-primary/10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-xl sticky top-0 z-20">
+<div class="flex items-center gap-8">
+<div class="flex gap-1 items-center bg-primary/10 rounded-full p-1 border border-primary/20">
+<button class="px-6 py-1.5 rounded-full bg-primary text-background-dark font-bold text-sm shadow-[0_0_15px_rgba(13,242,242,0.4)]">Action</button>
+<button class="px-6 py-1.5 rounded-full hover:text-primary transition-colors font-medium text-sm">Sci-Fi</button>
+<button class="px-6 py-1.5 rounded-full hover:text-primary transition-colors font-medium text-sm">Drama</button>
+<button class="px-6 py-1.5 rounded-full hover:text-primary transition-colors font-medium text-sm">Horror</button>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/50 group-focus-within:text-primary">search</span>
+<input class="bg-primary/5 border border-primary/20 rounded-lg pl-10 pr-4 py-2 w-72 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30" placeholder="Search titles, actors, directors..." type="text"/>
+</div>
+<button class="size-10 rounded-lg flex items-center justify-center bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto px-8 py-8 custom-scrollbar">
+<!-- Filters/Sorting Row -->
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-primary/60">Movies Library</h2>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-lg text-sm hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                            Filter
+                        </button>
+<button class="flex items-center gap-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-lg text-sm hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined text-lg">sort</span>
+                            Newest
+                        </button>
+</div>
+</div>
+<!-- Movies Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+<!-- Movie Card 1 -->
+<div class="group relative aspect-video rounded-xl overflow-hidden border border-primary/10 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Cinematic scifi space movie poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBjz88VqgWdwyOAt2R--bsTOCluYgROXHe-6DXZIRIDS8E6iIRcQ1QcGlMme5RWTg1Bm-XV-dN0Tzyp5-nBS3_GOr5TNgLbQ4PPrgSPR0qBOE6-kX9Bya6KGVERLmSDRj8W47pgtXCozyb3F3OrIyP-VWr4DGhOV0ABxY484NXKCuVChegLn6rPubqf5Jq-G7YV_8QMCt0l-IVXUZB-PWcN95IpLUyt-eyDqoMzUfsnt6FlFVHZAAtHP5en3CyuF5vvtfVB44E1oY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute bottom-0 left-0 p-4 w-full">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary text-background-dark text-[10px] font-bold px-1.5 py-0.5 rounded">4K</span>
+<span class="text-xs text-primary/80">2024 • 2h 14m</span>
+</div>
+<p class="font-bold truncate text-slate-100">Interstellar Protocol</p>
+</div>
+</div>
+<!-- Movie Card 2 -->
+<div class="group relative aspect-video rounded-xl overflow-hidden border border-primary/10 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Cyberpunk city futuristic movie poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxHIGrjWuagHOrBiFRyIjv8WvVb68BcsFZBxZNr1ICzuNHbagQXxIr7EB1QjhE-hw3eNqEckmhRwZetuk4AFv9s_BbW-zViuKAN4jIHP2HPk0dREcwkoEtUbuiLQqQENIOTH9vJotAWUAfjpQcwdSudVA7kQEn_aR3rjzTEE8qKmBjGLiNVND0lGLtkjk1JNeUZVbWG8ytJU01h8tRXR2w76BKePTKIpVHrUXUN8rfHCsRlPpnK15lBupbx1nl2pGT9uVXV_IF7HE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute bottom-0 left-0 p-4 w-full">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary text-background-dark text-[10px] font-bold px-1.5 py-0.5 rounded">ULTRA HD</span>
+<span class="text-xs text-primary/80">2023 • 1h 55m</span>
+</div>
+<p class="font-bold truncate text-slate-100">Neon Velocity</p>
+</div>
+</div>
+<!-- Movie Card 3 -->
+<div class="group relative aspect-video rounded-xl overflow-hidden border border-primary/10 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Deep ocean futuristic sub poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNVh5gAfIGgTa7lb3llIH-3lO_-TuFM1F2ObYr5STK5livb1jA7BnqZdZ-UrOPP5b3Jsp8KIrB9BeESZaWgePrHsbh2SHs2KDslcqduJilDQqY8cUPfOBhlPiqszEQLUbd3DmTlR7yj0V70nyD1lRE8QpR7e1r0XEJy3GoIMyRqQgwul-HhUwP0L4aQcCtB1-2I2V4mivaYwDkf44PH-5QL3vt7iROYVHCOXTc-LOHHRhh_4Wj2ojx-RtJQ1Gnd4ZOJJtvNrvPxOc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute bottom-0 left-0 p-4 w-full">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-xs text-primary/80">2024 • 2h 05m</span>
+</div>
+<p class="font-bold truncate text-slate-100">Abyss of Chronos</p>
+</div>
+</div>
+<!-- Movie Card 4 -->
+<div class="group relative aspect-video rounded-xl overflow-hidden border border-primary/10 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Futuristic desert dunes movie poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdPWLV3kurdsPSxRg3z5-HfWZ93YxEN3InPQ3GPwHhC7Nf3VATJr336c4eSjf99fJ8QnPT5ihbWW8JgrE7nIdNqAYi2whDwhUqn7NVB1qS15LOXR4XNzpBGaY4_sb6gPviKef2mhDf4Z9uzIBKSjr515UlNIvKZIR1Qfn0zpXmrSOiLqtkVN9bEbubtmZEfG-K-3DDE79ijfYiVQS2VGK_DdUNCQkxf6hdQNZdZiehqbnDMhJs8IxFFG_KcInVLpWL5ZaoacZ66ik"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute bottom-0 left-0 p-4 w-full">
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary text-background-dark text-[10px] font-bold px-1.5 py-0.5 rounded">4K</span>
+<span class="text-xs text-primary/80">2022 • 2h 32m</span>
+</div>
+<p class="font-bold truncate text-slate-100">Dune Drifters</p>
+</div>
+</div>
+<!-- Movie Card 5 -->
+<div class="group relative aspect-video rounded-xl overflow-hidden border border-primary/10 bg-primary/5 hover:border-primary/60 transition-all cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Android laboratory sci-fi poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5BUBBwcQkiriJdmc3ftnwrR0q2R1tjHF0a2VzSP7_s-iF15HiALWYwMGT3U7vbeWBXfiiVpMSRDSZE2uIqjcgtSPHezoEGW37vU-NK38vMzyCCe89LPYXgRebe5s57SS0iewbfRe0SfS_2GhaqqHpQErBklWb9nkBEWcIUy9ZazQeEn4rT8XcBVLMmpwaOpiSNC_PUSlc5-azrfTMyGI0Y6XaRuAeew7grNcBreDVLdoyikvXCAk-S3phVNBLFZeYmpMn33j1XIo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute bottom-0 left-0 p-4 w-full">
+<div class="flex items-center gap-2 mb-1">
+<span class="text-xs text-primary/80">2024 • 1h 42m</span>
+</div>
+<p class="font-bold truncate text-slate-100">Project AI-9</p>
+</div>
+</div>
+<!-- SKELETON LOADERS (Futuristic shimmer) -->
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-3/4 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-1/2 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-2/3 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-3/5 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-1/2 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-3/4 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-1/2 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-2/3 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-3/5 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="aspect-video rounded-xl skeleton-shimmer bg-primary/5 border border-primary/5"></div>
+<div class="h-4 w-1/2 rounded bg-primary/10 skeleton-shimmer"></div>
+</div>
+</div>
+<!-- Footer Load State -->
+<div class="mt-12 mb-8 flex flex-col items-center justify-center gap-4">
+<div class="flex items-center gap-3 text-primary/40">
+<span class="material-symbols-outlined animate-spin">data_usage</span>
+<p class="text-sm font-medium uppercase tracking-widest">Scanning deeper content sectors...</p>
+</div>
+<div class="w-full max-w-xs h-1 bg-primary/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary/40 skeleton-shimmer w-1/2"></div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Glowing Accents -->
+<div class="fixed top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] left-[-10%] w-[30%] h-[30%] bg-primary/5 blur-[100px] rounded-full pointer-events-none z-0"></div>
+</body></html>

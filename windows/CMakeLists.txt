@@ -10,6 +10,12 @@ set(BINARY_NAME "iptv_kleimer_player")
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)
 
+# Some third-party Flutter plugins still use legacy add_custom_command syntax.
+# Keep backward-compatible behavior on newer CMake releases to avoid dev warnings.
+if(POLICY CMP0175)
+  cmake_policy(SET CMP0175 OLD)
+endif()
+
 # Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(IS_MULTICONFIG)

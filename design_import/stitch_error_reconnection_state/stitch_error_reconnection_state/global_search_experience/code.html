@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Search Experience - IPTV Kleimer Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#081212",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .grid-overlay {
+            background-image: linear-gradient(to right, rgba(13, 242, 242, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(13, 242, 242, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        .glow-cursor {
+            border-right: 3px solid #0df2f2;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: #0df2f2 }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen relative overflow-x-hidden">
+<div class="fixed inset-0 grid-overlay pointer-events-none"></div>
+<div class="fixed inset-0 bg-gradient-to-b from-transparent via-background-dark/50 to-background-dark pointer-events-none"></div>
+<div class="relative z-10 flex flex-col min-h-screen">
+<header class="flex items-center justify-between px-12 py-6 border-b border-primary/10 bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold tracking-tight">KLEIMER PLAYER</h2>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#">Home</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#">Live TV</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#">Movies</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium uppercase tracking-widest" href="#">Series</a>
+<a class="text-primary border-b-2 border-primary pb-1 text-sm font-medium uppercase tracking-widest" href="#">Search</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary/50 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar with futuristic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcpGlSu70rKPTsSk-RZ7i1fZ-mjcjp3Dyof7clDQUrWHJAv3Y-JG3CyrZAVFwk3UE74lXbUzGjUXliRlmEvzvYbPEujIWXyYbSCrLF_LZiX7bzL78AT0qRjboXSohgnlic16cuTDnWg5UnoxG49cLTmBmg9GoNdVThEBy8FC-UnUU-Y82JqexmIzvyNTDblck3EyK7zwxmRRD4wn7ywASyiOqldj2xxEikpTautMypxFGEcXfo2vUX8aC4zuG8lW4DcpyYaBlmsEM"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col px-12 py-12 max-w-7xl mx-auto w-full">
+<div class="flex flex-col gap-12">
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/50 to-transparent rounded-xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
+<div class="relative flex items-center bg-background-dark/90 border-2 border-primary/20 rounded-xl px-8 py-6 focus-within:border-primary/60 transition-all shadow-2xl">
+<span class="material-symbols-outlined text-primary text-4xl mr-6">search</span>
+<input autofocus="" class="bg-transparent border-none text-3xl md:text-5xl font-light focus:ring-0 w-full placeholder:text-slate-700 glow-cursor" placeholder="Find content across the galaxy..." type="text"/>
+<div class="flex gap-4 items-center">
+<span class="text-slate-500 text-xs font-bold border border-slate-700 px-2 py-1 rounded">ESC TO EXIT</span>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-primary">mic</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary text-xl">trending_up</span>
+<h3 class="text-lg font-bold uppercase tracking-widest text-slate-400">Trending Searches</h3>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2.5 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/20 hover:border-primary/40 text-slate-100 transition-all flex items-center gap-2">
+<span>Cyberpunk: Edgerunners</span>
+<span class="material-symbols-outlined text-sm text-primary">north_east</span>
+</button>
+<button class="px-6 py-2.5 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/20 hover:border-primary/40 text-slate-100 transition-all flex items-center gap-2">
+<span>Dune Part Two 4K</span>
+<span class="material-symbols-outlined text-sm text-primary">north_east</span>
+</button>
+<button class="px-6 py-2.5 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/20 hover:border-primary/40 text-slate-100 transition-all flex items-center gap-2">
+<span>Formula 1 Live</span>
+<span class="material-symbols-outlined text-sm text-primary">north_east</span>
+</button>
+<button class="px-6 py-2.5 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/20 hover:border-primary/40 text-slate-100 transition-all flex items-center gap-2">
+<span>SpaceX Launch</span>
+</button>
+</div>
+</section>
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary text-xl">history</span>
+<h3 class="text-lg font-bold uppercase tracking-widest text-slate-400">Recent History</h3>
+</div>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2.5 rounded-full bg-slate-800/40 border border-slate-700 hover:border-primary/40 text-slate-400 hover:text-slate-100 transition-all flex items-center gap-2">
+<span>Interstellar</span>
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+<button class="px-6 py-2.5 rounded-full bg-slate-800/40 border border-slate-700 hover:border-primary/40 text-slate-400 hover:text-slate-100 transition-all flex items-center gap-2">
+<span>The Expanse S05</span>
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+<button class="px-6 py-2.5 rounded-full bg-slate-800/40 border border-slate-700 hover:border-primary/40 text-slate-400 hover:text-slate-100 transition-all flex items-center gap-2">
+<span>Mars 2024 Doc</span>
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</section>
+</div>
+<section class="mt-8">
+<div class="flex justify-between items-end mb-8 border-b border-primary/10 pb-4">
+<h3 class="text-2xl font-bold text-white flex items-center gap-3">
+                            Top Match Results
+                            <span class="text-sm font-normal text-slate-500 uppercase tracking-tighter">48 results found</span>
+</h3>
+<div class="flex gap-4">
+<button class="text-sm font-bold text-primary flex items-center gap-1">FILTER <span class="material-symbols-outlined text-sm">filter_alt</span></button>
+<button class="text-sm font-bold text-slate-500 flex items-center gap-1">SORT <span class="material-symbols-outlined text-sm">expand_more</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="group relative flex flex-col gap-3">
+<div class="aspect-video w-full rounded-lg overflow-hidden border-2 border-transparent group-hover:border-primary transition-all relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Sci-fi movie poster showing a spacecraft landing" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAh-FG5nQ3eFSm0tVQyJC58Cj5A1rXDUSKwHgiRy9HBYXjmDa_qJ3Kp6685T5ZWdX4irIKnZ4qf-ZldTMScJiu_0XjVogqonkX5O3bHTADcd7zvRJEBPvuk3iuNHlwAKayX5VbuChpovjLG3oL-ASl7XfyZIJppRAtb9e9v8bE417snd9t3WzP3T6yLoyZ7ArH0F8rKkwmV6qC34ftMr7EeuIRQsc1FRJJO1w72b-W9hybPRA2tX_jQbXM6Zp-fqUD3HxN5EvpGZOU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+<div class="flex gap-2">
+<button class="bg-primary text-background-dark rounded-full p-2"><span class="material-symbols-outlined text-sm fill-1">play_arrow</span></button>
+<button class="bg-white/20 backdrop-blur-md text-white rounded-full p-2"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+<div class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-0.5 rounded border border-primary/30 uppercase">4K UHD</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-100 group-hover:text-primary transition-colors">Beyond the Nebula</h4>
+<p class="text-xs text-slate-500">Movie • 2024 • 2h 14m</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3">
+<div class="aspect-video w-full rounded-lg overflow-hidden border-2 border-transparent group-hover:border-primary transition-all relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Earth from space cinematic shot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhV4vYkfVv4afvlhOOY5znS2RYflEe5zKAS15z3ZotLIpqi7inaJB-IZDd-ueYymCcPb9HkY-SErfuAASEFjZFrYUeKHi-E-iBxKnTJ2groonUH_yj8bVJ7000daeZzbhsrhkv2B4EXEeFwLRP1jkKdI1WlAsBNm9fcEKk5s-Qng5Z0p_idgr_EMCKXxYNuNYqa4rgEaSOkD9THboWcA9ao5L9nLrIFX1_slzrdT9EtJ4WxOtv6k9BJI5Op6EJ3yxp5j2V-SJi43s"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+<div class="flex gap-2">
+<button class="bg-primary text-background-dark rounded-full p-2"><span class="material-symbols-outlined text-sm fill-1">play_arrow</span></button>
+<button class="bg-white/20 backdrop-blur-md text-white rounded-full p-2"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+<div class="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded border border-red-400 uppercase">Live Now</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-100 group-hover:text-primary transition-colors">ISS Live Stream Feed</h4>
+<p class="text-xs text-slate-500">Channel • NASA TV</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3">
+<div class="aspect-video w-full rounded-lg overflow-hidden border-2 border-transparent group-hover:border-primary transition-all relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Neon city street at night with futuristic signs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4ZX6xdQGnO8_LiZWPLbDraoFt8CkcvTkWr8fcFq_CjVr1vbeMZO1kyYYWVkAlW56suEEJOtcUCGJyuo7rv7-av0kTsBIvQUACv36cjfMiYvoa4_o1G9nikBAnJWeeagzeW9AAdoLt8Z9SgU4vStBSwL6I87uLuhw3HAO9DlFscyQbpTVJNV0f8u4aX4_-IveNJJE0OAtjebaG72GI0U57iHcLTHe_sdWTEr0yV-4caEZ391T_HYWDn21MDCU9GAyVl_25BH8M6GM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+<div class="flex gap-2">
+<button class="bg-primary text-background-dark rounded-full p-2"><span class="material-symbols-outlined text-sm fill-1">play_arrow</span></button>
+<button class="bg-white/20 backdrop-blur-md text-white rounded-full p-2"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-100 group-hover:text-primary transition-colors">Neo Tokyo Chronicles</h4>
+<p class="text-xs text-slate-500">Series • Season 4 • 12 Episodes</p>
+</div>
+</div>
+<div class="group relative flex flex-col gap-3">
+<div class="aspect-video w-full rounded-lg overflow-hidden border-2 border-transparent group-hover:border-primary transition-all relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Robotic arm assembly line cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_abmN32P5iSXjz_0d5s8OiN1t0EulYpNLGbAmn61Nn94ZM-APD7uu19B6KcPGLGklZZEjfCqQr5JrC10d4KDnMUA41DvJmQMJyHcMNyy6xWGaIeCwvNBlWZ02K_7abkIIA-GNZrO8wBIuAWafED6V8lOtYuo0bSGVBLtjLsUZr8QvokevTzCEEOBlXPz7jo97riIBJsE6dkCg0OauHgx5D4mfeyJ9EFM3Aq08XfHdQtJ3sla_8huFjFr5XsMbXXLwaF2rtUAC7ro"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
+<div class="flex gap-2">
+<button class="bg-primary text-background-dark rounded-full p-2"><span class="material-symbols-outlined text-sm fill-1">play_arrow</span></button>
+<button class="bg-white/20 backdrop-blur-md text-white rounded-full p-2"><span class="material-symbols-outlined text-sm">add</span></button>
+</div>
+</div>
+<div class="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-primary text-[10px] font-bold px-2 py-0.5 rounded border border-primary/30 uppercase">Dolby Vision</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-100 group-hover:text-primary transition-colors">The Android Revolt</h4>
+<p class="text-xs text-slate-500">Movie • 2023 • 1h 55m</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="mt-auto px-12 py-8 border-t border-primary/10 bg-background-dark/50 flex flex-col md:flex-row justify-between items-center text-slate-500 gap-6">
+<div class="flex items-center gap-6">
+<span class="text-xs uppercase tracking-widest font-bold">System Status: <span class="text-primary">Operational</span></span>
+<span class="text-xs uppercase tracking-widest font-bold">Latency: <span class="text-primary">14ms</span></span>
+<span class="text-xs uppercase tracking-widest font-bold">Region: <span class="text-primary">Sector-7</span></span>
+</div>
+<div class="flex gap-8">
+<a class="text-xs uppercase hover:text-primary transition-colors" href="#">Support</a>
+<a class="text-xs uppercase hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-xs uppercase hover:text-primary transition-colors" href="#">Terms of Use</a>
+</div>
+<p class="text-xs opacity-50">© 2024 KLEIMER MULTIMEDIA SYSTEMS</p>
+</footer>
+</div>
+<div class="fixed bottom-10 right-10 z-50">
+<div class="bg-primary text-background-dark px-4 py-2 rounded-lg font-bold text-sm shadow-[0_0_20px_rgba(13,242,242,0.4)] flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">keyboard</span>
+<span>PRESS [Enter] TO PLAY</span>
+</div>
+</div>
+</body></html>

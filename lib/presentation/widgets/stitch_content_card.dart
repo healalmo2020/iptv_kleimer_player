@@ -46,35 +46,57 @@ class _StitchContentCardState extends State<StitchContentCard> {
   }
 
   Widget _buildMissingImagePlaceholder(BuildContext context) {
-    final normalized = widget.title
-        .replaceAll(RegExp(r'[^A-Za-z0-9 ]+'), ' ')
-        .trim();
-    final parts = normalized
-        .split(RegExp(r'\s+'))
-        .where((part) => part.isNotEmpty)
-        .toList(growable: false);
+    final isPosterAspect = widget.aspectRatio <= (3 / 4);
+    final icon = isPosterAspect
+        ? Icons.movie_creation_outlined
+        : Icons.live_tv_rounded;
 
-    final letters = parts.isEmpty
-        ? 'TV'
-        : parts.take(2).map((part) => part[0].toUpperCase()).join();
-
-    return ColoredBox(
-      color: const Color(0xFF162544),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.tv_rounded, color: Color(0xFFB0BEC5), size: 28),
-            const SizedBox(height: 6),
-            Text(
-              letters,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFFB0BEC5),
-                fontWeight: FontWeight.w700,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0D1A35), Color(0xFF152A56), Color(0xFF0A141F)],
+        ),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            top: 10,
+            right: 10,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0x330DF2F2),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: const Color(0x550DF2F2)),
+              ),
+              child: const Text(
+                'NO ARTWORK',
+                style: TextStyle(
+                  color: Color(0xFFD6F6F6),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.6,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: isPosterAspect ? 62 : 54,
+              height: isPosterAspect ? 62 : 54,
+              decoration: BoxDecoration(
+                color: const Color(0x220DF2F2),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0x440DF2F2)),
+              ),
+              child: Icon(icon, color: const Color(0xFFD9F9F9), size: 30),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -107,11 +129,13 @@ class _StitchContentCardState extends State<StitchContentCard> {
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
         transform: _focused
-          ? (Matrix4.identity()..scaleByDouble(1.1, 1.1, 1.0, 1.0))
-          : Matrix4.identity(),
+            ? (Matrix4.identity()..scaleByDouble(1.1, 1.1, 1.0, 1.0))
+            : Matrix4.identity(),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: _focused ? Border.all(color: const Color(0xFF40C4FF), width: 3) : null,
+          border: _focused
+              ? Border.all(color: const Color(0xFF40C4FF), width: 3)
+              : null,
           boxShadow: _focused
               ? const [
                   BoxShadow(
@@ -140,21 +164,21 @@ class _StitchContentCardState extends State<StitchContentCard> {
                       fadeInDuration: Duration.zero,
                       fadeOutDuration: Duration.zero,
                       placeholderFadeInDuration: Duration.zero,
-                        memCacheWidth: cacheWidth,
-                        memCacheHeight: cacheHeight,
-                        maxWidthDiskCache: cacheWidth,
-                        maxHeightDiskCache: cacheHeight,
-                      placeholder: (_, _) {
-                          if (!widget.useShimmerPlaceholder) {
-                            return _buildMissingImagePlaceholder(context);
-                          }
+                      memCacheWidth: cacheWidth,
+                      memCacheHeight: cacheHeight,
+                      maxWidthDiskCache: cacheWidth,
+                      maxHeightDiskCache: cacheHeight,
+                      placeholder: (context, url) {
+                        if (!widget.useShimmerPlaceholder) {
+                          return _buildMissingImagePlaceholder(context);
+                        }
                         return Shimmer.fromColors(
                           baseColor: const Color(0xFF162544),
                           highlightColor: const Color(0xFF2A3E68),
                           child: const ColoredBox(color: Color(0xFF162544)),
                         );
                       },
-                      errorWidget: (_, __, ___) {
+                      errorWidget: (context, error, stackTrace) {
                         final canUseFallback =
                             !_usingFallbackImage &&
                             fallbackUrl != null &&

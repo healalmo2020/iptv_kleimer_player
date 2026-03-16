@@ -19,6 +19,11 @@ final continueWatchingProvider = Provider.autoDispose<List<Map<String, dynamic>>
 
   final result = <Map<String, dynamic>>[];
   for (final item in history) {
+    final title = item['title']?.toString() ?? '';
+    if (_isKaraokeTitle(title)) {
+      continue;
+    }
+
     final id = item['id']?.toString();
     if (id == null || id.isEmpty) {
       continue;
@@ -40,3 +45,7 @@ final continueWatchingProvider = Provider.autoDispose<List<Map<String, dynamic>>
 
   return result;
 });
+
+bool _isKaraokeTitle(String title) {
+  return title.toLowerCase().contains('karaoke');
+}

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Live TV Guide | IPTV Kleimer Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "accent-coral": "#ff5f52",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#081212",
+                        "surface-dark": "#102222",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(16, 34, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 242, 242, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(16, 34, 34, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #0df2f2;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen overflow-hidden flex flex-col">
+<header class="flex items-center justify-between border-b border-primary/10 px-6 py-4 glass-panel sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary/10 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">rocket_launch</span>
+</div>
+<h2 class="text-slate-100 text-xl font-bold leading-tight tracking-tight uppercase">Kleimer <span class="font-light opacity-70 text-sm">OS</span></h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary text-sm font-semibold tracking-wide flex items-center gap-2" href="#"><span class="material-symbols-outlined text-base">live_tv</span> LIVE TV</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">MOVIES</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">SERIES</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">RECORDINGS</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-2 bg-surface-dark/50 border border-primary/20 rounded-lg px-3 py-1.5">
+<span class="material-symbols-outlined text-primary text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm placeholder:text-slate-500 w-48" placeholder="Search channels..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<button class="size-10 rounded-lg glass-panel flex items-center justify-center text-slate-400 hover:text-primary border-primary/5">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary/30 p-0.5 overflow-hidden">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="User profile avatar futuristic style" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCFXvVlBW9KwTIWR1Va8Tm_YvLyO026eCnqk4wmZLeGbiSj0xvTc8UYfxEiJrUf3U4LBFBccAk1s_6YtfazOaKVYXnwsvk3j7V2hV5ln9QsydqihBgHgET_dU_Fl50NTXXE8tqMf1Y1FoFwqXQ-aJjuu4vUAXFBKnvUUDjS6xbhYElQ--e9ny3iQgkQaHzATaffERFsOeFHBE6n7b4hODpX4vt1G1dOrQ4Tgn04UrgMRNULf0GNP3KLYSRfKIVJobfnCAQzSrl6aNg')"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<aside class="w-16 flex flex-col items-center py-6 border-r border-primary/10 glass-panel gap-8">
+<button class="text-primary border-r-2 border-primary pr-1">
+<span class="material-symbols-outlined text-2xl">home</span>
+</button>
+<button class="text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-2xl">grid_view</span>
+</button>
+<button class="text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-2xl">favorite</span>
+</button>
+<button class="text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-2xl">schedule</span>
+</button>
+<div class="mt-auto flex flex-col items-center gap-6">
+<span class="text-[10px] font-bold text-primary rotate-90 whitespace-nowrap tracking-[0.2em] mb-4">SYSTEM OK</span>
+<button class="text-slate-500 hover:text-primary">
+<span class="material-symbols-outlined text-2xl">power_settings_new</span>
+</button>
+</div>
+</aside>
+<section class="flex-1 flex flex-col overflow-hidden">
+<div class="px-6 py-4 flex items-center justify-between border-b border-primary/5 bg-surface-dark/30">
+<div class="flex items-center gap-4">
+<h1 class="text-2xl font-bold tracking-tight text-slate-100">Live TV Guide</h1>
+<div class="h-6 w-px bg-primary/20"></div>
+<p class="text-primary font-medium flex items-center gap-2">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span>
+                        OCT 27, 20:45
+                    </p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 bg-primary text-background-dark font-bold text-xs rounded uppercase tracking-wider">Today</button>
+<button class="px-4 py-1.5 glass-panel text-slate-300 font-bold text-xs rounded uppercase tracking-wider border-none">Filter</button>
+</div>
+</div>
+<div class="flex-1 flex flex-col overflow-hidden relative">
+<div class="flex border-b border-primary/10 bg-surface-dark">
+<div class="w-64 shrink-0 border-r border-primary/10 px-4 py-2 flex items-center justify-center">
+<span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Channel Lineup</span>
+</div>
+<div class="flex-1 flex overflow-x-hidden relative">
+<div class="flex min-w-[2000px] h-10 items-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+<div class="w-[400px] px-4">20:00</div>
+<div class="w-[400px] px-4">20:30</div>
+<div class="w-[400px] px-4">21:00</div>
+<div class="w-[400px] px-4">21:30</div>
+<div class="w-[400px] px-4">22:00</div>
+</div>
+</div>
+</div>
+<div class="flex-1 flex overflow-hidden">
+<div class="w-64 shrink-0 overflow-y-auto custom-scrollbar border-r border-primary/10 bg-surface-dark/20">
+<div class="flex flex-col">
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5 bg-primary/5">
+<span class="text-xs font-bold text-slate-400">001</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-primary font-black text-lg italic">HBO</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">HBO HD</span>
+<span class="text-[10px] text-slate-500 uppercase">Movies</span>
+</div>
+</div>
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5">
+<span class="text-xs font-bold text-slate-400">002</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-slate-100 font-black text-lg italic">CNN</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">CNN News</span>
+<span class="text-[10px] text-slate-500 uppercase">News</span>
+</div>
+</div>
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5">
+<span class="text-xs font-bold text-slate-400">003</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-slate-100 font-black text-lg italic">BBC</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">BBC Earth</span>
+<span class="text-[10px] text-slate-500 uppercase">Documentary</span>
+</div>
+</div>
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5">
+<span class="text-xs font-bold text-slate-400">004</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-slate-100 font-black text-lg italic">ESPN</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">ESPN Sports</span>
+<span class="text-[10px] text-slate-500 uppercase">Sports</span>
+</div>
+</div>
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5 bg-accent-coral/5">
+<span class="text-xs font-bold text-accent-coral">005</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-slate-100 font-black text-lg italic">AMC</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">AMC Series</span>
+<span class="text-[10px] text-accent-coral uppercase font-bold">● Recording</span>
+</div>
+</div>
+<div class="h-24 px-4 flex items-center gap-4 border-b border-primary/5">
+<span class="text-xs font-bold text-slate-400">006</span>
+<div class="size-12 bg-white/5 rounded-lg flex items-center justify-center border border-white/10">
+<span class="text-slate-100 font-black text-lg italic">DISC</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-slate-100">Discovery</span>
+<span class="text-[10px] text-slate-500 uppercase">Science</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-x-auto overflow-y-auto custom-scrollbar relative">
+<div class="absolute left-[600px] top-0 bottom-0 w-0.5 bg-primary z-20 shadow-[0_0_15px_rgba(13,242,242,0.8)] flex flex-col items-center">
+<div class="bg-primary text-background-dark text-[8px] px-1 py-0.5 font-black rounded-sm mb-1">LIVE</div>
+</div>
+<div class="min-w-[2000px] flex flex-col">
+<div class="h-24 flex border-b border-primary/5">
+<div class="w-[400px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Interstellar: Extended Cut</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 21:00</span>
+</div>
+<div class="w-[800px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center bg-primary/10 relative">
+<div class="absolute inset-x-0 bottom-0 h-1 bg-primary/20">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+<span class="text-sm font-bold text-primary">Inception</span>
+<span class="text-[10px] text-primary/70 mt-1 uppercase font-semibold">21:00 - 23:00</span>
+</div>
+</div>
+<div class="h-24 flex border-b border-primary/5">
+<div class="w-[600px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Global News Report</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 21:30</span>
+</div>
+<div class="w-[400px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Nightly Update</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">21:30 - 22:30</span>
+</div>
+</div>
+<div class="h-24 flex border-b border-primary/5">
+<div class="w-[500px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">The Deep Ocean</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 21:15</span>
+</div>
+<div class="w-[500px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Planet Life</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">21:15 - 22:30</span>
+</div>
+</div>
+<div class="h-24 flex border-b border-primary/5">
+<div class="w-[800px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">NBA Finals: Game 7 Recap</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 22:00</span>
+</div>
+<div class="w-[400px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">SportsCenter</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">22:00 - 23:00</span>
+</div>
+</div>
+<div class="h-24 flex border-b border-primary/5 bg-accent-coral/5">
+<div class="w-[400px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Better Call Saul S6E11</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 21:00</span>
+</div>
+<div class="w-[400px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center relative bg-accent-coral/10">
+<div class="absolute top-2 right-2 size-2 bg-accent-coral rounded-full animate-pulse"></div>
+<span class="text-sm font-bold text-accent-coral">Better Call Saul S6E12</span>
+<span class="text-[10px] text-accent-coral/70 mt-1 uppercase font-bold">Recording Live Now</span>
+</div>
+<div class="w-[400px] border-r border-primary/5 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Breaking Bad S1E01</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">22:00 - 23:00</span>
+</div>
+</div>
+<div class="h-24 flex border-b border-primary/5">
+<div class="w-[1200px] border-r border-primary/5 bg-surface-dark/40 px-6 py-4 flex flex-col justify-center">
+<span class="text-sm font-bold text-slate-100">Mythbusters: Mega Marathon</span>
+<span class="text-[10px] text-slate-400 mt-1 uppercase">20:00 - 23:00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="h-32 px-8 py-4 bg-surface-dark border-t border-primary/10 flex gap-10 items-center">
+<div class="w-48 shrink-0">
+<div class="w-full h-24 rounded-lg bg-slate-800 border border-primary/10 flex items-center justify-center overflow-hidden relative">
+<div class="absolute inset-0 bg-cover bg-center opacity-50" data-alt="Preview of the current program in guide" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDYt88v7OmA4flfYoPsWiIC8yrngZVodzJoYAaWuyGszIzNYdxX8N53DKXp5-9AMDvlZxRFLysb1qdyoBG5TWRIuABP8NMWdg2laUnz4nzHxM2LKnjOk9auhrauIYtLAlFXYqae4JAfmCLkPE8ermxXlPw6ort0upB3WCyOltGGwWbWPwbhGrwjvgTxnYKwJNz3p8lDHHgjO13HdlCaJfT0gtUL7oPGd6Ph7rAm6VkervrClswTCk13EycuB5FE7Kc1kU4Vv4k2km4')"></div>
+<span class="material-symbols-outlined text-3xl text-primary z-10">play_circle</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Action / Sci-Fi</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Available in 4K UHD</span>
+</div>
+<h3 class="text-xl font-bold text-slate-100 mb-2">Inception</h3>
+<p class="text-slate-400 text-xs line-clamp-2 max-w-3xl">
+                        A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O. Starring Leonardo DiCaprio, Joseph Gordon-Levitt, and Elliot Page. Directed by Christopher Nolan.
+                    </p>
+</div>
+<div class="flex flex-col gap-2">
+<button class="flex items-center gap-2 px-6 py-2 bg-primary text-background-dark font-bold text-sm rounded-lg hover:shadow-[0_0_15px_rgba(13,242,242,0.4)] transition-all">
+<span class="material-symbols-outlined text-lg">play_arrow</span> WATCH NOW
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2 bg-white/5 text-slate-100 font-bold text-sm rounded-lg hover:bg-white/10 transition-all border border-white/10">
+<span class="material-symbols-outlined text-lg">circle</span> RECORD
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<footer class="px-6 py-2 glass-panel border-t border-primary/10 flex justify-between items-center z-50">
+<div class="flex items-center gap-6 text-[10px] font-bold tracking-widest text-slate-500 uppercase">
+<span class="text-primary">● 0.1ms latency</span>
+<span>Server: EU-WEST-1</span>
+<span>Version 4.8.2-Sci-Fi</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-slate-400">ENCRYPTED CONNECTION SECURE</span>
+</div>
+</footer>
+</body></html>

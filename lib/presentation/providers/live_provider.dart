@@ -13,10 +13,10 @@ final _liveStreamsCacheProvider =
 
 const Duration _liveStreamsCacheTtl = Duration(minutes: 8);
 
-final liveCategoriesProvider = FutureProvider<List<LiveCategory>>((ref) async {
+final _liveRawCategoriesProvider = FutureProvider<List<LiveCategory>>((ref) async {
   final session = ref.watch(authControllerProvider).valueOrNull;
   if (session == null) {
-    return const [];
+    return const <LiveCategory>[];
   }
 
   return ref.watch(getLiveCategoriesUseCaseProvider)(
@@ -25,16 +25,44 @@ final liveCategoriesProvider = FutureProvider<List<LiveCategory>>((ref) async {
       );
 });
 
+final _excludedLiveCategoryIdsProvider = FutureProvider<Set<String>>((ref) async {
+  final categories = await ref.watch(_liveRawCategoriesProvider.future);
+  return categories
+      .where((category) => _isKaraokeCategoryName(category.name))
+      .map((category) => category.id.trim())
+      .where((id) => id.isNotEmpty)
+      .toSet();
+});
+
+final liveCategoriesProvider = FutureProvider<List<LiveCategory>>((ref) async {
+  final categories = await ref.watch(_liveRawCategoriesProvider.future);
+  return categories
+      .where((category) => !_isKaraokeCategoryName(category.name))
+      .toList(growable: false);
+});
+
 final liveStreamsProvider = FutureProvider<List<LiveStream>>((ref) async {
   final session = ref.watch(authControllerProvider).valueOrNull;
   if (session == null) {
-    return const [];
+    return const <LiveStream>[];
   }
 
-  return ref.watch(getLiveStreamsUseCaseProvider)(
+  final excludedCategoryIds = await ref.watch(
+    _excludedLiveCategoryIdsProvider.future,
+  );
+
+  final items = await ref.watch(getLiveStreamsUseCaseProvider)(
         username: session.username,
         password: session.password,
       );
+
+  if (excludedCategoryIds.isEmpty) {
+    return items;
+  }
+
+  return items
+      .where((item) => !excludedCategoryIds.contains(item.categoryId.trim()))
+      .toList(growable: false);
 });
 
 final liveStreamsByCategoryProvider =
@@ -46,7 +74,14 @@ final liveStreamsByCategoryProvider =
 
       final normalizedCategoryId = categoryId?.trim();
       if (normalizedCategoryId == null || normalizedCategoryId.isEmpty) {
-        return const [];
+        return const <LiveStream>[];
+      }
+
+      final excludedCategoryIds = await ref.watch(
+        _excludedLiveCategoryIdsProvider.future,
+      );
+      if (excludedCategoryIds.contains(normalizedCategoryId)) {
+        return const <LiveStream>[];
       }
 
       final cacheKey =
@@ -64,11 +99,20 @@ final liveStreamsByCategoryProvider =
             categoryId: normalizedCategoryId,
           );
 
+      final filtered = excludedCategoryIds.isEmpty
+          ? items
+          : items
+                .where(
+                  (item) =>
+                      !excludedCategoryIds.contains(item.categoryId.trim()),
+                )
+                .toList(growable: false);
+
       ref
           .read(_liveStreamsCacheProvider.notifier)
-          .set(cacheKey, items, updatedAt: DateTime.now());
+          .set(cacheKey, filtered, updatedAt: DateTime.now());
 
-      return items;
+      return filtered;
     });
 
 class _LiveStreamsCacheNotifier
@@ -108,3 +152,8 @@ final liveEpgProvider = FutureProvider.family<List<EpgEvent>, String>((ref, stre
         streamId: streamId,
       );
 });
+
+bool _isKaraokeCategoryName(String name) {
+  final normalized = name.toLowerCase().trim();
+  return normalized.contains('karaoke');
+}

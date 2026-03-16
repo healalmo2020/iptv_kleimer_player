@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Home Dashboard - IPTV Kleimer Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#081212",
+                        "surface": "#102222",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(16, 34, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 242, 242, 0.1);
+        }
+        .neon-border-focus {
+            border: 3px solid #0df2f2;
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.5);
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(13, 242, 242, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #0df2f2;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-slate-100 font-display overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- Collapsed Sidebar -->
+<aside class="w-20 flex flex-col items-center py-8 gap-10 bg-surface border-r border-primary/10">
+<div class="flex flex-col items-center gap-2">
+<div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-[0_0_15px_rgba(13,242,242,0.4)]">
+<span class="material-symbols-outlined text-background-dark font-bold text-3xl">play_circle</span>
+</div>
+</div>
+<nav class="flex flex-col gap-6">
+<a class="p-3 rounded-xl bg-primary/20 text-primary group" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+</a>
+<a class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">tv</span>
+</a>
+<a class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">movie</span>
+</a>
+<a class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">live_tv</span>
+</a>
+<a class="p-3 rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="p-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto custom-scrollbar relative">
+<!-- Cinematic Hero Banner -->
+<section class="relative h-[70vh] w-full group overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" data-alt="Cinematic sci-fi movie landscape background" style="background-image: linear-gradient(0deg, #081212 5%, rgba(8,18,18,0) 50%, rgba(8,18,18,0.4) 100%), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAZEDU-8s2qeI_Rh1vRmXE2NLD26liNiC8oBrGQ6rxjScB8YrSBP3lwc7Gsp4Rb7kDbDFsoky2VlIIomh_fGxvSxA7ZUiN6S-dUCREej1RRx89xRqr2tGA81tV821Q3SibC1BWMJLZ9TX6sGlC-6TC4c_pABH8SXxs01wjchDu5Maq5ihRlg-mDfamnvselPYIgFOvwYqSzh-NTk3lw_J3P6pDWoBdpYQKbkvaY28k9nTq2lLBbWqHqNkCB1eU89ggoN1OWN_ifhLE');">
+</div>
+<div class="absolute inset-0 flex flex-col justify-end p-12 bg-gradient-to-r from-background-dark/80 via-transparent to-transparent">
+<div class="max-w-2xl space-y-6">
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 bg-primary/20 border border-primary text-primary text-xs font-bold rounded uppercase tracking-widest">Estreno exclusivo</span>
+<span class="text-slate-300 text-sm">4K Ultra HD • 2024 • Sci-Fi</span>
+</div>
+<h1 class="text-6xl font-bold text-slate-100 tracking-tight leading-none uppercase italic">Nebula: Protocolo Omega</h1>
+<p class="text-slate-300 text-lg leading-relaxed max-w-xl">
+                            En un futuro donde la consciencia es transferible, un detective debe rastrear su propio asesinato antes de que su última copia de seguridad expire.
+                        </p>
+<div class="flex items-center gap-4 pt-4">
+<button class="flex items-center gap-3 px-8 py-4 bg-primary text-background-dark font-bold rounded-lg hover:shadow-[0_0_20px_rgba(13,242,242,0.6)] transition-all">
+<span class="material-symbols-outlined">play_arrow</span>
+<span class="uppercase tracking-wider">Reproducir ahora</span>
+</button>
+<button class="flex items-center gap-3 px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white font-bold rounded-lg transition-all">
+<span class="material-symbols-outlined">add</span>
+<span class="uppercase tracking-wider">Mi Lista</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Content Rows -->
+<div class="px-12 py-8 space-y-12 -mt-10 relative z-10">
+<!-- Continuar Viendo -->
+<section>
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<span class="w-2 h-8 bg-primary rounded-full"></span>
+                        Continuar Viendo
+                    </h2>
+<div class="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
+<!-- Card Focus State -->
+<div class="flex-none w-80 group cursor-pointer neon-border-focus rounded-xl">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3">
+<img class="w-full h-full object-cover" data-alt="Cyberpunk city street at night" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiXrC1PFwtcXbvt8WpTy2YL2h6ZQIjRxFqXp1d0fuYEuTVZn2cFK370-urEDb2FELNqgqRc400vftfN2ncRnFXR9HjPNZZTzGORYyKgDxO5r_rYXmQQka5GoBIf8w3cNMPURSi-NV2xFazOpVl8Ax5Ni6HckJPP-Io0DUPCBTpYJYRKtaAjxKwzm_8xRpd_EHE8C7sAAWCBzXawtlC3aJGumqp-XonuYTlnwlbSImPTXHuFCysryVHbQCCo_ZH6OBQqRWTeisFcZA"/>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+<div class="h-full bg-primary shadow-[0_0_8px_#0df2f2]" style="width: 75%"></div>
+</div>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+</div>
+<div class="p-2">
+<h3 class="font-bold text-slate-100 truncate">The Expanse: Destino final</h3>
+<p class="text-primary text-sm font-medium">Temporada 6 • Ep 4</p>
+</div>
+</div>
+<!-- Regular Cards -->
+<div class="flex-none w-80 group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3 bg-surface border border-primary/5 group-hover:border-primary/40 transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Deep space galaxy and stars" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB92415O6nw_O1k-HYhDJ5NG3azBCsl2IcstwWFngvN5pme0WdFoZSnF5Y7g0dL0YXO0Vq1s3dh9SmrW2EV3RJ1xUdPLCzuIZH-xkML0IE5AzfyCzROS1Ucr3KVNczRwevKRFqgOSXqI3nlBLBl2BE-Hq-K_dwdmZndGX1txp7nEzV1tM0GWsbxlvtyWVoG9kdRBhtxLwhpvyz7Rqm7PDsbIMYSUaQ7fB2XUW0FfOp9yIWaYFBXkfK187V5uXZ1q_JJLN-11yGqzR8"/>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+<div class="h-full bg-primary" style="width: 30%"></div>
+</div>
+</div>
+<div class="p-2">
+<h3 class="font-bold text-slate-400 group-hover:text-slate-100 transition-colors truncate">Foundation: Crisis Seldon</h3>
+<p class="text-slate-500 text-sm">Temporada 2 • Ep 8</p>
+</div>
+</div>
+<div class="flex-none w-80 group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3 bg-surface border border-primary/5 group-hover:border-primary/40 transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Futuristic laboratory interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW9XKyYXrCzNEnai74WlAiocOXmjSFyAaXLZ-OU3qpZcSa1nAoIrzmPxo78j7J6fdHc3N_Sfe_QEP94OW0WNPDM_mpbflolt8lCTTstyfRQr_MNjP9ukXlcvHgkvBTbjSB8rWiOv3H9rlfXDqRzra_5AvL7QaaajXkGyJ1666Sp-tIhIhN0ekRn8g1QZuKzUSCd0XUBjz-2RjZbJ7_FV3rFahoAhqbDM5LxvfMMjvO0FoYV6OxVkaczntDGZXN2cIGX7dBeA0Pk8o"/>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+<div class="h-full bg-primary" style="width: 90%"></div>
+</div>
+</div>
+<div class="p-2">
+<h3 class="font-bold text-slate-400 group-hover:text-slate-100 transition-colors truncate">Black Mirror: Joan es horrible</h3>
+<p class="text-slate-500 text-sm">12 min restantes</p>
+</div>
+</div>
+<div class="flex-none w-80 group cursor-pointer">
+<div class="relative aspect-video rounded-lg overflow-hidden mb-3 bg-surface border border-primary/5 group-hover:border-primary/40 transition-all">
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Global digital network visualization" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnjec9k_5OqJzJLfl2J2jYisL5iLYkDuoKtCxdxfngZMgDSsXwoxchIZymeo8t2qKN7caiCklS1rGkVeUrgRYiXgT1P8GxrzBAhZOElXCEyzeeMCCD5ELgvLc9-GR-D54RYaZrpdKrpP1WB_OaC8ciztgLaIbQve0vbpBkpjJcuAsqFjsGIc5MLXR3Zpdd2CFQQCaS84eQMa00qr78Qn1rXPhWjqjX9LeO3922O8zp9mVxR_ejUVLg5Hx-7HNHImc9KgV28A3TYgY"/>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+<div class="h-full bg-primary" style="width: 45%"></div>
+</div>
+</div>
+<div class="p-2">
+<h3 class="font-bold text-slate-400 group-hover:text-slate-100 transition-colors truncate">Severance: El Despido</h3>
+<p class="text-slate-500 text-sm">Temporada 1 • Ep 1</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Canales en Vivo -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold flex items-center gap-2">
+<span class="w-2 h-8 bg-primary rounded-full"></span>
+                            Canales en Vivo
+                        </h2>
+<button class="text-primary text-sm font-bold uppercase tracking-widest hover:underline">Ver todos</button>
+</div>
+<div class="grid grid-cols-4 gap-6">
+<div class="glass-panel p-4 rounded-xl flex items-center gap-4 group cursor-pointer hover:bg-primary/5 transition-all">
+<div class="w-16 h-16 rounded-lg bg-background-dark flex items-center justify-center p-2">
+<img class="w-full grayscale group-hover:grayscale-0 transition-all" data-alt="TV Network Logo 1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwkjuHFgIMkebBKcrp2_Hy6qtYGtOw-caar0B6Zj1ywtf14_hcz5hiy36IFQN0TwBPofX1zO0WrS14G2VUuUYhksORhDcjnzs85FUPfoZEGRb6K3c2jYTskVuj7T4BFEsVdMbUF--jHT2_Zi7LicelzLe5QjVEJns5e0bKclA3Kc4n2xCuEszkynVzqXYGFLgH9cQqWx51YlGryHOaGoDoFQkyOjc29T_W_NwP0n2dgMGZlwfUkcRPeSlJYI4qh4_59Aa-EK74cQg"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<p class="text-xs text-slate-400 uppercase font-bold tracking-tighter">Deportes HD</p>
+</div>
+<h3 class="text-sm font-bold text-slate-200">Final Champions League</h3>
+</div>
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="glass-panel p-4 rounded-xl flex items-center gap-4 group cursor-pointer hover:bg-primary/5 transition-all">
+<div class="w-16 h-16 rounded-lg bg-background-dark flex items-center justify-center p-2">
+<img class="w-full grayscale group-hover:grayscale-0 transition-all" data-alt="TV Network Logo 2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYe4EFKBFwnj18G0mwVxYAR-MelOKVfpDa5vW-dwuD_u47Od51V8_v-hJdaxPsE3mBmXXJ_9XkB0xR4VG29CNm46czr9U9R8zAKi50lKUOAfslfpx2VXusxGRHzXKU2zODdxd59LNiSpWi54ssA4gERIMiu0fKM8qJ7-E6rwt_ZMuifY9h3EHHPwR3GY9heUgojKB-fYVyhge5-F9fcz_c-w5X_W7hynS2Sv4JzH18j-xQrikTRGExRJelAztb5EgIDjE7FpD7vDk"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<p class="text-xs text-slate-400 uppercase font-bold tracking-tighter">News Global</p>
+</div>
+<h3 class="text-sm font-bold text-slate-200">Noticias de la Mañana</h3>
+</div>
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="glass-panel p-4 rounded-xl flex items-center gap-4 group cursor-pointer hover:bg-primary/5 transition-all">
+<div class="w-16 h-16 rounded-lg bg-background-dark flex items-center justify-center p-2">
+<img class="w-full grayscale group-hover:grayscale-0 transition-all" data-alt="TV Network Logo 3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0gF6U7jVWiOEhV3LpfkwY3EcxXPguQqK3CWz-lJ_0Q-8a1jt8rXSKn_N4_kJxKbIusuRdEkAsTliIVY2gRhJrZPE1aZfoz6QulKjcOltE6SjuK5uT7HuDlNoDJ1RyHG-aKJXQKTqoQJuHl7cKlBeQln5JlBvNIXmy3OEwenbBdewWUl8m0bGTiTWPtT2swDBErF8JSysUrHaD-cgl6bVGpp1VBa9sHNdCxklzTjJA1Bq2rbyZlzgA1iNQnubv4TW1V5N9oDVrbt8"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<p class="text-xs text-slate-400 uppercase font-bold tracking-tighter">Cinema X</p>
+</div>
+<h3 class="text-sm font-bold text-slate-200">Inception (En Vivo)</h3>
+</div>
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+<div class="glass-panel p-4 rounded-xl flex items-center gap-4 group cursor-pointer hover:bg-primary/5 transition-all">
+<div class="w-16 h-16 rounded-lg bg-background-dark flex items-center justify-center p-2">
+<img class="w-full grayscale group-hover:grayscale-0 transition-all" data-alt="TV Network Logo 4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7bfkM8IMlKLAVAIcY9hKmeajgMgTHNZlT4UAKLpCKbcDVJ1gvrrLBa-C15vQf1Mln1NUMB7tCgPRY9L5D8puIAlJkga90VZ4FweUwZxPSDXDni6FTU2bWBP4yUL-va2akWIptuu96Hlxc-z0g0FT06rY0l7Tvydpxvb-Wok-JZKlGoZiHlMoGSSthomDSj5BKWX45JYbQBjjdvE2bV4xwIRaXg8Q5kcQwpy3C8RG3iikVtLlHD1wJpZlb8liVHTyybFhmSd0PoW8"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+<p class="text-xs text-slate-400 uppercase font-bold tracking-tighter">Discovery Sci</p>
+</div>
+<h3 class="text-sm font-bold text-slate-200">Cosmos: Un Viaje Personal</h3>
+</div>
+<span class="material-symbols-outlined text-slate-500 group-hover:text-primary">arrow_forward_ios</span>
+</div>
+</div>
+</section>
+<!-- Películas Populares -->
+<section class="pb-20">
+<h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+<span class="w-2 h-8 bg-primary rounded-full"></span>
+                        Películas Populares
+                    </h2>
+<div class="flex gap-6 overflow-x-auto pb-6 custom-scrollbar">
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Abstract movie poster aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZQDDDpDwK2zbW8QrQE_E9Et8qzKFGmX6Mhy3yf1_cM3k-gdH1aJO8OD6wJ6aEkuzqL8ROLT69gmiy-zbOSvkJhJXkGYEx2vxxBxfT8DuM0q9isNSGxsIMMWOtwUiR4csSCdSiKjkoPmo6BC049h25YtVK_S35OwGyoORKgfMqVPpkRnTZ5taNkoCxdWeay2i9sFINg-Hw_5pdC1Ofa2o9-1jIKkPuiQ90r-8VGm8cAFhGO-j8t1jfTcqln9xAO55_-cQi-m3y8fQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+<div class="absolute top-2 right-2 px-2 py-1 bg-primary text-background-dark text-[10px] font-black rounded">NEW</div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">El Horizonte de Eventos</h3>
+</div>
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Dark dramatic movie poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRgMM1PmvWc5NoCuw1Va8QCSMQzBYvsRzDZrHmwyQab2JzFpccR0X6TFD9kQl1dnRqPT0s4rKmSAFBAKlrAkC2FaH3UVPv4JUrAC5oFoGh8MUIinWeewAFIIK0dHb7eyj4sYAjjNqBTnTv0oBcslTEPp6HAfH7XRPppUfc5Fjyt-zGz_aNdmBKHQ5r9ONUlmQougF0LAfaYMndcMnU-hWU0ZTa99LfQ8u5pWHnjwHMayFf9jho2asCM4hOEdO-HoUOLf6jLFGgGbY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+<div class="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 bg-yellow-400 text-black text-[10px] font-black rounded">
+<span class="material-symbols-outlined text-[10px] fill-current">star</span> 8.9
+                                </div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">Crónicas de Marte</h3>
+</div>
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Futuristic character poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkmWyj-9vQPCwiNnhKoTCheHBMF98Ry_HnF3pDV46JMN_AZ_LOqeJQN-SNex-mur_RWNxZ56KbrgYf002yU8molzolxlW478dld7ZBgJL8ebB-Vf-gto3IYEat6dlouqdGfLFwxEYBpkLC91tjbzyd2eQxQ11zaNn6nMMlS05awQGtxe9B8kXC815fUoLGDch4OYiQni4KfpxGNdmbXWSP8lB3_VUZHIVsyK3e60xsC26-gMEaHhYqu6uYHOlYq_KIoeCCcQft5Ic"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">Sintética: Orígenes</h3>
+</div>
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Cinematic lighting poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCspl42VXmurnzXVvQ0BWDGmLeTbQurXH459xzU_uB0ONripTKwRifpl3qzDPboxqXQfk6Y5MbEdPXzlAiiSofYWsIO4YQYAYjJqjxJ-lH9xE7x8tzpoCdQKKqE7YxtEjg5m4D6366sAT8KAV3G3sM_D5SJTUTt7H8etvTp1R3OGJqdmJu9v-i02ygyH2qg334GDKpI18_0gG1Bu2cSPDa58jwPDXVsOZP9lVRc4jO_BlLVezvbpiLfxZK94fZdAyzagexNZ_llEXY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">Bajo el Domo</h3>
+</div>
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Space exploration poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDkFdk1SDhRmmhyWdjtY9zggIX0SWwO6PjAEh9cRhJlu027gUCaFhFBENbwmLoPQs3uVk7kKyezNItCRqK19YBinKsoNEOckAf-uFo28V46WDJ9zbT5ImDJ1WeldIsPIRieAdU-WOlgPGWhuUqJ-v4O8IbnW_6ymE-f0JJhWj9TgzaK8tvtcQVqG2G6FCN5vlwgeDdYg2c6OUJHgtlFcexGZ1uWbBteZTc-0fBGgz3cKZL1ehnUeFtBkq30Ui27L-c4oUUs4uBhZM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">Andrómeda: Perdidos</h3>
+</div>
+<div class="flex-none w-48 group cursor-pointer">
+<div class="aspect-[2/3] rounded-xl overflow-hidden mb-3 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Cinematic landscape poster" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvRYJV1tPgmdqIRJhSlv892_D0IHtNRrrsf7BfPmms_gYeESWqC9GD5tye__mD4PzK3kzYLz9QpMgUTCi41lFprfWhk5A-pZgQoz7FTFaILX1KEe4qat2bxSnfBeFzwLpBc2S-ak3lAhH6Jrway2qwKyWz-MBdsKP5CtBHgSp-jK21n6ImZ9V1DCEo7lOqO4wFsYBITPtuKqaWGTmPa8zHb_3viQYzT1RZtg9VPBPztn-Eq2fwbKte3K8JbsE4xYQmT6OOpws9L5I"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent opacity-60"></div>
+</div>
+<h3 class="font-bold text-sm text-slate-100 truncate">El Último Jedi</h3>
+</div>
+</div>
+</section>
+</div>
+<!-- Global Glass Search/Nav -->
+<header class="fixed top-0 left-20 right-0 h-20 px-12 flex items-center justify-between z-50">
+<div class="flex items-center gap-8">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full h-10 pl-12 pr-4 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm backdrop-blur-lg" placeholder="Buscar películas, series, canales..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative p-2 text-slate-300 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 glass-panel px-3 py-1.5 rounded-full border border-white/10">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary border border-primary/40 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-hg-k7yRLhNkZ8XQP0aguwYRNK6GOVMGeM5q7S4--a0bpLGA6wqPsKtOjZlX_iZhRhTBbs7ysLo_s7NwtrxpmJ47Wxera_69HbhK5lOB07gjI-42-3eologR3AXEMc53TroXOBESlEE8GVpyBnPD1NH1cKtmEVWRC5cEe5NgAqBrEKyTdqp3nZyW9Kbrvk7IrCChn1QvUuD1rhgxiyB4l79K3kDo1YhqchrVdrgshHP0i-nO7Hqxf3mxJKa2woPX9aQ4_vYErg0c"/>
+</div>
+<span class="text-sm font-medium">Kleimer Premium</span>
+</div>
+</div>
+</header>
+</main>
+</div>
+</body></html>

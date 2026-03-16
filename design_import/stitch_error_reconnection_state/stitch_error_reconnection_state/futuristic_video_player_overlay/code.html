@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IPTV Kleimer Player - Futuristic Overlay</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "accent-coral": "#ff4d4d",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#081212",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glow-primary {
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.4);
+        }
+        .glass-panel {
+            background: rgba(8, 18, 18, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 242, 242, 0.1);
+        }
+        .vignette {
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 overflow-hidden">
+<!-- Video Background Container -->
+<div class="relative h-screen w-full bg-black overflow-hidden group">
+<!-- Main Video Placeholder -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Cinematic sci-fi space nebula background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCISc9NJMK4QJyFGwlg6tTUYXk4EG3zexBQS04HHAAT_rIoWQlHHh7CR9AT2qCAk96sOsAwGVwCpXrp0O91W7b0QNoWtZ18_mVRrShi7rITH4DX0j6Df9lQzy903ab743kmIR7mm7q8-VyEF9D9w-Qf361W1spNbYe1WnsSjPlxFLmNFj0x2TMByZ0L7eYEqFKSiPYp8zyXoenazFnXCHziL15JQ1E2W8zyyC6l_4Tu-IJx3tfCmwnDTgWEwk9Jy6TOHklpvMXaEJ8')"></div>
+<!-- Atmospheric Overlays -->
+<div class="absolute inset-0 vignette pointer-events-none"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-transparent to-background-dark/40 pointer-events-none"></div>
+<!-- Top Navigation Overlay -->
+<header class="absolute top-0 left-0 right-0 flex items-center justify-between px-12 py-8 transition-opacity duration-500 group-hover:opacity-100">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<span class="text-primary material-symbols-outlined scale-125">rocket_launch</span>
+<h1 class="text-2xl font-bold tracking-widest uppercase">Kleimer <span class="text-primary">Player</span></h1>
+</div>
+<div class="flex items-center gap-4 mt-2">
+<h2 class="text-4xl font-light tracking-tight">Interstellar: <span class="text-slate-400">The Endurance Mission</span></h2>
+<span class="px-2 py-0.5 rounded border border-accent-coral text-accent-coral text-[10px] font-bold tracking-tighter flex items-center gap-1">
+<span class="size-1.5 rounded-full bg-accent-coral animate-pulse"></span>
+                        LIVE 4K
+                    </span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-4 py-2 glass-panel rounded-full">
+<span class="material-symbols-outlined text-primary text-sm">wifi</span>
+<span class="text-xs font-medium tracking-widest uppercase">Signal: Optimal</span>
+</div>
+<button class="size-12 rounded-full glass-panel flex items-center justify-center hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</header>
+<!-- Center Play State (Hidden when playing) -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="size-24 rounded-full glass-panel border-primary/30 flex items-center justify-center transition-transform hover:scale-110 cursor-pointer pointer-events-auto">
+<span class="material-symbols-outlined text-5xl text-primary leading-none ml-1">play_arrow</span>
+</div>
+</div>
+<!-- Bottom Controls Overlay -->
+<div class="absolute bottom-0 left-0 right-0 px-12 pb-12 pt-20 bg-gradient-to-t from-background-dark via-background-dark/60 to-transparent">
+<!-- Timeline Section -->
+<div class="relative mb-8">
+<div class="flex justify-between items-end mb-3">
+<div class="flex items-baseline gap-2">
+<span class="text-primary text-xl font-medium tracking-tighter">01:42:08</span>
+<span class="text-slate-500 text-xs uppercase tracking-widest">/ 02:49:00</span>
+</div>
+<div class="glass-panel px-3 py-1 rounded-full text-[10px] text-primary/80 uppercase tracking-[0.2em]">Buffering 98%</div>
+</div>
+<div class="relative h-1.5 w-full bg-primary/10 rounded-full overflow-hidden group/timeline cursor-pointer">
+<!-- Progress Bar -->
+<div class="absolute top-0 left-0 h-full bg-primary glow-primary rounded-full transition-all" style="width: 62%;">
+<div class="absolute right-0 top-1/2 -translate-y-1/2 size-3 bg-white rounded-full shadow-[0_0_10px_#0df2f2]"></div>
+</div>
+<!-- Hover Preview Line -->
+<div class="absolute top-0 left-0 h-full bg-white/20 opacity-0 group-hover/timeline:opacity-100 transition-opacity" style="width: 75%;"></div>
+</div>
+</div>
+<!-- Main Control Bar -->
+<div class="flex items-center justify-between">
+<!-- Left Controls -->
+<div class="flex items-center gap-8">
+<button class="text-slate-300 hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">skip_previous</span>
+</button>
+<button class="size-14 rounded-full bg-primary text-background-dark flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-3xl font-bold">pause</span>
+</button>
+<button class="text-slate-300 hover:text-primary transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl">skip_next</span>
+</button>
+<div class="h-8 w-px bg-slate-700 mx-2"></div>
+<div class="flex items-center gap-4 group/volume cursor-pointer">
+<span class="material-symbols-outlined text-slate-300 group-hover/volume:text-primary">volume_up</span>
+<div class="w-24 h-1 bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 group-hover/volume:bg-primary transition-colors" style="width: 70%;"></div>
+</div>
+</div>
+</div>
+<!-- Right Controls -->
+<div class="flex items-center gap-6">
+<button class="glass-panel px-4 py-2 rounded-lg flex items-center gap-3 hover:border-primary/50 transition-all group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl">closed_caption</span>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-300">English (CC)</span>
+</button>
+<button class="glass-panel px-4 py-2 rounded-lg flex items-center gap-3 hover:border-primary/50 transition-all group">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl">high_quality</span>
+<span class="text-xs font-bold uppercase tracking-widest text-slate-300">Auto 4K</span>
+</button>
+<div class="h-8 w-px bg-slate-700 mx-2"></div>
+<button class="bg-primary/10 hover:bg-primary/20 border border-primary/30 px-6 py-2 rounded-lg flex items-center gap-3 transition-all group">
+<span class="text-xs font-black uppercase tracking-[0.2em] text-primary">Next Episode</span>
+<span class="material-symbols-outlined text-primary group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="text-slate-300 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">fullscreen</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sidebar Quick Info (Right Side) -->
+<div class="absolute top-1/2 -translate-y-1/2 right-6 flex flex-col gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+<div class="glass-panel p-3 rounded-xl flex flex-col items-center gap-4 border-r-2 border-primary/40">
+<div class="flex flex-col items-center gap-1 group/item cursor-pointer">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">info</span>
+<span class="text-[8px] uppercase tracking-tighter text-slate-500">Details</span>
+</div>
+<div class="flex flex-col items-center gap-1 group/item cursor-pointer">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">list</span>
+<span class="text-[8px] uppercase tracking-tighter text-slate-500">Chapters</span>
+</div>
+<div class="flex flex-col items-center gap-1 group/item cursor-pointer">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">share</span>
+<span class="text-[8px] uppercase tracking-tighter text-slate-500">Cast</span>
+</div>
+<div class="w-6 h-px bg-slate-700"></div>
+<div class="flex flex-col items-center gap-1 group/item cursor-pointer">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">favorite</span>
+<span class="text-[8px] uppercase tracking-tighter text-slate-500">Watchlist</span>
+</div>
+</div>
+</div>
+<!-- Technical HUD Details (Corner Glows) -->
+<div class="absolute top-0 left-0 size-32 border-l border-t border-primary/20 pointer-events-none"></div>
+<div class="absolute top-0 right-0 size-32 border-r border-t border-primary/20 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 size-32 border-l border-b border-primary/20 pointer-events-none"></div>
+<div class="absolute bottom-0 right-0 size-32 border-r border-b border-primary/20 pointer-events-none"></div>
+</div>
+</body></html>

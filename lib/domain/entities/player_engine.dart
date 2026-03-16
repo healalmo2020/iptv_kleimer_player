@@ -1,0 +1,1 @@
+enum PlayerEngine { vlc, mediaKit }

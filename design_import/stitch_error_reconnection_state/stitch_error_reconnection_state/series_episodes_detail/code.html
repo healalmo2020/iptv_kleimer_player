@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Series &amp; Episodes Detail - IPTV Kleimer Player</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2f2",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#102222",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(16, 34, 34, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 242, 242, 0.1);
+        }
+        .episode-card-focus {
+            border: 2px solid #0df2f2;
+            box-shadow: 0 0 15px rgba(13, 242, 242, 0.4);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #102222;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #224949;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0df2f2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-background-dark/80 backdrop-blur-md px-6 md:px-12 py-4">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">rocket_launch</span>
+<h1 class="text-xl font-bold tracking-tight">KLEIMER PLAYER</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Live TV</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Movies</a>
+<a class="text-primary border-b-2 border-primary pb-1 text-sm font-medium" href="#">Series</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Settings</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary/60">search</span>
+<input class="bg-primary/5 border border-primary/20 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search series..." type="text"/>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border border-primary/30 p-0.5 overflow-hidden">
+<img class="w-full h-full object-cover rounded-full" data-alt="User avatar placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCT21lhZ07fO6i8Fb600kJFUtzVwAfcz9yCEp-lH9EaQOEz0jMzILfIQkV7hu0bkYEW48pOZu02rwCYpWPysNxLJdF9K2LZtLNXw8SCQo6Q6NpasdIFKckNpgZ5btu421u0fTphYAIjDgzlM7zuIeg4R5gPo_RD1g5rKWSCN8ynKd6cmXygI1b6N_T-y59gQ3CLgz8B6uf47mXTp3j9Laq_atlRndlmb0HZ0P1oUg3AObCBMkiD8AYorQuPmigQVLA1F8ht-siGX-0"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-1">
+<div class="relative w-full h-[70vh] overflow-hidden">
+<div class="absolute inset-0">
+<img class="w-full h-full object-cover" data-alt="Cinematic background of a futuristic spaceship in orbit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP_a_dOBxVxFfwVZJN3Zw6NwRBG5cD_Nmz2eH526Fv8G4A1GPQp0TKo3WsHVb1WEHgkElDlDHwMeMZuDUAZuhR5jSawy8ri0P0xAO4MDtZXV81OMY8b8mBEdIJEdb8ksHfLT-tjYBnJanP5iF2rWofqPBl7VG-MYkK0NVH90gWOb4H6teu09HywUJMl1NBImgDKFt7iXAFRUVM_XrNxH_Y1pbLyX_YOKbIpZV7ZJgDjT_U-blXmfWElau8l-5rO2Mchn1-P6l92bE"/>
+<div class="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/60 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
+</div>
+<div class="relative z-10 h-full flex flex-col justify-end px-6 md:px-20 pb-16 max-w-5xl">
+<div class="glass-panel p-8 rounded-xl inline-block max-w-3xl">
+<div class="flex items-center gap-3 mb-4">
+<span class="bg-primary/20 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/30 uppercase tracking-widest">Original Series</span>
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+<span class="material-symbols-outlined text-sm text-primary/30">star</span>
+<span class="ml-2 text-sm font-bold text-slate-100">4.8</span>
+</div>
+</div>
+<h1 class="text-5xl md:text-7xl font-black text-slate-100 mb-4 tracking-tighter leading-none">NEON RECKONING</h1>
+<div class="flex flex-wrap items-center gap-6 text-sm font-medium text-primary mb-6">
+<span>2024</span>
+<span class="w-1 h-1 bg-primary/40 rounded-full"></span>
+<span>3 SEASONS</span>
+<span class="w-1 h-1 bg-primary/40 rounded-full"></span>
+<span class="px-2 py-0.5 border border-primary/40 rounded">18+</span>
+<span class="w-1 h-1 bg-primary/40 rounded-full"></span>
+<span>SCI-FI THRILLER</span>
+</div>
+<p class="text-slate-300 text-lg leading-relaxed mb-8 max-w-2xl">
+                            In a metropolis where consciousness can be uploaded to the cloud, a cybernetic detective uncovers a conspiracy that threatens to overwrite reality itself.
+                        </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary hover:bg-primary/80 text-background-dark font-bold px-8 py-3 rounded-lg flex items-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">play_arrow</span>
+                                RESUME S3:E4
+                            </button>
+<button class="bg-white/10 hover:bg-white/20 text-white font-bold px-8 py-3 rounded-lg flex items-center gap-2 transition-colors border border-white/10">
+<span class="material-symbols-outlined">add</span>
+                                MY LIST
+                            </button>
+<button class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-lg transition-colors border border-white/10">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 md:px-20 py-12">
+<div class="flex items-center justify-between mb-8 border-b border-primary/10 pb-4">
+<div class="flex gap-8">
+<button class="text-primary font-bold text-xl relative">
+                            Episodes
+                            <div class="absolute -bottom-4 left-0 w-full h-1 bg-primary rounded-full"></div>
+</button>
+<button class="text-slate-500 hover:text-slate-300 font-medium text-xl transition-colors">More Like This</button>
+<button class="text-slate-500 hover:text-slate-300 font-medium text-xl transition-colors">Details</button>
+</div>
+<div class="relative">
+<select class="bg-primary/5 border border-primary/20 text-primary font-bold rounded-lg px-4 py-2 pr-10 focus:outline-none appearance-none cursor-pointer">
+<option>SEASON 1</option>
+<option>SEASON 2</option>
+<option selected="">SEASON 3</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary">keyboard_arrow_down</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Cyberpunk city street at night with neon signs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUxVJkafdn6EpONvMwNmXRgNKVJ1N-IimZ-gLFCccWj9VvLSdFXMIlZFSCwad_nz3xs5R0O2lyGmMHgTDBwf6kOc683MuZKXAZnQFHL7EqmNCUmR1BVjs3bf1tSnWH0tcj2TsmsujK_DQdTrW5HuyCwQLD9MQqFCojj-z08SbDQ8pgeAu09D58xIbaUaB3eN3Pwv7CdB77tdvKGvf63unDodnpYk4wWl33BjAgO062DuJwDSky1dDfITUSy583DGowJLteh1fZQbQ"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary/20">
+<div class="h-full bg-primary" style="width: 100%"></div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">1. Digital Shadows</h3>
+<span class="text-xs text-primary font-mono uppercase">48m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">The investigation into the mainframe breach leads Elias to a familiar ghost from his past.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Satellite view of earth with digital grid overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWbaCXdBWbUgONDzn3GsIt94jT-tzSCnOP8z78vE_RTjsyY9pwwEGVMcu-5YnUN4eSHcCLfEhvU4DXN5UHk-G1oXXyf8Jam2T3TX-KuczP0pOiAlSOyZJ910eolrd2WEbGO0yM4VoQfAxwEyjuXDAyWYO4LM7yoVL-cZ8c22hn_ML3Ea3Q6We02eyvE1w6iEg3UBrWoIb3GsiP2_loRp47MK_0lpTk6djLtN8r-XL1DRGawyQNT5fAzCWkpOVAAuPGAkBHYLcQ8JU"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary/20">
+<div class="h-full bg-primary" style="width: 100%"></div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">2. Silicon Souls</h3>
+<span class="text-xs text-primary font-mono uppercase">52m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">A rogue AI attempts to communicate through the public announcement system of Sector 7.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/10 rounded-xl border-2 border-primary episode-card-focus scale-[1.05] shadow-lg shadow-primary/20">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up of futuristic robotic hand touching human skin" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIzOHipT_ioPftiYrpvLksoGfwBT0nL2yYXJicMGSsbcRtKoWjkDVNdXe1a709sTNPr2zEr8bFpQ4dE5Cx42sM4q9cssWSzRaqmaBSIPrkE_YEtxmL3KI4yjcggcJbQqQK5yyVMcglWKwtyzk8FEYcIEmFxiTBXz-n4-uta5aDzqG9iSDdF6qps2RuhL3kDwPAW5dkS4OoYDEoi6t0tTYNyrTNULhE5-1psInt9GtXXbL2iZsjQP6Y3vEMZJl1BvuGVwvAF1iatwk"/>
+<div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-6xl drop-shadow-lg">play_circle</span>
+</div>
+<div class="absolute bottom-2 left-2 bg-primary text-background-dark font-black text-[10px] px-2 py-0.5 rounded uppercase">Now Playing</div>
+<div class="absolute bottom-0 left-0 w-full h-1.5 bg-primary/20">
+<div class="h-full bg-primary" style="width: 65%"></div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-primary">3. The Ghost Protocol</h3>
+<span class="text-xs text-primary font-mono uppercase font-bold">55m</span>
+</div>
+<p class="text-slate-200 text-sm line-clamp-2">Elias must infiltrate the highest tower in the city to stop the overwrite before it begins.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden opacity-60">
+<img class="w-full h-full object-cover" data-alt="Retro futuristic computer hardware and cables" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6XdCjMc2ZCYmntYXoiMKkIWdnBf5ipEKZcsTTU9Vyn8nKi2-P2gXEqhuApR69bDZQyBlcd6EZcJoB29pcK7JLVBMrg0znmg26Sh2jfQnGst_BzhoJUxaXd2nti35dRhrYWaxEDgCA9VhFHQ1-7Kdv7nsrehNhPpaEqzjzp4f3F5rPu0W8zgaQw6lyo1Tu6j1JMtodHMavMoLIZn3LqIcJm5XUSPiKOXAnqk6i_wR7cQztJJcOZa7CQm8n5uM4lD9o44ICmQowo_A"/>
+<div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-5xl">lock</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-400 italic">4. Terminal Velocity</h3>
+<span class="text-xs text-slate-600 font-mono uppercase">50m</span>
+</div>
+<p class="text-slate-600 text-sm line-clamp-2">Coming Soon: Part of the Mid-Season finale event scheduled for next Friday.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Starry nebula in deep space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApmblJdLc81AMTqwnXhSbFTvqvVHNx5OAnVbL_G5EXVhdDmHMBf--D9CuDxPmgSTnKdYfk4AOrb5S0WNfLnf88qkB0PFQMX6BT-BV6Uy6r3JZIxiJeXpi9B8eMA84wEmTwGobtf3cel3BaTBkhjWAw02VcOKpIt61MFiTLG_kApH-gthM8I8qASdWRHG_YPmCO-U4ask3UZTxPyhvfNr5UoQsNbbn1YT0qD5l4h5HZrq2FjGJnwS9LlrnlGrvajhbvC_1wvHpo2U0"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">5. Event Horizon</h3>
+<span class="text-xs text-primary font-mono uppercase">45m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">The team discovers a hidden bunker beneath the ocean that holds the key to the first upload.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Astronaut floating in zero gravity inside a station" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgbQujDIce6JyJqBtBCaAihmFiJMOIGWCmGGEUDN7GerjdwTdG6pKwoQqRKqL4800gjWZOXKzZBb6ljoPRt5GstA6oiNo7LpPkCRiFif8udaTFjRXV_B9ODapPQE1hKgaPJ1VbS2taTwkKd833zgW5dGmD9R6ia_61I5_9Ji4fAyJhOLDrFO7wJhEx1iU9EU4b9-0gDXAiUHksJUaA1lIYQvGl9iy53Xt8F69le7IbwWtN93-v9-aErmI-fc019RGRzfIJ-0091tE"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">6. Zero Gravity</h3>
+<span class="text-xs text-primary font-mono uppercase">58m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">A high-stakes heist on the Orbital Station goes wrong when gravity stabilizers fail.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Abstract red and blue digital streams" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMxwFznLdtiEfrOUbg5HRdLHCW8V5HM4i-7MtJTGt0Dj6uLkw-L8z3h5x5fSKB-_xTG2n3h3RSuTeIUZbdxVYuXH1QADeYMBhtAdxfdszOWLzpkpACu3xZGKMVaazAmWaV_BjbTlUK4HgAML_jHAY1r9fhGvFlGDFAnYJlzcl13_78GBavxekGdJnVVYhUdMd_ocP1APl8_fzLEDoazPFhbvBx1VQkgcF85fuTnQaqrlVU3J7NQUumZyoicOtuX3dF2OSvXG_AV24"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">7. Data Breach</h3>
+<span class="text-xs text-primary font-mono uppercase">53m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">The resistance leaks classified files exposing the project's true purpose.</p>
+</div>
+</div>
+<div class="group relative flex flex-col bg-primary/5 rounded-xl border border-primary/10 overflow-hidden transition-all hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(13,242,242,0.1)]">
+<div class="aspect-video relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Dark mysterious laboratory with cyan lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcW0uJu6AL8Ru87mw50pDDq6l1fKCa_osq1pKQjbaMLUKnptRwMYtb0Q5USJ4frcftlcA0dAQFvBvVzDOpBe1wonxyxpX6WcYGByvVBRQowOZvpL_M_z48s7qxhPH5wCIQYYzyHuGzrVrycQmZoGPNdx4D4TOEUl7GBhYpvRe6HJp1TABb8irBWH9zRqPGHC47WAVBMxnyjVh6RCiwU_RWUR36RsSRtWTuz8XRzDbl5PKTf4p2Mc2webpU2niGr4lnV8HTx1yuLLI"/>
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary text-5xl">play_circle</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-slate-100">8. Finale: Aftermath</h3>
+<span class="text-xs text-primary font-mono uppercase">72m</span>
+</div>
+<p class="text-slate-400 text-sm line-clamp-2">The world as they knew it ends, and a new digital era begins for those who survived.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-background-dark/95 border-t border-primary/10 py-10 px-6 md:px-20">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-3 text-primary/60">
+<span class="material-symbols-outlined">rocket_launch</span>
+<span class="font-bold text-sm tracking-widest">KLEIMER PLAYER v2.4</span>
+</div>
+<div class="flex gap-8 text-slate-500 text-sm">
+<a class="hover:text-primary transition-colors" href="#">Help Center</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Cookie Settings</a>
+</div>
+<div class="flex gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/5 border border-primary/10 text-primary hover:bg-primary hover:text-background-dark transition-all">
+<span class="material-symbols-outlined">social_leaderboard</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg bg-primary/5 border border-primary/10 text-primary hover:bg-primary hover:text-background-dark transition-all">
+<span class="material-symbols-outlined">alternate_email</span>
+</button>
+</div>
+</div>
+<div class="text-center mt-8 text-slate-600 text-[10px] uppercase tracking-[0.2em]">
+                © 2024 NEON RECKONING STUDIOS. ALL SYSTEMS OPERATIONAL.
+            </div>
+</footer>
+</div>
+</body></html>

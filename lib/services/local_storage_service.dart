@@ -1,11 +1,19 @@
 import 'package:hive/hive.dart';
 
 import '../core/constants/app_constants.dart';
+import '../domain/entities/player_engine.dart';
 
-enum PlayerEngine { vlc, mediaKit }
+enum PlayerBufferProfile { fast, balanced, stable }
 
 class LocalStorageService {
   const LocalStorageService();
+
+  static const String searchIndexSnapshotKey = 'search_index_snapshot_v1';
+  static const String searchIndexSnapshotMetaKey =
+      'search_index_snapshot_meta_v1';
+  static const String dailyWarmupLastRunAtKey = 'daily_warmup_last_run_at_v1';
+  static const String dailyWarmupLastRunUserKey =
+      'daily_warmup_last_run_user_v1';
 
   Box<dynamic> get _settings => Hive.box<dynamic>(AppConstants.settingsBox);
   Box<dynamic> get _playback => Hive.box<dynamic>(AppConstants.playbackBox);
@@ -18,7 +26,30 @@ class LocalStorageService {
   }
 
   Future<void> setPlayerEngine(PlayerEngine engine) async {
-    await _settings.put('player_engine', engine == PlayerEngine.mediaKit ? 'media_kit' : 'vlc');
+    await _settings.put(
+      'player_engine',
+      engine == PlayerEngine.mediaKit ? 'media_kit' : 'vlc',
+    );
+  }
+
+  PlayerBufferProfile getPlayerBufferProfile() {
+    final value =
+        _settings.get('player_buffer_profile', defaultValue: 'balanced')
+            as String;
+    return switch (value) {
+      'fast' => PlayerBufferProfile.fast,
+      'stable' => PlayerBufferProfile.stable,
+      _ => PlayerBufferProfile.balanced,
+    };
+  }
+
+  Future<void> setPlayerBufferProfile(PlayerBufferProfile profile) async {
+    final value = switch (profile) {
+      PlayerBufferProfile.fast => 'fast',
+      PlayerBufferProfile.balanced => 'balanced',
+      PlayerBufferProfile.stable => 'stable',
+    };
+    await _settings.put('player_buffer_profile', value);
   }
 
   Future<void> saveCredentials({
@@ -31,8 +62,12 @@ class LocalStorageService {
 
   ({String username, String password}) getSavedCredentials() {
     try {
-      final username = _settings.get('username', defaultValue: AppConstants.defaultUsername) as String;
-      final password = _settings.get('password', defaultValue: AppConstants.defaultPassword) as String;
+      final username =
+          _settings.get('username', defaultValue: AppConstants.defaultUsername)
+              as String;
+      final password =
+          _settings.get('password', defaultValue: AppConstants.defaultPassword)
+              as String;
       return (username: username, password: password);
     } catch (_) {
       return (
@@ -42,7 +77,10 @@ class LocalStorageService {
     }
   }
 
-  Future<void> saveFavorite(String streamId, Map<String, dynamic> payload) async {
+  Future<void> saveFavorite(
+    String streamId,
+    Map<String, dynamic> payload,
+  ) async {
     await _favorites.put(streamId, payload);
   }
 
@@ -55,10 +93,16 @@ class LocalStorageService {
   }
 
   List<Map<String, dynamic>> getFavorites() {
-    return _favorites.values.map((e) => Map<String, dynamic>.from(e as Map)).toList(growable: false);
+    return _favorites.values
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList(growable: false);
   }
 
-  Future<void> savePlaybackProgress(String contentId, Duration progress, Duration total) async {
+  Future<void> savePlaybackProgress(
+    String contentId,
+    Duration progress,
+    Duration total,
+  ) async {
     await _playback.put(contentId, {
       'positionMs': progress.inMilliseconds,
       'durationMs': total.inMilliseconds,
@@ -115,15 +159,97 @@ class LocalStorageService {
   }
 
   Future<void> saveHistoryItem(Map<String, dynamic> item) async {
-    final existing = _history.get('items', defaultValue: <Map<String, dynamic>>[]) as List<dynamic>;
-    final mutable = existing.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    final existing =
+        _history.get('items', defaultValue: <Map<String, dynamic>>[])
+            as List<dynamic>;
+    final mutable = existing
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList();
     mutable.removeWhere((e) => e['id'] == item['id']);
     mutable.insert(0, item);
     await _history.put('items', mutable.take(100).toList(growable: false));
   }
 
   List<Map<String, dynamic>> getHistory() {
-    final items = _history.get('items', defaultValue: <Map<String, dynamic>>[]) as List<dynamic>;
-    return items.map((e) => Map<String, dynamic>.from(e as Map)).toList(growable: false);
+    final items =
+        _history.get('items', defaultValue: <Map<String, dynamic>>[])
+            as List<dynamic>;
+    return items
+        .map((e) => Map<String, dynamic>.from(e as Map))
+        .toList(growable: false);
+  }
+
+  Future<void> saveSearchIndexSnapshot(
+    List<Map<String, dynamic>> items, {
+    required int version,
+  }) async {
+    await _settings.put(searchIndexSnapshotKey, items);
+    await _settings.put(searchIndexSnapshotMetaKey, {
+      'version': version,
+      'updatedAt': DateTime.now().toIso8601String(),
+      'itemCount': items.length,
+    });
+  }
+
+  List<Map<String, dynamic>> getSearchIndexSnapshot() {
+    final value = _settings.get(
+      searchIndexSnapshotKey,
+      defaultValue: <Map<String, dynamic>>[],
+    );
+    if (value is! List) {
+      return const <Map<String, dynamic>>[];
+    }
+
+    return value
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList(growable: false);
+  }
+
+  Future<void> clearSearchIndexSnapshot() async {
+    await _settings.delete(searchIndexSnapshotKey);
+    await _settings.delete(searchIndexSnapshotMetaKey);
+  }
+
+  Map<String, dynamic>? getSearchIndexSnapshotMeta() {
+    final value = _settings.get(searchIndexSnapshotMetaKey);
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+    return null;
+  }
+
+  bool shouldRunDailyWarmup({required String username, DateTime? now}) {
+    final lastUser = _settings.get(dailyWarmupLastRunUserKey);
+    if (lastUser is! String || lastUser.trim() != username.trim()) {
+      return true;
+    }
+
+    final rawDate = _settings.get(dailyWarmupLastRunAtKey);
+    if (rawDate is! String) {
+      return true;
+    }
+
+    final lastRun = DateTime.tryParse(rawDate);
+    if (lastRun == null) {
+      return true;
+    }
+
+    final current = (now ?? DateTime.now()).toLocal();
+    final lastLocal = lastRun.toLocal();
+    return !_isSameLocalDate(lastLocal, current);
+  }
+
+  Future<void> markDailyWarmupRun({
+    required String username,
+    DateTime? executedAt,
+  }) async {
+    final now = executedAt ?? DateTime.now();
+    await _settings.put(dailyWarmupLastRunAtKey, now.toIso8601String());
+    await _settings.put(dailyWarmupLastRunUserKey, username.trim());
+  }
+
+  bool _isSameLocalDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

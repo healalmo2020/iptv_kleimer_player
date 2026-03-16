@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
+import '../../../core/constants/player_buffer_constants.dart';
+
 class VlcPlayerView extends StatefulWidget {
   const VlcPlayerView({
     super.key,
     required this.url,
+    required this.bufferConfig,
     required this.onProgress,
     required this.onError,
     this.onControllerCreated,
@@ -12,6 +15,7 @@ class VlcPlayerView extends StatefulWidget {
   });
 
   final String url;
+  final PlayerBufferConfig bufferConfig;
   final void Function(Duration position, Duration duration) onProgress;
   final void Function(String message) onError;
   final void Function(VlcPlayerController controller)? onControllerCreated;
@@ -33,7 +37,22 @@ class _VlcPlayerViewState extends State<VlcPlayerView> {
       widget.url,
       autoPlay: true,
       hwAcc: HwAcc.auto,
-      options: VlcPlayerOptions(),
+      options: VlcPlayerOptions(
+        advanced: VlcAdvancedOptions([
+          VlcAdvancedOptions.networkCaching(
+            widget.bufferConfig.vlcNetworkCachingMs,
+          ),
+          VlcAdvancedOptions.liveCaching(
+            widget.bufferConfig.vlcLiveCachingMs,
+          ),
+          VlcAdvancedOptions.fileCaching(
+            widget.bufferConfig.vlcFileCachingMs,
+          ),
+        ]),
+        http: VlcHttpOptions([
+          VlcHttpOptions.httpReconnect(true),
+        ]),
+      ),
     );
     widget.onControllerCreated?.call(_controller);
 

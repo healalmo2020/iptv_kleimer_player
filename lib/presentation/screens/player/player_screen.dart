@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +11,14 @@ import 'package:media_kit/media_kit.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/xtream_stream_url_builder.dart';
-import '../../../services/local_storage_service.dart';
-import '../../providers/app_providers.dart';
+import '../../../domain/entities/player_engine.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/player_playback_provider.dart';
+import '../../providers/player_reconnect_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../widgets/player/media_kit_player_view.dart';
 import '../../widgets/player/vlc_player_view.dart';
+import '../../../core/constants/player_buffer_constants.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
   const PlayerScreen({
@@ -44,36 +45,22 @@ class PlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
-  static const _maxReconnectAttempts = 5;
-  static const _stalledThreshold = Duration(seconds: 20);
-
-  int _playerInstanceNonce = 0;
-  int _urlIndex = 0;
-  int _reconnectAttempts = 0;
-  Duration _currentPosition = Duration.zero;
-  Duration _currentDuration = Duration.zero;
-  String? _lastError;
   Timer? _saveTimer;
-  Timer? _reconnectTimer;
   Timer? _stallWatchdog;
   Timer? _continuousSeekTimer;
-  bool _autoplayTriggered = false;
+  Timer? _unavailableExitTimer;
   Player? _mediaKitPlayer;
   VlcPlayerController? _vlcController;
-  bool _isPlaying = true;
-  bool _isSeeking = false;
-  Duration _dragPosition = Duration.zero;
   final _floating = Floating();
-  final _random = Random();
-  late final LocalStorageService _storage;
-  DateTime _lastProgressAt = DateTime.now();
-  int _lastPositionMs = 0;
-  int _activeUrlsCount = 2;
+
+  String get _reconnectProviderKey =>
+      '${widget.contentType}:${widget.streamId}';
+
+  String get _playbackProviderKey => '${widget.contentType}:${widget.streamId}';
 
   @override
   void initState() {
     super.initState();
-    _storage = ref.read(localStorageProvider);
     _startPersistenceLoop();
     _startStallWatchdog();
     unawaited(_saveHistoryEntry());
@@ -83,59 +70,67 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   @override
   void dispose() {
     _saveTimer?.cancel();
-    _reconnectTimer?.cancel();
     _stallWatchdog?.cancel();
     _continuousSeekTimer?.cancel();
+    _unavailableExitTimer?.cancel();
     unawaited(_disableAutoPiPOnLeave());
-    unawaited(_persistProgress());
     super.dispose();
   }
 
   void _startPersistenceLoop() {
     _saveTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) {
+        return;
+      }
       unawaited(_persistProgress());
     });
   }
 
   void _startStallWatchdog() {
     _stallWatchdog = Timer.periodic(const Duration(seconds: 10), (_) {
-      if (!mounted || _currentDuration <= Duration.zero) {
+      if (!mounted) {
         return;
       }
-      if (_reconnectTimer?.isActive ?? false) {
+      final bufferProfile = ref.read(playerBufferProfileProvider);
+      final bufferConfig = PlayerBufferConstants.configForProfile(bufferProfile);
+      final reconnectState = ref.read(
+        playerReconnectControllerProvider(_reconnectProviderKey),
+      );
+      if (reconnectState.isRetryScheduled) {
         return;
       }
-      final elapsed = DateTime.now().difference(_lastProgressAt);
-      if (elapsed >= _stalledThreshold) {
-        _scheduleReconnect(
-          'Buffering estancado, reconectando...',
-          _activeUrlsCount,
-        );
+      final playbackController = ref.read(
+        playerPlaybackControllerProvider(_playbackProviderKey).notifier,
+      );
+      if (playbackController.shouldReconnect(
+        bufferConfig.stallWatchdogThreshold,
+      )) {
+        _scheduleReconnect('Buffering estancado, reconectando...');
       }
     });
   }
 
   Future<void> _persistProgress() async {
-    if (_currentDuration <= Duration.zero) {
+    if (!mounted) {
       return;
     }
-
-    await _storage.savePlaybackProgress(
-      widget.streamId,
-      _currentPosition,
-      _currentDuration,
-    );
+    await ref
+        .read(playerPlaybackControllerProvider(_playbackProviderKey).notifier)
+        .persistProgress(widget.streamId);
   }
 
   Future<void> _saveHistoryEntry() async {
-    await _storage.saveLastChannel(widget.streamId);
-    await _storage.saveHistoryItem({
-      'id': widget.streamId,
-      'title': widget.title,
-      'updatedAt': DateTime.now().toIso8601String(),
-      'type': widget.contentType,
-      'ext': widget.extension,
-    });
+    if (!mounted) {
+      return;
+    }
+    await ref
+        .read(playerPlaybackControllerProvider(_playbackProviderKey).notifier)
+        .saveHistoryEntry(
+          streamId: widget.streamId,
+          title: widget.title,
+          contentType: widget.contentType,
+          extension: widget.extension,
+        );
   }
 
   void _onProgress(Duration position, Duration duration) {
@@ -143,31 +138,30 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
 
-    setState(() {
-      if (!_isSeeking) {
-        _currentPosition = position;
-      }
-      _currentDuration = duration;
-    });
+    final playbackController = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey).notifier,
+    );
+    final previousMs = ref
+        .read(playerPlaybackControllerProvider(_playbackProviderKey))
+        .lastPositionMs;
 
-    final currentMs = position.inMilliseconds;
-    if (currentMs > _lastPositionMs) {
-      _lastPositionMs = currentMs;
-      _lastProgressAt = DateTime.now();
+    final shouldAutoplay = playbackController.onProgress(
+      position: position,
+      duration: duration,
+      hasNextEpisode:
+          widget.contentType == 'series' &&
+          (widget.nextEpisodeId?.isNotEmpty ?? false),
+    );
+
+    if (playbackController.consumeProgressAdvancedSince(previousMs)) {
+      ref
+          .read(
+            playerReconnectControllerProvider(_reconnectProviderKey).notifier,
+          )
+          .markPlaybackRecovered();
     }
 
-    final hasNextEpisode =
-        widget.contentType == 'series' &&
-        (widget.nextEpisodeId?.isNotEmpty ?? false) &&
-        !_autoplayTriggered;
-
-    if (!hasNextEpisode) {
-      return;
-    }
-
-    if (_currentDuration > const Duration(seconds: 1) &&
-        _currentPosition >= _currentDuration - const Duration(seconds: 2)) {
-      _autoplayTriggered = true;
+    if (shouldAutoplay) {
       final nextTitle = widget.nextEpisodeTitle ?? 'Siguiente episodio';
       final nextExt = widget.nextEpisodeExtension ?? '';
       final nextId = widget.nextEpisodeId!;
@@ -182,46 +176,46 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     }
   }
 
-  void _scheduleReconnect(String message, int urlsCount) {
-    if (_reconnectAttempts >= _maxReconnectAttempts) {
-      if (mounted) {
-        setState(() {
-          _lastError = '$message (límite de reintentos alcanzado)';
-        });
-      }
+  void _scheduleReconnect(String message) {
+    if (!mounted) {
       return;
     }
+    final reconnectMessage = _sanitizeReconnectMessage(message);
+    ref
+        .read(playerReconnectControllerProvider(_reconnectProviderKey).notifier)
+        .scheduleReconnect(message: reconnectMessage);
+  }
 
-    final baseSeconds = 2 * (1 << _reconnectAttempts);
-    final jitterMs = _random.nextInt(800);
-    final backoff = Duration(
-      seconds: baseSeconds.clamp(2, 20),
-      milliseconds: jitterMs,
-    );
-    _reconnectTimer?.cancel();
-    if (mounted) {
-      setState(() {
-        _lastError =
-            '$message • reintento ${_reconnectAttempts + 1}/$_maxReconnectAttempts';
-      });
+  String _sanitizeReconnectMessage(String message) {
+    final normalized = message.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final lower = normalized.toLowerCase();
+    final looksLikeOpenFailure =
+        lower.contains('failed to open') ||
+        lower.contains('cannot open');
+    final containsRouteOrUrl =
+        lower.contains('http://') ||
+        lower.contains('https://') ||
+        lower.contains('/live/') ||
+        lower.contains('/movie/') ||
+        lower.contains('.m3u8') ||
+        lower.contains('.ts');
+
+    if (looksLikeOpenFailure || containsRouteOrUrl) {
+      return 'Failed to open channel: ${widget.title}';
     }
-    _reconnectTimer = Timer(backoff, () {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        _reconnectAttempts += 1;
-        _urlIndex = (_urlIndex + 1) % urlsCount;
-        _playerInstanceNonce += 1;
-        _lastError = null;
-      });
-    });
+
+    return normalized;
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedEngine = ref.watch(playerEngineProvider);
-    final canUseVlc = !kIsWeb && defaultTargetPlatform != TargetPlatform.linux;
+    final bufferProfile = ref.watch(playerBufferProfileProvider);
+    final bufferConfig = PlayerBufferConstants.configForProfile(bufferProfile);
+    final canUseVlc =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
     final engine = canUseVlc ? selectedEngine : PlayerEngine.mediaKit;
     final auth = ref.watch(authControllerProvider);
     final session = auth.valueOrNull;
@@ -269,281 +263,534 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         streamId: widget.streamId,
       ),
     };
-    final currentUrl = urls[_urlIndex % urls.length];
-    _activeUrlsCount = urls.length;
+    final playbackState = ref.watch(
+      playerPlaybackControllerProvider(_playbackProviderKey),
+    );
+    final playbackController = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey).notifier,
+    );
+    if (playbackState.activeUrlsCount != urls.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        ref
+            .read(
+              playerPlaybackControllerProvider(_playbackProviderKey).notifier,
+            )
+            .setActiveUrlsCount(urls.length);
+      });
+    }
 
-    final savedProgress = _storage.getPlaybackProgress(widget.streamId);
-    final initialPosition = Duration(
-      milliseconds: savedProgress?['positionMs'] as int? ?? 0,
+    final currentUrl = urls[playbackState.urlIndex % urls.length];
+
+    final initialPosition = playbackController.getInitialPosition(
+      widget.streamId,
     );
     final isLiveContent = widget.contentType == 'live';
-    final canSeek = !isLiveContent && _currentDuration > Duration.zero;
+    final canSeek =
+        !isLiveContent && playbackState.currentDuration > Duration.zero;
+    final totalMs = playbackState.currentDuration.inMilliseconds <= 0
+        ? 1
+        : playbackState.currentDuration.inMilliseconds;
+    final currentSeekPosition = playbackController.seekBasePosition;
+    final progressValue = isLiveContent
+        ? 1.0
+        : currentSeekPosition.inMilliseconds.clamp(0, totalMs) / totalMs;
+    final hasNextEpisode =
+        widget.contentType == 'series' &&
+        (widget.nextEpisodeId?.isNotEmpty ?? false);
+    final reconnectState = ref.watch(
+      playerReconnectControllerProvider(_reconnectProviderKey),
+    );
+
+    ref.listen<PlayerReconnectState>(
+      playerReconnectControllerProvider(_reconnectProviderKey),
+      (previous, next) {
+        if (!mounted) {
+          return;
+        }
+
+        if ((previous?.triggerNonce ?? 0) == next.triggerNonce) {
+          final becameExhausted =
+              !(previous?.isExhausted ?? false) && next.isExhausted;
+          if (becameExhausted) {
+            _scheduleUnavailableExit();
+          }
+          if (!next.isExhausted) {
+            _unavailableExitTimer?.cancel();
+          }
+          return;
+        }
+
+        _unavailableExitTimer?.cancel();
+        playbackController.applyReconnectTrigger();
+      },
+    );
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-              return;
-            }
-            context.go('/home');
-          },
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.25,
+            colors: [Color(0xFF112525), Color(0xFF081212), Color(0xFF030707)],
+          ),
         ),
-        title: Text(widget.title),
-        actions: [
-          PopupMenuButton<PlayerEngine>(
-            initialValue: engine,
-            onSelected: (value) =>
-                ref.read(playerEngineProvider.notifier).setEngine(value),
-            itemBuilder: (_) => [
-              if (canUseVlc)
-                const PopupMenuItem(
-                  value: PlayerEngine.vlc,
-                  child: Text('VLC Player'),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(18),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        DecoratedBox(
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF03090D),
+                          ),
+                          child: engine == PlayerEngine.vlc
+                              ? VlcPlayerView(
+                                  key: ValueKey(
+                                    'vlc-${widget.streamId}-${playbackState.playerInstanceNonce}-${bufferProfile.name}',
+                                  ),
+                                  url: currentUrl,
+                                  bufferConfig: bufferConfig,
+                                  initialPosition: initialPosition,
+                                  onProgress: _onProgress,
+                                  onError: (message) =>
+                                      _scheduleReconnect(message),
+                                  onControllerCreated: (controller) {
+                                    _vlcController = controller;
+                                    playbackController.setPlaying(true);
+                                  },
+                                )
+                              : MediaKitPlayerView(
+                                  key: ValueKey(
+                                    'media-${widget.streamId}-${playbackState.playerInstanceNonce}-${bufferProfile.name}',
+                                  ),
+                                  url: currentUrl,
+                                  bufferConfig: bufferConfig,
+                                  initialPosition: initialPosition,
+                                  onProgress: _onProgress,
+                                  onError: (message) =>
+                                      _scheduleReconnect(message),
+                                  onPlayerCreated: (player) {
+                                    _mediaKitPlayer = player;
+                                    playbackController.setPlaying(true);
+                                  },
+                                ),
+                        ),
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0x9903090D),
+                                Colors.transparent,
+                                Color(0xCC03090D),
+                              ],
+                              stops: [0, 0.42, 1],
+                            ),
+                          ),
+                        ),
+                        if (reconnectState.isRetryScheduled ||
+                            reconnectState.isExhausted)
+                          Positioned.fill(
+                            child: Center(
+                              child: _InlineReconnectStatus(
+                                isExhausted: reconnectState.isExhausted,
+                                message: reconnectState.errorMessage,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-              const PopupMenuItem(
-                value: PlayerEngine.mediaKit,
-                child: Text('Media Kit'),
+              ),
+              Positioned(
+                left: 22,
+                right: 22,
+                top: 14,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _FrostButton(
+                      icon: Icons.arrow_back_rounded,
+                      onTap: () {
+                        if (context.canPop()) {
+                          context.pop();
+                          return;
+                        }
+                        context.go('/home');
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFFEAF9F9),
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isLiveContent
+                                      ? const Color(0x26FF4D4D)
+                                      : const Color(0x220DF2F2),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: isLiveContent
+                                        ? const Color(0x59FF4D4D)
+                                        : const Color(0x440DF2F2),
+                                  ),
+                                ),
+                                child: Text(
+                                  isLiveContent
+                                      ? 'LIVE 4K'
+                                      : widget.contentType.toUpperCase(),
+                                  style: TextStyle(
+                                    color: isLiveContent
+                                        ? const Color(0xFFFFB8B8)
+                                        : const Color(0xFF7DF6F6),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0x99102222),
+                                  borderRadius: BorderRadius.circular(999),
+                                  border: Border.all(
+                                    color: const Color(0x220DF2F2),
+                                  ),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.wifi,
+                                      size: 12,
+                                      color: Color(0xFF0DF2F2),
+                                    ),
+                                    SizedBox(width: 6),
+                                    Text(
+                                      'Signal: Optimal',
+                                      style: TextStyle(
+                                        color: Color(0xFFBEECEC),
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuButton<PlayerEngine>(
+                      initialValue: engine,
+                      onSelected: (value) => ref
+                          .read(playerEngineProvider.notifier)
+                          .setEngine(value),
+                      itemBuilder: (_) => [
+                        if (canUseVlc)
+                          const PopupMenuItem(
+                            value: PlayerEngine.vlc,
+                            child: Text('VLC Player'),
+                          ),
+                        const PopupMenuItem(
+                          value: PlayerEngine.mediaKit,
+                          child: Text('Media Kit'),
+                        ),
+                      ],
+                      child: const _FrostButton(icon: Icons.tune),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                left: 22,
+                right: 22,
+                bottom: 14,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xB3081212),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0x220DF2F2)),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x66000000),
+                        blurRadius: 28,
+                        offset: Offset(0, 16),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            isLiveContent
+                                ? 'LIVE'
+                                : _formatDuration(currentSeekPosition),
+                            style: const TextStyle(
+                              color: Color(0xFF0DF2F2),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            isLiveContent
+                                ? 'STREAM ACTIVE'
+                                : _formatDuration(
+                                    playbackState.currentDuration,
+                                  ),
+                            style: const TextStyle(
+                              color: Color(0xFF8BA3A3),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          minHeight: 5,
+                          value: progressValue,
+                          backgroundColor: const Color(0x1F0DF2F2),
+                          color: const Color(0xFF0DF2F2),
+                        ),
+                      ),
+                      if (!isLiveContent)
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            trackHeight: 2,
+                            activeTrackColor: const Color(0xFF0DF2F2),
+                            inactiveTrackColor: const Color(0x220DF2F2),
+                            thumbColor: Colors.white,
+                            overlayColor: const Color(0x220DF2F2),
+                          ),
+                          child: Slider(
+                            min: 0,
+                            max: totalMs.toDouble(),
+                            value: currentSeekPosition.inMilliseconds
+                                .clamp(0, totalMs)
+                                .toDouble(),
+                            onChanged:
+                                playbackState.currentDuration <= Duration.zero
+                                ? null
+                                : (value) {
+                                    playbackController.beginSeek(
+                                      Duration(milliseconds: value.round()),
+                                    );
+                                  },
+                            onChangeEnd:
+                                playbackState.currentDuration <= Duration.zero
+                                ? null
+                                : (value) {
+                                    unawaited(
+                                      _seekTo(
+                                        engine,
+                                        Duration(milliseconds: value.round()),
+                                      ),
+                                    );
+                                  },
+                          ),
+                        ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onLongPressStart: canSeek
+                                ? (_) => _startContinuousSeek(
+                                    engine,
+                                    const Duration(seconds: -10),
+                                  )
+                                : null,
+                            onLongPressEnd: (_) => _stopContinuousSeek(),
+                            onLongPressCancel: _stopContinuousSeek,
+                            child: _ControlIconButton(
+                              icon: Icons.replay_10_rounded,
+                              onTap: canSeek
+                                  ? () => unawaited(
+                                      _seekBy(
+                                        engine,
+                                        const Duration(seconds: -10),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          InkWell(
+                            onTap: () => unawaited(_togglePlayPause(engine)),
+                            borderRadius: BorderRadius.circular(999),
+                            child: Container(
+                              width: 58,
+                              height: 58,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF0DF2F2),
+                                borderRadius: BorderRadius.circular(999),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x660DF2F2),
+                                    blurRadius: 18,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Icon(
+                                playbackState.isPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                color: const Color(0xFF081212),
+                                size: 34,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onLongPressStart: canSeek
+                                ? (_) => _startContinuousSeek(
+                                    engine,
+                                    const Duration(seconds: 10),
+                                  )
+                                : null,
+                            onLongPressEnd: (_) => _stopContinuousSeek(),
+                            onLongPressCancel: _stopContinuousSeek,
+                            child: _ControlIconButton(
+                              icon: Icons.forward_10_rounded,
+                              onTap: canSeek
+                                  ? () => unawaited(
+                                      _seekBy(
+                                        engine,
+                                        const Duration(seconds: 10),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _PlayerAction(
+                            icon: Icons.closed_caption_rounded,
+                            label: 'Subtitles',
+                            onTap: () => _openSubtitleSelector(engine),
+                          ),
+                          _PlayerAction(
+                            icon: Icons.graphic_eq_rounded,
+                            label: 'Audio',
+                            onTap: () => _openAudioSelector(engine),
+                          ),
+                          _PlayerAction(
+                            icon: Icons.picture_in_picture_alt_outlined,
+                            label: 'PiP',
+                            onTap: _enterPiP,
+                          ),
+                          const _PlayerAction(
+                            icon: Icons.high_quality_rounded,
+                            label: 'Auto 4K',
+                          ),
+                          _PlayerAction(
+                            icon: Icons.fullscreen_rounded,
+                            label: 'Fullscreen',
+                            onTap: () => _showHint(
+                              'Pantalla completa no implementada aun.',
+                            ),
+                          ),
+                          if (hasNextEpisode)
+                            _PlayerAction(
+                              icon: Icons.skip_next_rounded,
+                              label: 'Next Episode',
+                              onTap: () {
+                                final nextId = widget.nextEpisodeId;
+                                if (nextId == null) {
+                                  return;
+                                }
+                                final nextTitle =
+                                    widget.nextEpisodeTitle ??
+                                    'Siguiente episodio';
+                                final nextExt =
+                                    widget.nextEpisodeExtension ?? '';
+                                context.go(
+                                  '/player?title=${Uri.encodeComponent(nextTitle)}&id=$nextId&type=series&ext=$nextExt',
+                                );
+                              },
+                            ),
+                        ],
+                      ),
+                      if (reconnectState.isExhausted) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: Color(0xFFFFD9B3),
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: const Text(
+                                'Este contenido no esta disponible. Regresando...',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Color(0xFFFFD9B3),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
             ],
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Icon(Icons.tune),
-            ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: const Color(0xFF162544),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: engine == PlayerEngine.vlc
-                      ? VlcPlayerView(
-                          key: ValueKey(
-                            'vlc-${widget.streamId}-$_playerInstanceNonce',
-                          ),
-                          url: currentUrl,
-                          initialPosition: initialPosition,
-                          onProgress: _onProgress,
-                          onError: (message) =>
-                              _scheduleReconnect(message, urls.length),
-                          onControllerCreated: (controller) {
-                            _vlcController = controller;
-                            _isPlaying = true;
-                          },
-                        )
-                      : MediaKitPlayerView(
-                          key: ValueKey(
-                            'media-${widget.streamId}-$_playerInstanceNonce',
-                          ),
-                          url: currentUrl,
-                          initialPosition: initialPosition,
-                          onProgress: _onProgress,
-                          onError: (message) =>
-                              _scheduleReconnect(message, urls.length),
-                          onPlayerCreated: (player) {
-                            _mediaKitPlayer = player;
-                            _isPlaying = true;
-                          },
-                        ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Column(
-              children: [
-                if (isLiveContent)
-                  Row(
-                    children: [
-                      const Expanded(child: LinearProgressIndicator(value: 1)),
-                      const SizedBox(width: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF5252),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: const Text(
-                          'LIVE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Slider(
-                    min: 0,
-                    max:
-                        (_currentDuration.inMilliseconds <= 0
-                                ? 1
-                                : _currentDuration.inMilliseconds)
-                            .toDouble(),
-                    value: (_isSeeking ? _dragPosition : _currentPosition)
-                        .inMilliseconds
-                        .clamp(
-                          0,
-                          _currentDuration.inMilliseconds <= 0
-                              ? 1
-                              : _currentDuration.inMilliseconds,
-                        )
-                        .toDouble(),
-                    onChanged: _currentDuration <= Duration.zero
-                        ? null
-                        : (value) {
-                            setState(() {
-                              _isSeeking = true;
-                              _dragPosition = Duration(
-                                milliseconds: value.round(),
-                              );
-                            });
-                          },
-                    onChangeEnd: _currentDuration <= Duration.zero
-                        ? null
-                        : (value) {
-                            unawaited(
-                              _seekTo(
-                                engine,
-                                Duration(milliseconds: value.round()),
-                              ),
-                            );
-                          },
-                  ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (isLiveContent)
-                      const Text('En vivo')
-                    else
-                      Text(
-                        _formatDuration(
-                          _isSeeking ? _dragPosition : _currentPosition,
-                        ),
-                      ),
-                    if (isLiveContent)
-                      const Text('')
-                    else
-                      Text(_formatDuration(_currentDuration)),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onLongPressStart: canSeek
-                          ? (_) => _startContinuousSeek(
-                              engine,
-                              const Duration(seconds: -10),
-                            )
-                          : null,
-                      onLongPressEnd: (_) => _stopContinuousSeek(),
-                      onLongPressCancel: _stopContinuousSeek,
-                      child: IconButton(
-                        iconSize: 30,
-                        onPressed: canSeek
-                            ? () => unawaited(
-                                _seekBy(engine, const Duration(seconds: -10)),
-                              )
-                            : null,
-                        icon: const Icon(Icons.replay_10),
-                      ),
-                    ),
-                    IconButton(
-                      iconSize: 38,
-                      onPressed: () => unawaited(_togglePlayPause(engine)),
-                      icon: Icon(
-                        _isPlaying ? Icons.pause_circle : Icons.play_circle,
-                      ),
-                    ),
-                    GestureDetector(
-                      onLongPressStart: canSeek
-                          ? (_) => _startContinuousSeek(
-                              engine,
-                              const Duration(seconds: 10),
-                            )
-                          : null,
-                      onLongPressEnd: (_) => _stopContinuousSeek(),
-                      onLongPressCancel: _stopContinuousSeek,
-                      child: IconButton(
-                        iconSize: 30,
-                        onPressed: canSeek
-                            ? () => unawaited(
-                                _seekBy(engine, const Duration(seconds: 10)),
-                              )
-                            : null,
-                        icon: const Icon(Icons.forward_10),
-                      ),
-                    ),
-                  ],
-                ),
-                if (_lastError != null) ...[
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _lastError!,
-                          style: const TextStyle(color: Color(0xFFFF5252)),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: _retryNow,
-                        child: const Text('Reintentar ahora'),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _PlayerAction(
-                  icon: Icons.closed_caption,
-                  label: 'Subtítulos',
-                  onTap: () => _openSubtitleSelector(engine),
-                ),
-                _PlayerAction(
-                  icon: Icons.graphic_eq,
-                  label: 'Audio',
-                  onTap: () => _openAudioSelector(engine),
-                ),
-                _PlayerAction(
-                  icon: Icons.picture_in_picture_alt_outlined,
-                  label: 'PiP',
-                  onTap: _enterPiP,
-                ),
-                const _PlayerAction(icon: Icons.high_quality, label: 'Auto'),
-                const _PlayerAction(
-                  icon: Icons.fullscreen,
-                  label: 'Fullscreen',
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -696,6 +943,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   }
 
   Future<void> _togglePlayPause(PlayerEngine engine) async {
+    final playbackController = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey).notifier,
+    );
+    final playbackState = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey),
+    );
+
     if (engine == PlayerEngine.mediaKit) {
       final player = _mediaKitPlayer;
       if (player == null) {
@@ -712,9 +966,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       if (!mounted) {
         return;
       }
-      setState(() {
-        _isPlaying = player.state.playing;
-      });
+      playbackController.setPlaying(player.state.playing);
       return;
     }
 
@@ -724,7 +976,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       return;
     }
 
-    if (_isPlaying) {
+    if (playbackState.isPlaying) {
       await controller.pause();
     } else {
       await controller.play();
@@ -733,18 +985,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
-      _isPlaying = !_isPlaying;
-    });
+    playbackController.setPlaying(!playbackState.isPlaying);
   }
 
   Future<void> _seekTo(PlayerEngine engine, Duration position) async {
-    final clamped = Duration(
-      milliseconds: position.inMilliseconds.clamp(
-        0,
-        _currentDuration.inMilliseconds,
-      ),
+    final playbackController = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey).notifier,
     );
+    final clamped = playbackController.clampToDuration(position);
 
     if (engine == PlayerEngine.mediaKit) {
       final player = _mediaKitPlayer;
@@ -763,18 +1011,22 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
-      _isSeeking = false;
-      _currentPosition = clamped;
-    });
+    playbackController.completeSeek(clamped);
   }
 
   Future<void> _seekBy(PlayerEngine engine, Duration delta) async {
-    if (_currentDuration <= Duration.zero) {
+    final playbackState = ref.read(
+      playerPlaybackControllerProvider(_playbackProviderKey),
+    );
+    if (playbackState.currentDuration <= Duration.zero) {
       return;
     }
 
-    final base = _isSeeking ? _dragPosition : _currentPosition;
+    unawaited(HapticFeedback.lightImpact());
+
+    final base = playbackState.isSeeking
+        ? playbackState.dragPosition
+        : playbackState.currentPosition;
     final target = base + delta;
     await _seekTo(engine, target);
   }
@@ -785,6 +1037,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     _continuousSeekTimer = Timer.periodic(const Duration(milliseconds: 280), (
       _,
     ) {
+      if (!mounted) {
+        _stopContinuousSeek();
+        return;
+      }
       unawaited(_seekBy(engine, delta));
     });
   }
@@ -794,20 +1050,22 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     _continuousSeekTimer = null;
   }
 
-  void _retryNow() {
-    if (!mounted) {
-      return;
-    }
-    _reconnectTimer?.cancel();
-    setState(() {
-      _urlIndex = (_urlIndex + 1) % _activeUrlsCount;
-      _playerInstanceNonce += 1;
-      _lastError = null;
-      _lastProgressAt = DateTime.now();
-      _isPlaying = true;
-      _isSeeking = false;
+  void _scheduleUnavailableExit() {
+    _unavailableExitTimer?.cancel();
+    _unavailableExitTimer = Timer(const Duration(seconds: 2), () {
+      if (!mounted) {
+        return;
+      }
+      context.go(_contentFallbackRoute);
     });
   }
+
+  String get _contentFallbackRoute => switch (widget.contentType) {
+    'live' => '/live',
+    'vod' => '/movies',
+    'series' => '/series',
+    _ => '/home',
+  };
 }
 
 class _PlayerAction extends StatelessWidget {
@@ -821,12 +1079,127 @@ class _PlayerAction extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Column(
-          children: [Icon(icon), const SizedBox(height: 6), Text(label)],
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0x99102222),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0x220DF2F2)),
         ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: const Color(0xFF97B1B1)),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFFCCEEEE),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ControlIconButton extends StatelessWidget {
+  const _ControlIconButton({required this.icon, this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: const Color(0xAA102222),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: const Color(0x220DF2F2)),
+        ),
+        child: Icon(icon, color: const Color(0xFFEAF9F9)),
+      ),
+    );
+  }
+}
+
+class _FrostButton extends StatelessWidget {
+  const _FrostButton({required this.icon, this.onTap});
+
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(999),
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: const Color(0x99102222),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: const Color(0x220DF2F2)),
+        ),
+        child: Icon(icon, color: const Color(0xFFEAF9F9)),
+      ),
+    );
+  }
+}
+
+class _InlineReconnectStatus extends StatelessWidget {
+  const _InlineReconnectStatus({required this.isExhausted, this.message});
+
+  final bool isExhausted;
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 34,
+            height: 34,
+            child: isExhausted
+                ? const Icon(
+                    Icons.info_outline_rounded,
+                    size: 28,
+                    color: Color(0xFFFFD9B3),
+                  )
+                : const CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation(Color(0xFF0DF2F2)),
+                  ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            isExhausted
+                ? 'Contenido no disponible. Regresando...'
+                : (message ?? 'Reconectando...'),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: isExhausted
+                  ? const Color(0xFFFFD9B3)
+                  : const Color(0xFFE6F9F9),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

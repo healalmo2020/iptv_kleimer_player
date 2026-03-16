@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 class ApiClient {
   ApiClient({required this.baseUrl, http.Client? client}) : _client = client ?? http.Client();
 
+  static const Duration _requestTimeout = Duration(seconds: 12);
+
   final String baseUrl;
   final http.Client _client;
 
@@ -13,7 +15,7 @@ class ApiClient {
     required Map<String, String> query,
   }) async {
     final uri = Uri.parse('$baseUrl$path').replace(queryParameters: query);
-    final response = await _client.get(uri);
+    final response = await _client.get(uri).timeout(_requestTimeout);
 
     if (response.statusCode < 200 || response.statusCode > 299) {
       throw Exception('Request failed with status: ${response.statusCode}');
@@ -32,7 +34,7 @@ class ApiClient {
     required Map<String, String> query,
   }) async {
     final uri = Uri.parse('$baseUrl$path').replace(queryParameters: query);
-    final response = await _client.get(uri);
+    final response = await _client.get(uri).timeout(_requestTimeout);
 
     if (response.statusCode < 200 || response.statusCode > 299) {
       throw Exception('Request failed with status: ${response.statusCode}');
