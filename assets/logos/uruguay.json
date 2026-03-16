@@ -1,0 +1,818 @@
+[
+  {
+    "canal": "1000xHoraTV.uy",
+    "url": "https://i.imgur.com/wP3bbYr.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "33TV.uy",
+    "url": "https://i.imgur.com/gobt613.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ADULive.uy",
+    "url": "https://i.imgur.com/5mHeJTP.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ANPITV.uy",
+    "url": "https://i.imgur.com/vk3pZ0w.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "APlusV.uy",
+    "url": "https://i.imgur.com/tmEXjlY.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ActivaTV.uy",
+    "url": "https://i.imgur.com/0nwhraJ.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "AntelEventos.uy",
+    "url": "https://i.imgur.com/h8lcF21.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "AntelTVInternacional.uy",
+    "url": "https://i.imgur.com/24RTdiD.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ArtigasTelevision.uy",
+    "url": "https://i.imgur.com/XMqXdfI.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "AsuntosPublicos.uy",
+    "url": "https://i.imgur.com/qetG36i.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "AutonomaTV.uy",
+    "url": "https://i.imgur.com/G5hB8bx.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CCVCanal9.uy",
+    "url": "https://i.imgur.com/ZrUa7Qh.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CLDTV.uy",
+    "url": "https://i.imgur.com/OZWBGji.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CV10HDMercedes.uy",
+    "url": "https://i.imgur.com/wBiawGt.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CamaradeRepresentantes.uy",
+    "url": "https://i.imgur.com/rDcHjlb.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CamaradeSenadores.uy",
+    "url": "https://i.imgur.com/6NBK4LN.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CampoRuralTV.uy",
+    "url": "https://i.imgur.com/MO2jDMn.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal10.uy",
+    "url": "https://i.imgur.com/LowlfG2.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal10TVBellaUnion.uy",
+    "url": "https://i.imgur.com/w7iXbcE.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal11FrayBentos.uy",
+    "url": "https://i.imgur.com/tAC9v5t.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal11TV.uy",
+    "url": "https://i.imgur.com/h9jh44X.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal11TreintayTres.uy",
+    "url": "https://i.imgur.com/L66pQoa.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal11deSantaLucia.uy",
+    "url": "https://i.imgur.com/nPtGtpE.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal12Melo.uy",
+    "url": "https://i.imgur.com/xwLWoSC.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal13CerrodelVerdun.uy",
+    "url": "https://i.imgur.com/5xNMHD4.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal14YoungTeve.uy",
+    "url": "https://i.imgur.com/85h9bXi.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal23Florida.uy",
+    "url": "https://i.imgur.com/LyAjQOF.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal2Lascano.uy",
+    "url": "https://i.imgur.com/TnzrvuU.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal2MinasCableVision.uy",
+    "url": "https://i.imgur.com/mH0maHJ.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal2SanCarlos.uy",
+    "url": "https://i.imgur.com/Xo4SMvN.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal2VisionCanaria.uy",
+    "url": "https://i.imgur.com/3wmlfqk.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal38RBTV.uy",
+    "url": "https://i.imgur.com/pj03zef.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal3Colonia.uy",
+    "url": "https://i.imgur.com/pXknpTt.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal3SanJose.uy",
+    "url": "https://i.imgur.com/16SPvil.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4.uy",
+    "url": "https://i.imgur.com/E4gotbu.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4Chuy.uy",
+    "url": "https://i.imgur.com/oLKMwgm.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4Internacional.uy",
+    "url": "https://i.imgur.com/wsQ7z4o.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4JuanLacaze.uy",
+    "url": "https://i.imgur.com/gNqoBQo.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4Paysandu.uy",
+    "url": "https://i.imgur.com/9hVmY1R.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4Salto.uy",
+    "url": "https://i.imgur.com/SB52TSr.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal4Tacuarembo.uy",
+    "url": "https://i.imgur.com/3jL0Atd.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal5.uy",
+    "url": "https://i.imgur.com/IpYxSr1.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal5Salto.uy",
+    "url": "https://i.imgur.com/7trZYvV.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal5Tarariras.uy",
+    "url": "https://i.imgur.com/iBvfOcJ.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal6CiudaddelaCosta.uy",
+    "url": "https://i.imgur.com/WxxLktR.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal6Durazno.uy",
+    "url": "https://i.imgur.com/M14nDfC.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal7PuntadelEste.uy",
+    "url": "https://i.imgur.com/W87rlp2.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal7Tacuarembo.uy",
+    "url": "https://i.imgur.com/sXJMDYQ.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8.uy",
+    "url": "https://i.imgur.com/SMK9R73.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Artigas.uy",
+    "url": "https://i.imgur.com/nyYeBm3.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8BellaUnion.uy",
+    "url": "https://i.imgur.com/Oj2ceOU.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Carolino.uy",
+    "url": "https://i.imgur.com/l6KZSy9.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Durazno.uy",
+    "url": "https://i.imgur.com/knFYWoq.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8EventosHD.uy",
+    "url": "https://i.imgur.com/DeR02wC.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Mercedes.uy",
+    "url": "https://i.imgur.com/mg7ZB9K.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8RioBranco.uy",
+    "url": "https://i.imgur.com/6eenskw.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Rivera.uy",
+    "url": "https://i.imgur.com/Y7RWTTN.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Rosario.uy",
+    "url": "https://i.imgur.com/z5Rzh4L.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Salto.uy",
+    "url": "https://i.imgur.com/RB1U8zx.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal8Trinidad.uy",
+    "url": "https://i.imgur.com/vbWMlMV.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal9Palmitas.uy",
+    "url": "https://i.imgur.com/pu1FuRt.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Canal9Telerocha.uy",
+    "url": "https://i.imgur.com/v4doVEe.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalALMA.uy",
+    "url": "https://i.imgur.com/rB7iFUF.jpg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalLocalCardona.uy",
+    "url": "https://i.imgur.com/bQRQssZ.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalM.uy",
+    "url": "https://i.imgur.com/e9xYeh2.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalMas.uy",
+    "url": "https://i.imgur.com/T2vgUvN.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalOncePuntadelEste.uy",
+    "url": "https://i.imgur.com/qlQL8Pp.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanalTRESSarandidelYi.uy",
+    "url": "https://i.imgur.com/aiozt4F.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CanelonesCapitalTV.uy",
+    "url": "https://i.imgur.com/j52Y2mq.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CardinalTV.uy",
+    "url": "https://i.imgur.com/NOoZNgK.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "CharruaTelevision.uy",
+    "url": "https://i.imgur.com/KWAuNXn.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "DelEsteTV.uy",
+    "url": "https://i.imgur.com/bUlmXW5.jpg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "DesdeElSurTV.uy",
+    "url": "https://i.imgur.com/y3vNkEU.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Dexary.uy",
+    "url": "https://i.imgur.com/HXfxyVz.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "DoloresPlusTV.uy",
+    "url": "https://i.imgur.com/X5nd51O.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "DuraznoTV.uy",
+    "url": "https://i.imgur.com/qFEi97E.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "EfusivaTV.uy",
+    "url": "https://i.imgur.com/mOoaA4w.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ElCanaldelaRegion.uy",
+    "url": "https://i.imgur.com/pn2QBwl.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "EventosTV.uy",
+    "url": "https://i.imgur.com/ovfzHht.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "FIXTV.uy",
+    "url": "https://i.imgur.com/iFSGp7V.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "FTC.uy",
+    "url": "https://i.imgur.com/kPuW1fm.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "ICMtv.uy",
+    "url": "https://i.imgur.com/hFHXi1z.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "LaCostaTV.uy",
+    "url": "https://i.imgur.com/dR4a5t3.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "LaRed.uy",
+    "url": "https://i.imgur.com/COThfaj.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "LatinaTVPaysandu.uy",
+    "url": "https://i.imgur.com/t4MeCLF.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "LatinoKidsTV.uy",
+    "url": "https://i.imgur.com/VEk5aJ6.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MASBUS.uy",
+    "url": "https://i.imgur.com/pY70bSr.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MIEM.uy",
+    "url": "https://i.imgur.com/4MEN4EI.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MaronasEntertainment.uy",
+    "url": "https://i.imgur.com/qssSxPn.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MasTelevision.uy",
+    "url": "https://i.imgur.com/N0leaVD.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MiMovilTV.uy",
+    "url": "https://i.imgur.com/5yJ7CY7.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "MisionVidaTV.uy",
+    "url": "https://i.imgur.com/8JgBuTm.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "NSEventos1.uy",
+    "url": "https://i.imgur.com/UGACkCb.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "NSEventos2.uy",
+    "url": "https://i.imgur.com/UGACkCb.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "NSEventos3.uy",
+    "url": "https://i.imgur.com/UGACkCb.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "NovaTVProgreso.uy",
+    "url": "https://i.imgur.com/lnKD2ud.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "NuevoSigloTV.uy",
+    "url": "https://i.imgur.com/4lFaoq6.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "PantallaIMPO.uy",
+    "url": "https://i.imgur.com/mX9qRhl.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "PerfilesTV.uy",
+    "url": "https://i.imgur.com/k7BTTfB.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Plazacanal.uy",
+    "url": "https://i.imgur.com/XMwX6qi.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "PlusDeportesUy.uy",
+    "url": "https://i.imgur.com/EEJhvAA.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "PopTV.uy",
+    "url": "https://i.imgur.com/WOy1wnx.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "RDTV.uy",
+    "url": "https://i.imgur.com/V5ZyMUy.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "RioUruguayTV.uy",
+    "url": "https://i.imgur.com/hTNKaKZ.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Siemprecine.uy",
+    "url": "https://i.imgur.com/ChcMDLv.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "SomosTV.uy",
+    "url": "https://i.imgur.com/7AmwhKq.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "SuperCanal.uy",
+    "url": "https://i.imgur.com/tUkaM4i.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TCC1.uy",
+    "url": "https://i.imgur.com/r5uXyWm.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TCC2.uy",
+    "url": "https://i.imgur.com/h414U6c.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TCC3.uy",
+    "url": "https://i.imgur.com/yNPRo1B.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TCCVivo.uy",
+    "url": "https://i.imgur.com/rAqUXPj.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TUtv.uy",
+    "url": "https://i.imgur.com/1kyLoMt.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TV10Rivera.uy",
+    "url": "https://i.imgur.com/skXYSE0.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TV5Artigas.uy",
+    "url": "https://i.imgur.com/L0qSxaw.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVABCPalmira.uy",
+    "url": "https://i.imgur.com/tuiX3RD.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVCiudad.uy",
+    "url": "https://i.imgur.com/zoEYZil.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVEODolores.uy",
+    "url": "https://i.imgur.com/lk5Tbm4.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVFlorida.uy",
+    "url": "https://i.imgur.com/ORjoLdw.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVLPando.uy",
+    "url": "https://i.imgur.com/yTiMKoj.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVLibre.uy",
+    "url": "https://i.imgur.com/pM6vGJa.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVRio.uy",
+    "url": "https://i.imgur.com/sdlFOFk.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVRochense.uy",
+    "url": "https://i.imgur.com/gy7sJ90.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TVUniversalUruguay.uy",
+    "url": "https://i.imgur.com/KD4aZ7W.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TeleR.uy",
+    "url": "https://i.imgur.com/fA1NQVv.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "Teledoce.uy",
+    "url": "https://i.imgur.com/rgwizEF.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "TevePlusFlorida.uy",
+    "url": "https://i.imgur.com/BTAJyox.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "UCL.uy",
+    "url": "https://i.imgur.com/BzQphbw.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "UruguayNaturalTV.uy",
+    "url": "https://i.imgur.com/dDCw8KX.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "UruguayPresidencia.uy",
+    "url": "https://i.imgur.com/3PQIRUZ.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VCCLagunadelSauceTV.uy",
+    "url": "https://i.imgur.com/9gY0LJ4.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VIVOTV.uy",
+    "url": "https://i.ibb.co/Drx6fgZ/Logo-white.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VTV.uy",
+    "url": "https://i.imgur.com/SiImXjJ.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VTVPlus.uy",
+    "url": "https://i.imgur.com/HndFaFP.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VeraPlus.uy",
+    "url": "https://i.imgur.com/WytFWZ9.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VideoCableCastillos.uy",
+    "url": "https://i.imgur.com/7AGF2MZ.jpeg",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  },
+  {
+    "canal": "VivoCanal3.uy",
+    "url": "https://i.imgur.com/eqIznb4.png",
+    "pais_codigo": "UY",
+    "pais": "Uruguay"
+  }
+]

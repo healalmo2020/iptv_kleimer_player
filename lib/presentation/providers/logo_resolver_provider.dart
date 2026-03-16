@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/json_logo_item.dart';
 
@@ -21,32 +21,45 @@ class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
     _isLoading = true;
 
     try {
-      // In a real TV environment, we might want to use compute() if the JSON is very large
-      // to avoid frame drops during warmup.
-      final file = File('channel_logos.json');
-      if (!await file.exists()) {
+      // 1. Find all logo assets using the manifest
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      
+      final logoPaths = manifestMap.keys
+          .where((String key) => key.startsWith('assets/logos/') && key.endsWith('.json'))
+          .toList();
+
+      if (logoPaths.isEmpty) {
+        if (kDebugMode) print('LogoResolver: No logo files found in assets/logos/');
         _isLoading = false;
         return;
       }
 
-      final content = await file.readAsString();
-      final List<dynamic> jsonList = json.decode(content);
-
       final Map<String, String> index = {};
-      for (final item in jsonList) {
-        final logo = JsonLogoItem.fromJson(item as Map<String, dynamic>);
-        // Index by normalized name for O(1) lookup
-        final key = _normalizeForLookup(logo.canal);
-        index[key] = logo.url;
+
+      // 2. Load each file and aggregate into the index
+      for (final path in logoPaths) {
+        try {
+          final content = await rootBundle.loadString(path);
+          final List<dynamic> jsonList = json.decode(content);
+
+          for (final item in jsonList) {
+            final logo = JsonLogoItem.fromJson(item as Map<String, dynamic>);
+            final key = _normalizeForLookup(logo.canal);
+            index[key] = logo.url;
+          }
+        } catch (e) {
+          if (kDebugMode) print('LogoResolver Error loading $path: $e');
+        }
       }
 
       state = index;
       if (kDebugMode) {
-        print('LogoResolver: Indexed ${index.length} logos from JSON');
+        print('LogoResolver: Indexed ${index.length} logos from ${logoPaths.length} country files');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('LogoResolver Error: $e');
+        print('LogoResolver Global Error: $e');
       }
     } finally {
       _isLoading = false;

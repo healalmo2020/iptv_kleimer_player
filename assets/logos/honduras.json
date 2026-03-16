@@ -1,0 +1,944 @@
+[
+  {
+    "canal": "45TV.hn",
+    "url": "https://i.imgur.com/SjUnQlg.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "504TV.hn",
+    "url": "https://i.imgur.com/c2HLI3k.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AZATVHD.hn",
+    "url": "https://i.imgur.com/Jytpy32.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ActivaTV.hn",
+    "url": "https://i.imgur.com/S69lDu4.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AlfaOmegaVision.hn",
+    "url": "https://i.imgur.com/4BSKCQT.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AlsaciasTelevision.hn",
+    "url": "https://i.imgur.com/SbuD1UW.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AvanceHD.hn",
+    "url": "https://i.imgur.com/gEiTlsC.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AvivaTV.hn",
+    "url": "https://i.imgur.com/0jMM4TQ.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "AztecaHonduras.hn",
+    "url": "https://i.imgur.com/sxFh1dw.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "BayIslandsEntertainmentTV.hn",
+    "url": "https://i.imgur.com/tcj3hLm.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "BuendiaTV.hn",
+    "url": "https://i.imgur.com/m5hNyNE.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CCIChannel.hn",
+    "url": "https://i.imgur.com/c6hm03f.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CHTV.hn",
+    "url": "https://i.imgur.com/QLQgwc6.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CRTelevisionCholuteca.hn",
+    "url": "https://i.imgur.com/pUnenh6.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CTVInternacional.hn",
+    "url": "https://i.imgur.com/BcmQhry.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CVATV.hn",
+    "url": "https://i.imgur.com/R8P5enu.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CampusTV.hn",
+    "url": "https://i.imgur.com/E1TmADM.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal11.hn",
+    "url": "https://i.imgur.com/Sht2Rd4.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal12Guaimaca.hn",
+    "url": "https://i.imgur.com/SEwSEXA.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal12TV.hn",
+    "url": "https://i.imgur.com/CygHFtz.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal15DTP.hn",
+    "url": "https://i.imgur.com/QQNcob1.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal22Telenerema.hn",
+    "url": "https://i.imgur.com/nWmOnBE.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal24.hn",
+    "url": "https://i.imgur.com/S2FBWpj.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal32STO.hn",
+    "url": "https://i.imgur.com/dS4Gb0Q.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal4Victoria.hn",
+    "url": "https://i.imgur.com/cyK3p5p.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal51.hn",
+    "url": "https://i.imgur.com/xhVEEA1.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal5ElLider.hn",
+    "url": "https://i.imgur.com/4hEYFa9.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal6.hn",
+    "url": "https://i.imgur.com/vygCUNz.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal7TalangaVision.hn",
+    "url": "https://i.ibb.co/0cqcyz4/Logo-2020-azul-El-lider-de-la-zona.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Canal8.hn",
+    "url": "https://i.imgur.com/5wGLpef.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CanalUnoCholuteca.hn",
+    "url": "https://i.imgur.com/8yU3chu.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CaribeTVRoatan.hn",
+    "url": "https://i.imgur.com/CP0tjBc.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Catavision.hn",
+    "url": "https://i.imgur.com/E7o0ots.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CeibaVisionCanal36.hn",
+    "url": "https://i.imgur.com/90h9abf.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CholusatSur36.hn",
+    "url": "https://i.imgur.com/6qL2hE5.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CholutecaTV.hn",
+    "url": "https://i.imgur.com/mpc4Isd.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "CholuvisionCanal27.hn",
+    "url": "https://i.imgur.com/vEXsnhX.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "DTV.hn",
+    "url": "https://i.imgur.com/UpsLEAV.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "DeportesTVC.hn",
+    "url": "https://i.imgur.com/Y1t8xkL.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "DiosTeVe.hn",
+    "url": "https://i.imgur.com/7hNwUV2.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "DiosTeVeKids.hn",
+    "url": "https://i.imgur.com/GnZicVH.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "DiosTvTalanga.hn",
+    "url": "https://i.ibb.co/mb8F7R1/Db52f621d30793337de1cdcfc4f02be1.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "EDNTV.hn",
+    "url": "https://i.imgur.com/5fPsYTz.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ENTV.hn",
+    "url": "https://i.imgur.com/GQ3ka8z.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ENTVCanal13Danli.hn",
+    "url": "https://i.imgur.com/KQaoJGD.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "EbenezerTV.hn",
+    "url": "https://i.imgur.com/IC30j61.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "EmanuelTV.hn",
+    "url": "https://i.imgur.com/I9ChVMD.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GRTCanal31.hn",
+    "url": "https://i.imgur.com/nq5mocX.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GalaxiaTVRocas.hn",
+    "url": "https://i.imgur.com/h9yj16r.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GirasolTV.hn",
+    "url": "https://i.imgur.com/2t7A2yg.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GloboTV.hn",
+    "url": "https://i.imgur.com/hxGvZ77.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GoTV.hn",
+    "url": "https://i.imgur.com/qPugeWX.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GuaimacaTV.hn",
+    "url": "https://i.imgur.com/iTD61O5.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "GuayapeTV.hn",
+    "url": "https://i.imgur.com/cteBdAJ.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "HCH.hn",
+    "url": "https://i.imgur.com/2CB5ezq.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Hondured13.hn",
+    "url": "https://i.imgur.com/5W6z7ed.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ICNDigital.hn",
+    "url": "https://i.imgur.com/UCZVQgj.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ImagenFM1051.hn",
+    "url": "https://i.ibb.co/C9zjz9p/343159606-190989583743350-3489987129696505785-n.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "InmaculadaTV.hn",
+    "url": "https://i.imgur.com/2lisFJV.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "JBNTV.hn",
+    "url": "https://i.imgur.com/4EbHIvf.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "JehovaTV.hn",
+    "url": "https://i.imgur.com/ylZKG57.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "JuncoTv.hn",
+    "url": "https://i.imgur.com/KAsAwxP.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "KerussoTV.hn",
+    "url": "https://i.imgur.com/S79uof0.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LTV.hn",
+    "url": "https://i.imgur.com/KBYUOcP.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "La981TV.hn",
+    "url": "https://i.imgur.com/7380kTN.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LaNuevaVisionHD.hn",
+    "url": "https://i.imgur.com/Hh1QKZ2.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LaTop1029.hn",
+    "url": "https://i.imgur.com/ZqwLPag.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LaTop1077.hn",
+    "url": "https://i.imgur.com/vgHhh1W.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LencaTV.hn",
+    "url": "https://i.imgur.com/fc5IHSy.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LiberVisionTV.hn",
+    "url": "https://i.imgur.com/6Ug75te.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LiderTV.hn",
+    "url": "https://i.imgur.com/Mj4Wrvr.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "LitoralAtlanticoHD.hn",
+    "url": "https://i.imgur.com/UXsgEPX.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MVC.hn",
+    "url": "https://i.imgur.com/D7WvS6I.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MasNoticiasTelevision.hn",
+    "url": "https://i.imgur.com/FG4nfRX.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MasTelevisiondeColon.hn",
+    "url": "https://i.imgur.com/ksPEAfu.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MayaTV.hn",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Maya_TV_logo.png/960px-Maya_TV_logo.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MegavisionCanal28.hn",
+    "url": "https://i.imgur.com/nzBKRzD.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MetroTV.hn",
+    "url": "https://i.imgur.com/BqS8BHi.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MultiTVCholoma.hn",
+    "url": "https://i.imgur.com/U8lMHDb.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MulticableTVLasVegas.hn",
+    "url": "https://i.imgur.com/QYo1eVF.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MulticableTVMorazan.hn",
+    "url": "https://i.imgur.com/QYo1eVF.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MulticableTVRioLindo.hn",
+    "url": "https://i.imgur.com/QYo1eVF.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "MulticableTVSanAntonio.hn",
+    "url": "https://i.imgur.com/QYo1eVF.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "OlanchitoTVCanal23.hn",
+    "url": "https://i.imgur.com/v1o1oT5.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "OrienteTelevision.hn",
+    "url": "https://i.imgur.com/MIzqrvW.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ParadiseTV.hn",
+    "url": "https://i.imgur.com/9yMyYCn.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "PateplumaTelevision.hn",
+    "url": "https://i.imgur.com/xvT01Qm.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "PicosaTV.hn",
+    "url": "https://i.imgur.com/AGFeu7r.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "PorvenirTV.hn",
+    "url": "https://i.imgur.com/mOwCSPY.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "PuringlaTV.hn",
+    "url": "https://i.imgur.com/CGyjxPO.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "QhuboTV.hn",
+    "url": "https://i.imgur.com/yZmnfvj.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RCVTV.hn",
+    "url": "https://i.imgur.com/0TEeEFG.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RHCTV.hn",
+    "url": "https://i.imgur.com/kJUzdlf.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RSVHonduras.hn",
+    "url": "https://i.imgur.com/yr7Ellh.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RTV.hn",
+    "url": "https://i.imgur.com/c8wAvxC.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RadioFiestadeMilagrosTV.hn",
+    "url": "https://i.imgur.com/hqYPAYL.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RadioIdeal.hn",
+    "url": "https://i.imgur.com/chPfoOs.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RadioOmegaTV.hn",
+    "url": "https://i.ibb.co/nfJhQMx/Bj7qf5-Tb-Z9.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RoatanInfoinsularTV.hn",
+    "url": "https://i.imgur.com/t0q6kjG.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "RoatanTravelNetwork.hn",
+    "url": "https://i.imgur.com/uPIuv3K.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SMY29.hn",
+    "url": "https://i.imgur.com/RBe1R0L.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SPDHTV.hn",
+    "url": "https://i.imgur.com/gLXydsH.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "STVETelebasica.hn",
+    "url": "https://i.imgur.com/nUsq67m.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SanIgnacioTV.hn",
+    "url": "https://i.ibb.co/XJNGsv0/903784d2b8df3f29a43579b78d4341d3.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SantaBarbaraVision.hn",
+    "url": "https://i.imgur.com/Hpc3AEP.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SercanoTV.hn",
+    "url": "https://pbs.twimg.com/profile_images/972873782972076032/6cacahDX_400x400.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SiTV.hn",
+    "url": "https://i.imgur.com/w5aKt2l.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SulaTV.hn",
+    "url": "https://i.imgur.com/v90r5jS.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SurTV.hn",
+    "url": "https://i.imgur.com/iqLSN8j.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "SuyapaTV.hn",
+    "url": "https://i.imgur.com/I7GuToz.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TCtvHonduras.hn",
+    "url": "https://i.imgur.com/W5ZnXL0.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TDVTV.hn",
+    "url": "https://i.ibb.co/C2mr74y/Ee0f72e3708fb045177dd894cc93ae99.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TENCanal10.hn",
+    "url": "https://i.imgur.com/HQiKyHy.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TSi.hn",
+    "url": "https://i.imgur.com/GEyxDnf.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVCentro272HD.hn",
+    "url": "https://i.imgur.com/Wo2scQf.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVCentroHD.hn",
+    "url": "https://i.imgur.com/bcfmqHb.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVCopan.hn",
+    "url": "https://i.imgur.com/JiPmRFr.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVES.hn",
+    "url": "https://i.imgur.com/iLW5e2T.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVEstrella.hn",
+    "url": "https://i.imgur.com/QqSR7l7.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVMASHD.hn",
+    "url": "https://i.imgur.com/tjnTbRR.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVOCanal43.hn",
+    "url": "https://i.imgur.com/DkrjD8u.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVSCanal42.hn",
+    "url": "https://i.imgur.com/n7Lcxlp.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TVSanMarcos.hn",
+    "url": "https://i.imgur.com/oNMptq7.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TalangaTVCanal39.hn",
+    "url": "https://i.imgur.com/5GiUzHC.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telavision.hn",
+    "url": "https://i.imgur.com/vzjqAZh.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TeleDanli.hn",
+    "url": "https://i.imgur.com/BACuUSc.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TeleMarcovia.hn",
+    "url": "https://i.imgur.com/SXTAn9u.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TeleProgreso.hn",
+    "url": "https://i.imgur.com/yBDI3AF.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telecadena7y4.hn",
+    "url": "https://i.imgur.com/PTN7fCa.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telecaes49.hn",
+    "url": "https://i.imgur.com/urkZzrd.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Teleceiba.hn",
+    "url": "https://i.imgur.com/oPSfsvy.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Teledisa.hn",
+    "url": "https://i.imgur.com/PZ5k62M.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelemarHD.hn",
+    "url": "https://i.imgur.com/ugOnfU7.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telemas.hn",
+    "url": "https://i.imgur.com/eORs1yt.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telerayo.hn",
+    "url": "https://i.imgur.com/jLQsU1u.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Telesistema3y7.hn",
+    "url": "https://i.imgur.com/5viHgRa.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelesurCanal33.hn",
+    "url": "https://i.imgur.com/mWEuxlY.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Televida.hn",
+    "url": "https://i.imgur.com/yDR4qkJ.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisionComayaguaCanal40.hn",
+    "url": "https://i.imgur.com/uDLhsDM.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisionMetropolis191.hn",
+    "url": "https://i.imgur.com/X5C1GzB.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisionMetropolis192.hn",
+    "url": "https://i.imgur.com/QaocW5x.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisionOlanchana.hn",
+    "url": "https://i.imgur.com/8LnLEQz.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisionOriental.hn",
+    "url": "https://i.imgur.com/DmsvpoS.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TelevisiondeTocoa.hn",
+    "url": "https://i.imgur.com/21mBI8h.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "ThunderSports.hn",
+    "url": "https://i.imgur.com/uGXrqWk.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TigoSports.hn",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Tigo_Sports_2025.png/960px-Tigo_Sports_2025.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "TodoDeportesTV.hn",
+    "url": "https://i.imgur.com/afqIy2K.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "UNAHUTV.hn",
+    "url": "https://i.imgur.com/GhzaYbK.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "UNETV.hn",
+    "url": "https://i.imgur.com/V9Fpd3Y.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "UncionTV.hn",
+    "url": "https://i.imgur.com/Amf1a0C.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "VTV.hn",
+    "url": "https://i.imgur.com/CsPkwD5.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "Vallevision.hn",
+    "url": "https://i.imgur.com/hvn2tVA.jpg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "VenusTV.hn",
+    "url": "https://i.imgur.com/JIpbPCZ.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "VillavisionTV.hn",
+    "url": "https://i.imgur.com/NAdMyAM.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "VivaTVCanal45.hn",
+    "url": "https://i.imgur.com/pa7RnKc.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "WaldivisionInternacional.hn",
+    "url": "https://i.imgur.com/NB8pfpb.png",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  },
+  {
+    "canal": "YojoaTVCanal12.hn",
+    "url": "https://i.imgur.com/Kgc6R9d.jpeg",
+    "pais_codigo": "HN",
+    "pais": "Honduras"
+  }
+]
