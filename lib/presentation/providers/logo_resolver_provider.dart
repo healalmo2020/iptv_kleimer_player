@@ -61,9 +61,6 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
               final countryKey = _normalizeCountry(logo.pais);
               final channelKey = _normalizeForLookup(logo.canal);
               
-              if (kDebugMode && countryKey == 'honduras' && (nestedIndex['honduras']?.length ?? 0) < 5) {
-                print('LogoResolver: Honduras item mapped: "$channelKey" -> ${logo.url.substring(0, 20)}...');
-              }
 
               final countryMap = nestedIndex.putIfAbsent(countryKey, () => {});
               countryMap[channelKey] = logo.url;

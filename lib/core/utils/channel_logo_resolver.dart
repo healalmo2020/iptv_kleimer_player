@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 
 String resolveChannelLogoUrl({
   required String channelName,
@@ -6,74 +5,65 @@ String resolveChannelLogoUrl({
   Map<String, Map<String, String>>? jsonIndex,
   String? country,
 }) {
-  // 1. Try Country-Specific Search (Highest Accuracy)
+  // 1. Try JSON index lookup (High Priority)
   if (jsonIndex != null && jsonIndex.isNotEmpty) {
-     final countryKey = country != null ? _normalizeCountryForLookup(country) : null;
-     final searchKey = _normalizeForJsonLookup(channelName);
+    final searchKey = _normalizeForJsonLookup(channelName);
+    final countryKey = country != null ? _normalizeCountryForLookup(country) : null;
 
-     if (kDebugMode && (channelName.toLowerCase().contains('chtv') || channelName.toLowerCase().contains('hch'))) {
-        print('[LOGO-RESOLVER] Debugging channel: "$channelName"');
-        print('[LOGO-RESOLVER] -> Generated Search Key: "$searchKey"');
-        print('[LOGO-RESOLVER] -> Target Country Key: "$countryKey"');
-        if (countryKey != null) {
-          print('[LOGO-RESOLVER] -> Country In Index: ${jsonIndex.containsKey(countryKey)}');
-          if (jsonIndex.containsKey(countryKey)) {
-             print('[LOGO-RESOLVER] -> Sample Keys in Country Map: ${jsonIndex[countryKey]!.keys.take(5).toList()}');
+    // Search Level 1: In the deduced country
+    if (countryKey != null) {
+      final targetIso = _countryToIso(countryKey);
+      final countryMap = jsonIndex[targetIso] ?? jsonIndex[countryKey];
+      
+      if (countryMap != null) {
+        // Exact match in country
+        if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
+
+        // Fuzzy match in country
+        for (final entry in countryMap.entries) {
+          if (searchKey.length > 2 && (entry.key.contains(searchKey) || searchKey.contains(entry.key))) {
+            return entry.value;
           }
         }
-     }
+      }
+    }
 
-     if (countryKey != null) {
-        final Map<String, String>? countryMap = jsonIndex[countryKey] ?? jsonIndex[_countryToIso(countryKey)];
-        
-        if (countryMap != null) {
-          // Layer 1: Exact Match in Country
-          if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
+    // Search Level 2: Global fallback (search in all countries)
+    for (final countryEntry in jsonIndex.entries) {
+      final map = countryEntry.value;
+      if (map.containsKey(searchKey)) return map[searchKey]!;
 
-          // Layer 2: Fuzzy Match in Country
-          for (final entry in countryMap.entries) {
-            final jsonKey = entry.key;
-            if (searchKey.length > 2 && (jsonKey.contains(searchKey) || searchKey.contains(jsonKey))) {
-              return entry.value;
-            }
+      // Deep global fuzzy
+      if (searchKey.length > 3) {
+        for (final entry in map.entries) {
+          if (entry.key.contains(searchKey) || searchKey.contains(entry.key)) {
+            return entry.value;
           }
         }
-     }
+      }
+    }
 
-     // 2. GLOBAL FALLBACK
-     for (final countryEntry in jsonIndex.entries) {
-       final map = countryEntry.value;
-       if (map.containsKey(searchKey)) return map[searchKey]!;
-
-       if (searchKey.length > 3) {
-         for (final entry in map.entries) {
-           final jk = entry.key;
-           if (jk.contains(searchKey) || searchKey.contains(jk)) return entry.value;
-         }
-       }
-     }
-
-     // 3. AT-ANY-COST GLOBAL FALLBACK
-     final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
-     if (atAnyCostKey.isNotEmpty && atAnyCostKey.length > 2) {
-       for (final countryEntry in jsonIndex.entries) {
-         final map = countryEntry.value;
-         for (final entry in map.entries) {
-           if (entry.key == atAnyCostKey || entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
-             return entry.value;
-           }
-         }
-       }
-     }
+    // Search Level 3: At-any-cost search (ignore symbols completely)
+    final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
+    if (atAnyCostKey.length > 3) {
+      for (final countryEntry in jsonIndex.entries) {
+        final map = countryEntry.value;
+        for (final entry in map.entries) {
+          if (entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
+            return entry.value;
+          }
+        }
+      }
+    }
   }
 
-  // 4. Fall back to server-provided icon URL
+  // 2. Fall back to server-provided icon URL (may be broken, but worth trying)
   final primary = primaryIconUrl?.trim();
   if (primary != null && primary.isNotEmpty) {
     return primary;
   }
 
-  // 5. Final fallback to existing manual repository
+  // 3. Final fallback to existing manual repository
   return resolveChannelLogoRepositoryUrl(channelName: channelName);
 }
 
@@ -84,17 +74,16 @@ String _normalizeCountryForLookup(String country) {
 }
 
 String _countryToIso(String country) {
-  const map = {
-    'honduras': 'hn',
-    'mexico': 'mx',
-    'spain': 'es',
-    'unitedstates': 'us',
-    'argentina': 'ar',
-    'colombia': 'co',
-    'chile': 'cl',
-    'peru': 'pe',
-  };
-  return map[country] ?? country;
+  final c = country.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '').trim();
+  if (c.contains('honduras') || c == 'hn' || c == 'hon' || c == 'hnd') return 'hn';
+  if (c.contains('mexico') || c == 'mx' || c == 'mex') return 'mx';
+  if (c.contains('espana') || c.contains('spain') || c == 'es' || c == 'esp') return 'es';
+  if (c.contains('usa') || c.contains('unitedstates') || c == 'us') return 'us';
+  if (c.contains('argentina') || c == 'ar' || c == 'arg') return 'ar';
+  if (c.contains('colombia') || c == 'co' || c == 'col') return 'co';
+  if (c.contains('chile') || c == 'cl' || c == 'chl') return 'cl';
+  if (c.contains('peru') || c == 'pe') return 'pe';
+  return c;
 }
 
 String _sharedNormalize(String name) {
