@@ -240,6 +240,20 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                           }
                         }
 
+                        // ---- DIAGNOSTIC BLOCK (remove after debug) ----
+                        if (index == 0) {
+                          debugPrint('[LOGO-DEBUG] === Index size: ${logoIndex.length} countries ===');
+                          debugPrint('[LOGO-DEBUG] Countries available: ${logoIndex.keys.toList()}');
+                          debugPrint('[LOGO-DEBUG] Category raw name: "${currentCategory?.name}"');
+                          debugPrint('[LOGO-DEBUG] Deduced country raw: "$deducedCountry"');
+                          final normalizedCountry = deducedCountry?.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '');
+                          debugPrint('[LOGO-DEBUG] Normalized country: "$normalizedCountry"');
+                          debugPrint('[LOGO-DEBUG] Channels in that country: ${logoIndex[normalizedCountry]?.length ?? 0}');
+                          debugPrint('[LOGO-DEBUG] Stream name: "${stream.name}"');
+                          debugPrint('[LOGO-DEBUG] Stream iconUrl: "${stream.iconUrl}"');
+                        }
+                        // ---- END DIAGNOSTIC BLOCK ----
+
                         final logoUrl = resolveChannelLogoUrl(
                           channelName: stream.name,
                           primaryIconUrl: stream.iconUrl,

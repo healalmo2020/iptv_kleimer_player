@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 String resolveChannelLogoUrl({
   required String channelName,
   String? primaryIconUrl,
@@ -14,12 +16,21 @@ String resolveChannelLogoUrl({
     final countryKey = _normalizeCountryForLookup(country);
     final countryMap = jsonIndex[countryKey];
     
+    if (kDebugMode && countryKey == 'honduras') {
+       print('[RESOLVER-DEBUG] Searching in Honduras map. Channel: "$channelName"');
+    }
+
     if (countryMap != null && countryMap.isNotEmpty) {
       final key = _normalizeForJsonLookup(channelName);
       
+      if (kDebugMode && countryKey == 'honduras') {
+         print('[RESOLVER-DEBUG] Normalized key: "$key"');
+      }
+
       // Layer 1: Exact Match (O(1))
       final exactUrl = countryMap[key];
       if (exactUrl != null && exactUrl.isNotEmpty) {
+        if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Match FOUND: $exactUrl');
         return exactUrl;
       }
 
@@ -28,10 +39,14 @@ String resolveChannelLogoUrl({
         final jsonKey = entry.key;
         if (key.length > 2 && jsonKey.length > 2) {
           if (jsonKey.contains(key) || key.contains(jsonKey)) {
+            if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Fuzzy Match FOUND: ${entry.value}');
             return entry.value;
           }
         }
       }
+      if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] No match found in Honduras map.');
+    } else {
+      if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Honduras map is NULL or EMPTY.');
     }
   }
 
