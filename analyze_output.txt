@@ -1,0 +1,12 @@
+Analyzing iptv_kleimer_player-warmup-preload...                 
+
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:28:10 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:34:53 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:43:57 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:49:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:56:13 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:62:9 • avoid_print
+   info • Don't invoke 'print' in production code • lib/core/utils/channel_logo_resolver.dart:63:9 • avoid_print
+   info • The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' • lib/presentation/screens/live/live_screen.dart:9:8 • unnecessary_import
+
+8 issues found. (ran in 1.8s)

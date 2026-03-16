@@ -20,17 +20,24 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
     if (_isLoading) return;
     _isLoading = true;
 
+    if (kDebugMode) print('LogoResolver: Starting to load logos...');
+
     try {
-      // 1. Find all logo assets using the manifest
-      final manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-      
-      final logoPaths = manifestMap.keys
-          .where((String key) => key.startsWith('assets/logos/') && key.endsWith('.json'))
+      // 1. Find all logo assets using the modern AssetManifest API
+      final AssetManifest manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      final List<String> logoPaths = manifest.listAssets()
+          .where((String key) => key.contains('assets/logos/') && key.endsWith('.json'))
           .toList();
 
+      if (kDebugMode) {
+        print('LogoResolver: Found ${logoPaths.length} logo files in assets/logos/');
+        if (logoPaths.isNotEmpty) {
+          print('LogoResolver: Sample paths: ${logoPaths.take(3).toList()}');
+        }
+      }
+
       if (logoPaths.isEmpty) {
-        if (kDebugMode) print('LogoResolver: No logo files found in assets/logos/');
+        if (kDebugMode) print('LogoResolver: WARNING - No logo files found in assets/logos/. Check pubspec.yaml');
         _isLoading = false;
         return;
       }
@@ -53,6 +60,9 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
             final countryMap = nestedIndex.putIfAbsent(countryKey, () => {});
             countryMap[channelKey] = logo.url;
           }
+          if (kDebugMode) {
+            print('LogoResolver: Loaded ${jsonList.length} items from $path');
+          }
         } catch (e) {
           if (kDebugMode) print('LogoResolver Error loading $path: $e');
         }
@@ -62,7 +72,12 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
       if (kDebugMode) {
         int total = 0;
         nestedIndex.forEach((_, map) => total += map.length);
-        print('LogoResolver: Listed Countries: ${nestedIndex.keys.toList()}');
+        print('LogoResolver: Listed Country Keys: ${nestedIndex.keys.toList()}');
+        if (nestedIndex.containsKey('honduras')) {
+           print('LogoResolver: Honduras is REGISTERED with ${nestedIndex['honduras']!.length} logos');
+        } else {
+           print('LogoResolver: WARNING - Honduras NOT FOUND in index keys!');
+        }
         print('LogoResolver: Indexed $total logos across ${nestedIndex.length} countries');
       }
     } catch (e) {

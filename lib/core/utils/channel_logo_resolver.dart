@@ -14,11 +14,12 @@ String resolveChannelLogoUrl({
   // 1. Try JSON index with country filter - STRICT MODE (highest priority)
   if (jsonIndex != null && jsonIndex.isNotEmpty && country != null && country.isNotEmpty) {
     final countryKey = _normalizeCountryForLookup(country);
-    final countryMap = jsonIndex[countryKey];
     
-    if (kDebugMode && countryKey == 'honduras') {
-       print('[RESOLVER-DEBUG] Searching in Honduras map. Channel: "$channelName"');
+    if (kDebugMode) {
+      print('[RESOLVER-DEBUG] Querying for country: "$country" -> Key: "$countryKey" (Found in Index: ${jsonIndex.containsKey(countryKey)})');
     }
+    
+    final countryMap = jsonIndex[countryKey];
 
     if (countryMap != null && countryMap.isNotEmpty) {
       final key = _normalizeForJsonLookup(channelName);
@@ -44,9 +45,23 @@ String resolveChannelLogoUrl({
           }
         }
       }
-      if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] No match found in Honduras map.');
+      if (kDebugMode && countryKey == 'honduras') {
+        print('[RESOLVER-DEBUG] No match found in Honduras map.');
+        
+        // GLOBAL SEARCH (Debug only)
+        for (var cEntry in jsonIndex.entries) {
+          final cMap = cEntry.value;
+          final key = _normalizeForJsonLookup(channelName);
+          if (cMap.containsKey(key)) {
+            print('[RESOLVER-DEBUG] !!! FOUND GLOBALLY in country "${cEntry.key}": ${cMap[key]}');
+          }
+        }
+      }
     } else {
-      if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Honduras map is NULL or EMPTY.');
+      if (kDebugMode && countryKey == 'honduras') {
+        print('[RESOLVER-DEBUG] Honduras map is NULL or EMPTY.');
+        print('[RESOLVER-DEBUG] Available keys in index: ${jsonIndex.keys.toList()}');
+      }
     }
   }
 
