@@ -81,8 +81,11 @@ String _normalizeCountryForLookup(String country) {
 
 String _normalizeForAtAnyCostLookup(String name) {
   if (name.isEmpty) return '';
-  // Remove EVERYTHING except alphanumeric (no spaces, no dots, no symbols)
-  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+  var n = name.toLowerCase();
+  // 1. Remove extensions first
+  n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
+  // 2. Remove EVERYTHING except alphanumeric
+  return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
 String _normalizeForJsonLookup(String name) {
