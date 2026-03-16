@@ -62,6 +62,7 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
       if (kDebugMode) {
         int total = 0;
         nestedIndex.forEach((_, map) => total += map.length);
+        print('LogoResolver: Listed Countries: ${nestedIndex.keys.toList()}');
         print('LogoResolver: Indexed $total logos across ${nestedIndex.length} countries');
       }
     } catch (e) {
@@ -75,7 +76,7 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
 
   String _normalizeCountry(String country) {
     return country.toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]'), '')
+        .replaceAll(RegExp(r'[^a-z]'), '')
         .trim();
   }
 

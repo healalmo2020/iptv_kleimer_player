@@ -4,12 +4,12 @@ String resolveChannelLogoUrl({
   Map<String, Map<String, String>>? jsonIndex,
   String? country,
 }) {
-  final primary = primaryIconUrl?.trim();
-  if (primary != null && primary.isNotEmpty) {
-    return primary;
-  }
+  // PRIORITY ORDER:
+  // 1. Country-specific JSON lookup (most curated, accurate)
+  // 2. Server icon URL (may be broken or wrong, used as fallback)
+  // 3. Manual repository fallback (last resort)
 
-  // 1. Try JSON index first (local/custom map) - STRICT MODE
+  // 1. Try JSON index with country filter - STRICT MODE (highest priority)
   if (jsonIndex != null && jsonIndex.isNotEmpty && country != null && country.isNotEmpty) {
     final countryKey = _normalizeCountryForLookup(country);
     final countryMap = jsonIndex[countryKey];
@@ -35,13 +35,19 @@ String resolveChannelLogoUrl({
     }
   }
 
-  // 2. Fallback to existing manual repository
+  // 2. Fall back to server-provided icon URL (may be broken, but worth trying)
+  final primary = primaryIconUrl?.trim();
+  if (primary != null && primary.isNotEmpty) {
+    return primary;
+  }
+
+  // 3. Final fallback to existing manual repository
   return resolveChannelLogoRepositoryUrl(channelName: channelName);
 }
 
 String _normalizeCountryForLookup(String country) {
   return country.toLowerCase()
-      .replaceAll(RegExp(r'[^a-z0-9]'), '')
+      .replaceAll(RegExp(r'[^a-z]'), '') // Only letters for country
       .trim();
 }
 

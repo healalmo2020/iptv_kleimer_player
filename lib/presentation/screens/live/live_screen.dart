@@ -6,6 +6,7 @@ import '../../../core/utils/channel_logo_resolver.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/live_provider.dart';
 import '../../providers/parental_provider.dart';
+import 'package:flutter/foundation.dart';
 import '../../providers/logo_resolver_provider.dart';
 import '../../widgets/stitch_async_state.dart';
 import '../../widgets/stitch_content_card.dart';
