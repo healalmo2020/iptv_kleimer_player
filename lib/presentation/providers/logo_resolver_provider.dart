@@ -40,6 +40,7 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
         logoPaths = [
           'assets/logos/honduras.json',
           'assets/logos/mexico.json',
+          'assets/logos/guatemala.json',
           'assets/logos/united_states.json',
           'assets/logos/spain.json'
         ];
@@ -98,17 +99,22 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
   }
 
   String _countryToIso(String country) {
-    const map = {
-      'honduras': 'hn',
-      'mexico': 'mx',
-      'spain': 'es',
-      'unitedstates': 'us',
-      'argentina': 'ar',
-      'colombia': 'co',
-      'chile': 'cl',
-      'peru': 'pe',
-    };
-    return map[country] ?? country;
+    final c = country.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '').trim();
+    if (c.contains('honduras') || c == 'hn' || c == 'hon' || c == 'hnd') return 'hn';
+    if (c.contains('mexico') || c == 'mx' || c == 'mex') return 'mx';
+    if (c.contains('guatemala') || c == 'gt' || c == 'gua') return 'gt';
+    if (c.contains('salvador') || c == 'sv' || c == 'els') return 'sv';
+    if (c.contains('nicaragua') || c == 'ni' || c == 'nic') return 'ni';
+    if (c.contains('costarica') || c == 'cr') return 'cr';
+    if (c.contains('panama') || c == 'pa' || c == 'pan') return 'pa';
+    if (c.contains('espana') || c.contains('spain') || c == 'es' || c == 'esp') return 'es';
+    if (c.contains('usa') || c.contains('unitedstates') || c == 'us') return 'us';
+    if (c.contains('argentina') || c == 'ar' || c == 'arg') return 'ar';
+    if (c.contains('colombia') || c == 'co' || c == 'col') return 'co';
+    if (c.contains('chile') || c == 'cl' || c == 'chl') return 'cl';
+    if (c.contains('peru') || c == 'pe') return 'pe';
+    if (c.contains('dominican') || c == 'do' || c == 'dom') return 'do';
+    return c;
   }
 
   String _normalizeCountry(String country) {
