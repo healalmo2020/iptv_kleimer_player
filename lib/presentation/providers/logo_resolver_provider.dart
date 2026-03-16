@@ -54,6 +54,28 @@ class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
   }
 
   String _normalizeForLookup(String name) {
-    return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+    if (name.isEmpty) return '';
+    var n = name.toLowerCase();
+
+    // 1. Extract part after | if present (IPTV categorization)
+    if (n.contains('|')) {
+      n = n.split('|').last.trim();
+    }
+
+    // 2. Remove common noise keywords at word boundaries
+    n = n.replaceAll(
+      RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b'),
+      ' ',
+    );
+
+    // 3. Remove country extensions at the END (common in the JSON entries)
+    // Examples: .hn, .mx, .es, .us, .ar, .co, .cl, .pe, .uy, .ve, .ec, .bo, .pa, .do, .ca, .uk, .br, .pt, .de, .fr, .gr, .it
+    n = n.replaceFirst(
+      RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'),
+      '',
+    );
+
+    // 4. Final cleaning: keep only alphanumeric
+    return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
   }
 }

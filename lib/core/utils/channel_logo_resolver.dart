@@ -11,9 +11,22 @@ String resolveChannelLogoUrl({
   // 1. Try JSON index first (local/custom map)
   if (jsonIndex != null && jsonIndex.isNotEmpty) {
     final key = _normalizeForJsonLookup(channelName);
-    final jsonUrl = jsonIndex[key];
-    if (jsonUrl != null && jsonUrl.isNotEmpty) {
-      return jsonUrl;
+    
+    // Layer 1: Exact Match (O(1))
+    final exactUrl = jsonIndex[key];
+    if (exactUrl != null && exactUrl.isNotEmpty) {
+      return exactUrl;
+    }
+
+    // Layer 2: Fuzzy Match (O(n)) - Only if exact fails
+    // This catches cases like "HCH" matching "HCH-HD" or vice versa
+    for (final entry in jsonIndex.entries) {
+      final jsonKey = entry.key;
+      if (key.length > 2 && jsonKey.length > 2) {
+        if (jsonKey.contains(key) || key.contains(jsonKey)) {
+          return entry.value;
+        }
+      }
     }
   }
 
@@ -22,8 +35,28 @@ String resolveChannelLogoUrl({
 }
 
 String _normalizeForJsonLookup(String name) {
-  // Use same normalization as in LogoResolverNotifier
-  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+  if (name.isEmpty) return '';
+  var n = name.toLowerCase();
+
+  // 1. Extract part after | if present
+  if (n.contains('|')) {
+    n = n.split('|').last.trim();
+  }
+
+  // 2. Remove common noise keywords at word boundaries
+  n = n.replaceAll(
+    RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b'),
+    ' ',
+  );
+
+  // 3. Remove country extensions at the END
+  n = n.replaceFirst(
+    RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'),
+    '',
+  );
+
+  // 4. Final cleaning: keep only alphanumeric
+  return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
 String resolveChannelLogoRepositoryUrl({required String channelName}) {
