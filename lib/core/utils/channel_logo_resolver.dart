@@ -1,13 +1,29 @@
 String resolveChannelLogoUrl({
   required String channelName,
   String? primaryIconUrl,
+  Map<String, String>? jsonIndex,
 }) {
   final primary = primaryIconUrl?.trim();
   if (primary != null && primary.isNotEmpty) {
     return primary;
   }
 
+  // 1. Try JSON index first (local/custom map)
+  if (jsonIndex != null && jsonIndex.isNotEmpty) {
+    final key = _normalizeForJsonLookup(channelName);
+    final jsonUrl = jsonIndex[key];
+    if (jsonUrl != null && jsonUrl.isNotEmpty) {
+      return jsonUrl;
+    }
+  }
+
+  // 2. Fallback to existing manual repository
   return resolveChannelLogoRepositoryUrl(channelName: channelName);
+}
+
+String _normalizeForJsonLookup(String name) {
+  // Use same normalization as in LogoResolverNotifier
+  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
 String resolveChannelLogoRepositoryUrl({required String channelName}) {

@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/utils/channel_logo_resolver.dart';
 import '../providers/library_provider.dart';
 import '../providers/live_provider.dart';
+import '../providers/logo_resolver_provider.dart';
 import '../providers/series_provider.dart';
 import '../providers/vod_provider.dart';
 import '../widgets/stitch_content_card.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends ConsumerWidget {
     final liveAsync = ref.watch(liveStreamsProvider);
     final vodAsync = ref.watch(vodStreamsProvider);
     final seriesAsync = ref.watch(seriesProvider);
+    final logoIndex = ref.watch(logoResolverProvider);
     final isCompact = MediaQuery.sizeOf(context).width < 1000;
 
     final issues = <String>[];
@@ -92,6 +94,7 @@ class HomeScreen extends ConsumerWidget {
                       imageBuilder: (item) => resolveChannelLogoUrl(
                         channelName: item.name,
                         primaryIconUrl: item.iconUrl,
+                        jsonIndex: logoIndex,
                       ),
                       onTapBuilder: (item) =>
                           () => context.push(

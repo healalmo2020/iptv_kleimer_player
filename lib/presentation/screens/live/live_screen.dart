@@ -6,6 +6,7 @@ import '../../../core/utils/channel_logo_resolver.dart';
 import '../../providers/favorites_provider.dart';
 import '../../providers/live_provider.dart';
 import '../../providers/parental_provider.dart';
+import '../../providers/logo_resolver_provider.dart';
 import '../../widgets/stitch_async_state.dart';
 import '../../widgets/stitch_content_card.dart';
 import '../../widgets/library_inline_search_box.dart';
@@ -221,25 +222,20 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                       itemBuilder: (context, index) {
                         final stream = filteredItems[index];
                         final isFavorite = favorites.contains(stream.id);
-                        final repositoryLogo = resolveChannelLogoRepositoryUrl(
+                        final logoIndex = ref.watch(logoResolverProvider);
+                        
+                        final logoUrl = resolveChannelLogoUrl(
                           channelName: stream.name,
+                          primaryIconUrl: stream.iconUrl,
+                          jsonIndex: logoIndex,
                         );
-                        final primaryLogo = repositoryLogo.isEmpty
-                            ? stream.iconUrl
-                            : repositoryLogo;
-                        final fallbackLogo = repositoryLogo.isEmpty
-                            ? null
-                            : stream.iconUrl;
 
                         return Stack(
                           children: [
                             Positioned.fill(
                               child: StitchContentCard(
                                 title: stream.name,
-                                imageUrl: primaryLogo,
-                                fallbackImageUrl: fallbackLogo,
-                                imageCacheWidth: 320,
-                                imageCacheHeight: 180,
+                                imageUrl: logoUrl,
                                 imageFit: BoxFit.contain,
                                 useShimmerPlaceholder: false,
                                 onTap: () => context.push(
