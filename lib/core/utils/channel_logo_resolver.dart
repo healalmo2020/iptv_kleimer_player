@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+// No imports needed for fundamental types here
 
 String resolveChannelLogoUrl({
   required String channelName,
@@ -122,7 +122,6 @@ String resolveChannelLogoRepositoryUrl({required String channelName}) {
     }
     return '$_logoRepositoryBaseUrl/$inferredPath';
   }
-
   return '$_logoRepositoryBaseUrl/$path';
 }
 
