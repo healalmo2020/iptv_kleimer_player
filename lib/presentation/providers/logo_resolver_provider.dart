@@ -23,23 +23,22 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
     if (kDebugMode) print('LogoResolver: Starting to load logos...');
 
     try {
-      // 1. Find all logo assets (using the more compatible AssetManifest.json approach)
-      final String manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-      
-      final List<String> logoPaths = manifestMap.keys
-          .where((String key) => key.contains('assets/logos/') && key.endsWith('.json'))
-          .toList();
-
-      if (kDebugMode) {
-        print('LogoResolver: Found ${logoPaths.length} logo files in assets/logos/');
-        if (logoPaths.isNotEmpty) {
-          print('LogoResolver: Sample paths: ${logoPaths.take(3).toList()}');
-        }
+      // 1. Find all logo assets
+      List<String> logoPaths = [];
+      try {
+        final String manifestContent = await rootBundle.loadString('AssetManifest.json');
+        final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+        logoPaths = manifestMap.keys
+            .where((String key) => key.contains('assets/logos/') && key.endsWith('.json'))
+            .toList();
+      } catch (e) {
+        if (kDebugMode) print('LogoResolver: Manifest fallback - trying direct load for main countries');
+        // If manifest fails (common in some Flutter builds), hardcode the main ones
+        logoPaths = ['assets/logos/honduras.json', 'assets/logos/mexico.json', 'assets/logos/spain.json', 'assets/logos/united_states.json'];
       }
 
       if (logoPaths.isEmpty) {
-        if (kDebugMode) print('LogoResolver: WARNING - No logo files found in assets/logos/. Check pubspec.yaml');
+        if (kDebugMode) print('LogoResolver: CRITICAL - No logos found.');
         _isLoading = false;
         return;
       }
@@ -104,6 +103,11 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
         .replaceAll(RegExp(r'[^a-z]'), '')
         .trim();
   }
+
+  String _normalizeForAtAnyCostLookup(String name) {
+  // Most aggressive cleanup: only letters and numbers, ignore everything else
+  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+}
 
   String _normalizeForLookup(String name) {
     if (name.isEmpty) return '';

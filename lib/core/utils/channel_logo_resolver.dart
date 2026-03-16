@@ -24,22 +24,41 @@ String resolveChannelLogoUrl({
         if (match != null) return match;
 
         for (final entry in countryMap.entries) {
-          if (key.length > 2 && entry.key.contains(key)) return entry.value;
+          if (key.length > 2 && (entry.key.contains(key) || key.contains(entry.key))) {
+            return entry.value;
+          }
         }
      }
 
-     // 2. GLOBAL FALLBACK (Search in all countries)
-     // This handles cases where country deduction fails or the channel is displaced.
+     // 2. GLOBAL FALLBACK (Deep search in all countries)
      final globalKey = _normalizeForJsonLookup(channelName);
      for (final countryEntry in jsonIndex.entries) {
        final map = countryEntry.value;
-       if (map.containsKey(globalKey)) {
-         if (kDebugMode) print('[LOGO-RESOLVER] Global hit for $channelName in ${countryEntry.key}');
-         return map[globalKey]!;
+       
+       // Try exact match in this country
+       if (map.containsKey(globalKey)) return map[globalKey]!;
+
+       // Try fuzzy match in this country
+       if (globalKey.length > 3) {
+         for (final entry in map.entries) {
+           if (entry.key.contains(globalKey) || globalKey.contains(entry.key)) {
+             return entry.value;
+           }
+         }
        }
-       // Last ditch fuzzy global
-       for (final entry in map.entries) {
-         if (globalKey.length > 3 && entry.key == globalKey) return entry.value;
+     }
+
+     // 3. AT-ANY-COST GLOBAL FALLBACK (Ignore symbols, search globally)
+     // This is a last resort if the normalized search fails.
+     final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
+     if (atAnyCostKey.isNotEmpty) {
+       for (final countryEntry in jsonIndex.entries) {
+         final map = countryEntry.value;
+         for (final entry in map.entries) {
+           if (entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
+             return entry.value;
+           }
+         }
        }
      }
   }
@@ -58,6 +77,12 @@ String _normalizeCountryForLookup(String country) {
   return country.toLowerCase()
       .replaceAll(RegExp(r'[^a-z]'), '') // Only letters for country
       .trim();
+}
+
+String _normalizeForAtAnyCostLookup(String name) {
+  if (name.isEmpty) return '';
+  // Remove EVERYTHING except alphanumeric (no spaces, no dots, no symbols)
+  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
 String _normalizeForJsonLookup(String name) {
