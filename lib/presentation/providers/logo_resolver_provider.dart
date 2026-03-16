@@ -104,10 +104,6 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
         .trim();
   }
 
-  String _normalizeForAtAnyCostLookup(String name) {
-  // Most aggressive cleanup: only letters and numbers, ignore everything else
-  return name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
-}
 
   String _normalizeForLookup(String name) {
     if (name.isEmpty) return '';

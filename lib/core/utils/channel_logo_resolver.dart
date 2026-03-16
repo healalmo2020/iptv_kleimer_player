@@ -1,4 +1,4 @@
-// No imports needed for fundamental types here
+import 'package:flutter/foundation.dart';
 
 String resolveChannelLogoUrl({
   required String channelName,
@@ -6,42 +6,45 @@ String resolveChannelLogoUrl({
   Map<String, Map<String, String>>? jsonIndex,
   String? country,
 }) {
-  // PRIORITY ORDER:
-  // 1. Country-specific JSON lookup (most curated, accurate)
-  // 2. Server icon URL (may be broken or wrong, used as fallback)
-  // 3. Manual repository fallback (last resort)
-
   // 1. Try Country-Specific Search (Highest Accuracy)
   if (jsonIndex != null && jsonIndex.isNotEmpty) {
      final countryKey = country != null ? _normalizeCountryForLookup(country) : null;
-     
+     final searchKey = _normalizeForJsonLookup(channelName);
+
+     if (kDebugMode && (channelName.toLowerCase().contains('chtv') || channelName.toLowerCase().contains('hch'))) {
+        print('[LOGO-RESOLVER] Debugging channel: "$channelName"');
+        print('[LOGO-RESOLVER] -> Generated Search Key: "$searchKey"');
+        print('[LOGO-RESOLVER] -> Target Country Key: "$countryKey"');
+        if (countryKey != null) {
+          print('[LOGO-RESOLVER] -> Country In Index: ${jsonIndex.containsKey(countryKey)}');
+          if (jsonIndex.containsKey(countryKey)) {
+             print('[LOGO-RESOLVER] -> Sample Keys in Country Map: ${jsonIndex[countryKey]!.keys.take(5).toList()}');
+          }
+        }
+     }
+
      if (countryKey != null && jsonIndex.containsKey(countryKey)) {
         final countryMap = jsonIndex[countryKey]!;
-        final key = _normalizeForJsonLookup(channelName);
         
-        // Match exact or fuzzy within country
-        final match = countryMap[key];
-        if (match != null) return match;
+        // Layer 1: Exact Match in Country
+        if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
 
+        // Layer 2: Fuzzy Match in Country
         for (final entry in countryMap.entries) {
-          if (key.length > 2 && (entry.key.contains(key) || key.contains(entry.key))) {
+          if (searchKey.length > 2 && (entry.key.contains(searchKey) || searchKey.contains(entry.key))) {
             return entry.value;
           }
         }
      }
 
      // 2. GLOBAL FALLBACK (Deep search in all countries)
-     final globalKey = _normalizeForJsonLookup(channelName);
      for (final countryEntry in jsonIndex.entries) {
        final map = countryEntry.value;
-       
-       // Try exact match in this country
-       if (map.containsKey(globalKey)) return map[globalKey]!;
+       if (map.containsKey(searchKey)) return map[searchKey]!;
 
-       // Try fuzzy match in this country
-       if (globalKey.length > 3) {
+       if (searchKey.length > 3) {
          for (final entry in map.entries) {
-           if (entry.key.contains(globalKey) || globalKey.contains(entry.key)) {
+           if (entry.key.contains(searchKey) || searchKey.contains(entry.key)) {
              return entry.value;
            }
          }
@@ -49,13 +52,12 @@ String resolveChannelLogoUrl({
      }
 
      // 3. AT-ANY-COST GLOBAL FALLBACK (Ignore symbols, search globally)
-     // This is a last resort if the normalized search fails.
      final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
      if (atAnyCostKey.isNotEmpty) {
        for (final countryEntry in jsonIndex.entries) {
          final map = countryEntry.value;
          for (final entry in map.entries) {
-           if (entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
+           if (entry.key == atAnyCostKey || entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
              return entry.value;
            }
          }
@@ -63,13 +65,13 @@ String resolveChannelLogoUrl({
      }
   }
 
-  // 2. Fall back to server-provided icon URL (may be broken, but worth trying)
+  // 4. Fall back to server-provided icon URL
   final primary = primaryIconUrl?.trim();
   if (primary != null && primary.isNotEmpty) {
     return primary;
   }
 
-  // 3. Final fallback to existing manual repository
+  // 5. Final fallback to existing manual repository
   return resolveChannelLogoRepositoryUrl(channelName: channelName);
 }
 
@@ -99,8 +101,8 @@ String _normalizeForJsonLookup(String name) {
     n = parts.last.trim();
   }
 
-  // 2. Remove common country identifiers if still present
-  n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|us|usa|latam|latino|televicentro|tvc)\b'), '');
+  // 2. Remove common country identifiers if still present at the START
+  n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc)\b'), '');
 
   // 3. Remove common quality noise
   n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265)\b'), ' ');
