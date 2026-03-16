@@ -23,9 +23,11 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
     if (kDebugMode) print('LogoResolver: Starting to load logos...');
 
     try {
-      // 1. Find all logo assets using the modern AssetManifest API
-      final AssetManifest manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-      final List<String> logoPaths = manifest.listAssets()
+      // 1. Find all logo assets (using the more compatible AssetManifest.json approach)
+      final String manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      
+      final List<String> logoPaths = manifestMap.keys
           .where((String key) => key.contains('assets/logos/') && key.endsWith('.json'))
           .toList();
 
@@ -51,14 +53,22 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
           final List<dynamic> jsonList = json.decode(content);
 
           for (final item in jsonList) {
-            final logo = JsonLogoItem.fromJson(item as Map<String, dynamic>);
-            
-            // Handle nesting by Country
-            final countryKey = _normalizeCountry(logo.pais);
-            final channelKey = _normalizeForLookup(logo.canal);
-            
-            final countryMap = nestedIndex.putIfAbsent(countryKey, () => {});
-            countryMap[channelKey] = logo.url;
+            try {
+              final logo = JsonLogoItem.fromJson(item as Map<String, dynamic>);
+              
+              // Handle nesting by Country
+              final countryKey = _normalizeCountry(logo.pais);
+              final channelKey = _normalizeForLookup(logo.canal);
+              
+              if (kDebugMode && countryKey == 'honduras' && (nestedIndex['honduras']?.length ?? 0) < 5) {
+                print('LogoResolver: Honduras item mapped: "$channelKey" -> ${logo.url.substring(0, 20)}...');
+              }
+
+              final countryMap = nestedIndex.putIfAbsent(countryKey, () => {});
+              countryMap[channelKey] = logo.url;
+            } catch (e) {
+              // Skip bad items instead of breaking whole file
+            }
           }
           if (kDebugMode) {
             print('LogoResolver: Loaded ${jsonList.length} items from $path');

@@ -95,6 +95,7 @@ class HomeScreen extends ConsumerWidget {
                         channelName: item.name,
                         primaryIconUrl: item.iconUrl,
                         jsonIndex: logoIndex,
+                        country: null, // Global fallback on Home for now
                       ),
                       onTapBuilder: (item) =>
                           () => context.push(
