@@ -32,15 +32,17 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
             .where((String key) => key.contains('assets/logos/') && key.endsWith('.json'))
             .toList();
       } catch (e) {
-        if (kDebugMode) print('LogoResolver: Manifest fallback - trying direct load for main countries');
-        // If manifest fails (common in some Flutter builds), hardcode the main ones
-        logoPaths = ['assets/logos/honduras.json', 'assets/logos/mexico.json', 'assets/logos/spain.json', 'assets/logos/united_states.json'];
+        if (kDebugMode) print('LogoResolver: Manifest failed, using fallback list');
       }
 
+      // If manifest failed or returned nothing, force-add the primary ones
       if (logoPaths.isEmpty) {
-        if (kDebugMode) print('LogoResolver: CRITICAL - No logos found.');
-        _isLoading = false;
-        return;
+        logoPaths = [
+          'assets/logos/honduras.json',
+          'assets/logos/mexico.json',
+          'assets/logos/united_states.json',
+          'assets/logos/spain.json'
+        ];
       }
 
       final Map<String, Map<String, String>> nestedIndex = {};
@@ -109,28 +111,22 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
     if (name.isEmpty) return '';
     var n = name.toLowerCase();
 
-    // 1. Extract part after separators (|, :, or -)
-    final separatorIndex = n.lastIndexOf(RegExp(r'[|:\-]'));
-    if (separatorIndex != -1 && separatorIndex < n.length - 1) {
-      n = n.substring(separatorIndex + 1).trim();
+    // 1. Handle IPTV specific prefixes and symbols (HON|, HN:, TV-)
+    final parts = n.split(RegExp(r'[|:/\-\\]'));
+    if (parts.length > 1) {
+      n = parts.last.trim();
     }
 
-    // 2. Remove common country prefix markers
-    n = n.replaceFirst(RegExp(r'^(hon|hn|es|mx|us|usa|latam|latino|la)\s+'), '');
+    // 2. Remove common country identifiers at the START
+    n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc)\b'), '');
 
-    // 3. Remove common noise keywords at word boundaries
-    n = n.replaceAll(
-      RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b'),
-      ' ',
-    );
+    // 3. Remove common quality noise
+    n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam)\b'), ' ');
 
-    // 4. Remove country extensions at the END (common in the JSON entries)
-    n = n.replaceFirst(
-      RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'),
-      '',
-    );
+    // 4. Remove country extensions at the end (common in JSON)
+    n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
 
-    // 5. Final cleaning: keep only alphanumeric
+    // 5. Final cleaning: keep letters and numbers only
     return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
   }
 }

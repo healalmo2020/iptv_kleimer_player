@@ -31,20 +31,22 @@ String resolveChannelLogoUrl({
 
         // Layer 2: Fuzzy Match in Country
         for (final entry in countryMap.entries) {
-          if (searchKey.length > 2 && (entry.key.contains(searchKey) || searchKey.contains(entry.key))) {
+          final jsonKey = entry.key;
+          if (searchKey.length > 2 && (jsonKey.contains(searchKey) || searchKey.contains(jsonKey))) {
             return entry.value;
           }
         }
      }
 
-     // 2. GLOBAL FALLBACK (Deep search in all countries)
+     // 2. GLOBAL FALLBACK (Search everywhere if country failed)
      for (final countryEntry in jsonIndex.entries) {
        final map = countryEntry.value;
        if (map.containsKey(searchKey)) return map[searchKey]!;
 
        if (searchKey.length > 3) {
          for (final entry in map.entries) {
-           if (entry.key.contains(searchKey) || searchKey.contains(entry.key)) {
+           final jk = entry.key;
+           if (jk.contains(searchKey) || searchKey.contains(jk)) {
              return entry.value;
            }
          }
@@ -105,7 +107,7 @@ String _normalizeForJsonLookup(String name) {
   n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc)\b'), '');
 
   // 3. Remove common quality noise
-  n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265)\b'), ' ');
+  n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam)\b'), ' ');
 
   // 4. Remove country extensions at the end (common in JSON)
   n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
