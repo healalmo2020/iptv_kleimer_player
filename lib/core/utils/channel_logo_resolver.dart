@@ -1,30 +1,35 @@
 String resolveChannelLogoUrl({
   required String channelName,
   String? primaryIconUrl,
-  Map<String, String>? jsonIndex,
+  Map<String, Map<String, String>>? jsonIndex,
+  String? country,
 }) {
   final primary = primaryIconUrl?.trim();
   if (primary != null && primary.isNotEmpty) {
     return primary;
   }
 
-  // 1. Try JSON index first (local/custom map)
-  if (jsonIndex != null && jsonIndex.isNotEmpty) {
-    final key = _normalizeForJsonLookup(channelName);
+  // 1. Try JSON index first (local/custom map) - STRICT MODE
+  if (jsonIndex != null && jsonIndex.isNotEmpty && country != null && country.isNotEmpty) {
+    final countryKey = _normalizeCountryForLookup(country);
+    final countryMap = jsonIndex[countryKey];
     
-    // Layer 1: Exact Match (O(1))
-    final exactUrl = jsonIndex[key];
-    if (exactUrl != null && exactUrl.isNotEmpty) {
-      return exactUrl;
-    }
+    if (countryMap != null && countryMap.isNotEmpty) {
+      final key = _normalizeForJsonLookup(channelName);
+      
+      // Layer 1: Exact Match (O(1))
+      final exactUrl = countryMap[key];
+      if (exactUrl != null && exactUrl.isNotEmpty) {
+        return exactUrl;
+      }
 
-    // Layer 2: Fuzzy Match (O(n)) - Only if exact fails
-    // This catches cases like "HCH" matching "HCH-HD" or vice versa
-    for (final entry in jsonIndex.entries) {
-      final jsonKey = entry.key;
-      if (key.length > 2 && jsonKey.length > 2) {
-        if (jsonKey.contains(key) || key.contains(jsonKey)) {
-          return entry.value;
+      // Layer 2: Fuzzy Match (O(n)) - Only if exact fails within the SAME country
+      for (final entry in countryMap.entries) {
+        final jsonKey = entry.key;
+        if (key.length > 2 && jsonKey.length > 2) {
+          if (jsonKey.contains(key) || key.contains(jsonKey)) {
+            return entry.value;
+          }
         }
       }
     }
@@ -32,6 +37,12 @@ String resolveChannelLogoUrl({
 
   // 2. Fallback to existing manual repository
   return resolveChannelLogoRepositoryUrl(channelName: channelName);
+}
+
+String _normalizeCountryForLookup(String country) {
+  return country.toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]'), '')
+      .trim();
 }
 
 String _normalizeForJsonLookup(String name) {

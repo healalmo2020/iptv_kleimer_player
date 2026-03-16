@@ -224,10 +224,26 @@ class _LiveScreenState extends ConsumerState<LiveScreen> {
                         final isFavorite = favorites.contains(stream.id);
                         final logoIndex = ref.watch(logoResolverProvider);
                         
+                        // Deduce country from category name (e.g., "TV | HONDURAS" -> "HONDURAS")
+                        String? deducedCountry;
+                        final currentCategory = categories.value?.any((c) => c.id == _selectedCategoryId) == true
+                            ? categories.value?.firstWhere((c) => c.id == _selectedCategoryId)
+                            : null;
+                        
+                        if (currentCategory != null) {
+                          final name = currentCategory.name;
+                          if (name.contains('|')) {
+                            deducedCountry = name.split('|').last.trim();
+                          } else {
+                            deducedCountry = name;
+                          }
+                        }
+
                         final logoUrl = resolveChannelLogoUrl(
                           channelName: stream.name,
                           primaryIconUrl: stream.iconUrl,
                           jsonIndex: logoIndex,
+                          country: deducedCountry,
                         );
 
                         return Stack(

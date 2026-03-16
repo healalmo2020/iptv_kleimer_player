@@ -4,11 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/json_logo_item.dart';
 
-final logoResolverProvider = StateNotifierProvider<LogoResolverNotifier, Map<String, String>>((ref) {
+final logoResolverProvider = StateNotifierProvider<LogoResolverNotifier, Map<String, Map<String, String>>>((ref) {
   return LogoResolverNotifier();
 });
 
-class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
+class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>>> {
   LogoResolverNotifier() : super({}) {
     loadLogos();
   }
@@ -35,9 +35,9 @@ class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
         return;
       }
 
-      final Map<String, String> index = {};
+      final Map<String, Map<String, String>> nestedIndex = {};
 
-      // 2. Load each file and aggregate into the index
+      // 2. Load each file and aggregate into the nested index
       for (final path in logoPaths) {
         try {
           final content = await rootBundle.loadString(path);
@@ -45,17 +45,24 @@ class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
 
           for (final item in jsonList) {
             final logo = JsonLogoItem.fromJson(item as Map<String, dynamic>);
-            final key = _normalizeForLookup(logo.canal);
-            index[key] = logo.url;
+            
+            // Handle nesting by Country
+            final countryKey = _normalizeCountry(logo.pais);
+            final channelKey = _normalizeForLookup(logo.canal);
+            
+            final countryMap = nestedIndex.putIfAbsent(countryKey, () => {});
+            countryMap[channelKey] = logo.url;
           }
         } catch (e) {
           if (kDebugMode) print('LogoResolver Error loading $path: $e');
         }
       }
 
-      state = index;
+      state = nestedIndex;
       if (kDebugMode) {
-        print('LogoResolver: Indexed ${index.length} logos from ${logoPaths.length} country files');
+        int total = 0;
+        nestedIndex.forEach((_, map) => total += map.length);
+        print('LogoResolver: Indexed $total logos across ${nestedIndex.length} countries');
       }
     } catch (e) {
       if (kDebugMode) {
@@ -64,6 +71,12 @@ class LogoResolverNotifier extends StateNotifier<Map<String, String>> {
     } finally {
       _isLoading = false;
     }
+  }
+
+  String _normalizeCountry(String country) {
+    return country.toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9]'), '')
+        .trim();
   }
 
   String _normalizeForLookup(String name) {
