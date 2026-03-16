@@ -9,47 +9,54 @@ String resolveChannelLogoUrl({
   if (jsonIndex != null && jsonIndex.isNotEmpty) {
     final searchKey = _normalizeForJsonLookup(channelName);
     final countryKey = country != null ? _normalizeCountryForLookup(country) : null;
+    final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
 
-    // Search Level 1: In the deduced country
+    // Search Level 1: STRICT COUNTRY SEARCH (Exhaust all options in current country)
     if (countryKey != null) {
       final targetIso = _countryToIso(countryKey);
       final countryMap = jsonIndex[targetIso] ?? jsonIndex[countryKey];
       
       if (countryMap != null) {
-        // Exact match in country
+        // 1a. Exact match
         if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
 
-        // Fuzzy match in country
+        // 1b. Fuzzy match
         for (final entry in countryMap.entries) {
           if (searchKey.length > 2 && (entry.key.contains(searchKey) || searchKey.contains(entry.key))) {
             return entry.value;
           }
         }
-      }
-    }
 
-    // Search Level 2: Global fallback (search in all countries)
-    for (final countryEntry in jsonIndex.entries) {
-      final map = countryEntry.value;
-      if (map.containsKey(searchKey)) return map[searchKey]!;
-
-      // Deep global fuzzy
-      if (searchKey.length > 3) {
-        for (final entry in map.entries) {
-          if (entry.key.contains(searchKey) || searchKey.contains(entry.key)) {
-            return entry.value;
+        // 1c. At-any-cost match (but only within this country)
+        if (atAnyCostKey.length > 2) {
+          for (final entry in countryMap.entries) {
+            if (entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
+              return entry.value;
+            }
           }
         }
       }
     }
 
-    // Search Level 3: At-any-cost search (ignore symbols completely)
-    final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
-    if (atAnyCostKey.length > 3) {
-      for (final countryEntry in jsonIndex.entries) {
-        final map = countryEntry.value;
+    // Search Level 2: GLOBAL FALLBACK (Only if not found in specific country)
+    // To prevent conflicts (like Canal 11 Guatemala vs Honduras), we only match 
+    // globally if the name is unique/long or we have high confidence.
+    for (final countryEntry in jsonIndex.entries) {
+      // Skip if it's the country we already searched
+      if (countryKey != null && (countryEntry.key == _countryToIso(countryKey))) continue;
+
+      final map = countryEntry.value;
+      
+      // Global Exact
+      if (map.containsKey(searchKey)) {
+        // If it's a very short/generic name, don't match it globally to avoid wrong country logos
+        if (searchKey.length > 4) return map[searchKey]!;
+      }
+
+      // Global Fuzzy (only for long names)
+      if (searchKey.length > 6) {
         for (final entry in map.entries) {
-          if (entry.key.contains(atAnyCostKey) || atAnyCostKey.contains(entry.key)) {
+          if (entry.key.contains(searchKey) || searchKey.contains(entry.key)) {
             return entry.value;
           }
         }
@@ -77,12 +84,18 @@ String _countryToIso(String country) {
   final c = country.toLowerCase().replaceAll(RegExp(r'[^a-z]'), '').trim();
   if (c.contains('honduras') || c == 'hn' || c == 'hon' || c == 'hnd') return 'hn';
   if (c.contains('mexico') || c == 'mx' || c == 'mex') return 'mx';
+  if (c.contains('guatemala') || c == 'gt' || c == 'gua') return 'gt';
+  if (c.contains('salvador') || c == 'sv' || c == 'els') return 'sv';
+  if (c.contains('nicaragua') || c == 'ni' || c == 'nic') return 'ni';
+  if (c.contains('costarica') || c == 'cr') return 'cr';
+  if (c.contains('panama') || c == 'pa' || c == 'pan') return 'pa';
   if (c.contains('espana') || c.contains('spain') || c == 'es' || c == 'esp') return 'es';
   if (c.contains('usa') || c.contains('unitedstates') || c == 'us') return 'us';
   if (c.contains('argentina') || c == 'ar' || c == 'arg') return 'ar';
   if (c.contains('colombia') || c == 'co' || c == 'col') return 'co';
   if (c.contains('chile') || c == 'cl' || c == 'chl') return 'cl';
   if (c.contains('peru') || c == 'pe') return 'pe';
+  if (c.contains('dominican') || c == 'do' || c == 'dom') return 'do';
   return c;
 }
 
