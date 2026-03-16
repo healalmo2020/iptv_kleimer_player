@@ -28,39 +28,44 @@ String resolveChannelLogoUrl({
          print('[RESOLVER-DEBUG] Normalized key: "$key"');
       }
 
-      // Layer 1: Exact Match (O(1))
+      // Layer 1: Exact Match (O(1)) in Country
       final exactUrl = countryMap[key];
       if (exactUrl != null && exactUrl.isNotEmpty) {
-        if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Match FOUND: $exactUrl');
+        if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Match FOUND in Honduras: $exactUrl');
         return exactUrl;
       }
 
-      // Layer 2: Fuzzy Match (O(n)) - Only if exact fails within the SAME country
+      // Layer 2: Fuzzy Match (O(n)) in Country
       for (final entry in countryMap.entries) {
         final jsonKey = entry.key;
         if (key.length > 2 && jsonKey.length > 2) {
           if (jsonKey.contains(key) || key.contains(jsonKey)) {
-            if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Fuzzy Match FOUND: ${entry.value}');
+            if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Fuzzy Match FOUND in Honduras: ${entry.value}');
             return entry.value;
           }
         }
       }
       if (kDebugMode && countryKey == 'honduras') {
         print('[RESOLVER-DEBUG] No match found in Honduras map.');
-        
-        // GLOBAL SEARCH (Debug only)
-        for (var cEntry in jsonIndex.entries) {
-          final cMap = cEntry.value;
-          final key = _normalizeForJsonLookup(channelName);
-          if (cMap.containsKey(key)) {
-            print('[RESOLVER-DEBUG] !!! FOUND GLOBALLY in country "${cEntry.key}": ${cMap[key]}');
-          }
-        }
       }
     } else {
       if (kDebugMode && countryKey == 'honduras') {
         print('[RESOLVER-DEBUG] Honduras map is NULL or EMPTY.');
         print('[RESOLVER-DEBUG] Available keys in index: ${jsonIndex.keys.toList()}');
+      }
+    }
+
+    // Layer 3: GLOBAL FALLBACK (Last Resort)
+    // If we didn't find it in the specific country, search EVERYWHERE else.
+    // This handles cases where a channel is in a country category but our JSON has it elsewhere.
+    final globalKey = _normalizeForJsonLookup(channelName);
+    for (var otherCountryEntry in jsonIndex.entries) {
+      if (otherCountryEntry.key == countryKey) continue; // Skip what we already searched
+      
+      final otherMap = otherCountryEntry.value;
+      if (otherMap.containsKey(globalKey)) {
+        if (kDebugMode) print('[RESOLVER-DEBUG] !!! GLOBAL MATCH FOUND for "$channelName" in "${otherCountryEntry.key}": ${otherMap[globalKey]}');
+        return otherMap[globalKey]!;
       }
     }
   }
@@ -85,24 +90,28 @@ String _normalizeForJsonLookup(String name) {
   if (name.isEmpty) return '';
   var n = name.toLowerCase();
 
-  // 1. Extract part after | if present
-  if (n.contains('|')) {
-    n = n.split('|').last.trim();
+  // 1. Extract part after separators (IPTV usually uses |, :, or - as prefix dividers)
+  final separatorIndex = n.lastIndexOf(RegExp(r'[|:\-]'));
+  if (separatorIndex != -1 && separatorIndex < n.length - 1) {
+    n = n.substring(separatorIndex + 1).trim();
   }
 
-  // 2. Remove common noise keywords at word boundaries
+  // 2. Remove common country prefix markers if they still exist (e.g., "HON ", "HN ")
+  n = n.replaceFirst(RegExp(r'^(hon|hn|es|mx|us|usa|latam|latino|la)\s+'), '');
+
+  // 3. Remove common noise keywords at word boundaries
   n = n.replaceAll(
     RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b'),
     ' ',
   );
 
-  // 3. Remove country extensions at the END
+  // 4. Remove country extensions at the END (common in our JSON)
   n = n.replaceFirst(
     RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'),
     '',
   );
 
-  // 4. Final cleaning: keep only alphanumeric
+  // 5. Final cleaning: keep only alphanumeric
   return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
