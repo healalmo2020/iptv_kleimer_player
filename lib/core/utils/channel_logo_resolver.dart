@@ -23,22 +23,24 @@ String resolveChannelLogoUrl({
         }
      }
 
-     if (countryKey != null && jsonIndex.containsKey(countryKey)) {
-        final countryMap = jsonIndex[countryKey]!;
+     if (countryKey != null) {
+        final Map<String, String>? countryMap = jsonIndex[countryKey] ?? jsonIndex[_countryToIso(countryKey)];
         
-        // Layer 1: Exact Match in Country
-        if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
+        if (countryMap != null) {
+          // Layer 1: Exact Match in Country
+          if (countryMap.containsKey(searchKey)) return countryMap[searchKey]!;
 
-        // Layer 2: Fuzzy Match in Country
-        for (final entry in countryMap.entries) {
-          final jsonKey = entry.key;
-          if (searchKey.length > 2 && (jsonKey.contains(searchKey) || searchKey.contains(jsonKey))) {
-            return entry.value;
+          // Layer 2: Fuzzy Match in Country
+          for (final entry in countryMap.entries) {
+            final jsonKey = entry.key;
+            if (searchKey.length > 2 && (jsonKey.contains(searchKey) || searchKey.contains(jsonKey))) {
+              return entry.value;
+            }
           }
         }
      }
 
-     // 2. GLOBAL FALLBACK (Search everywhere if country failed)
+     // 2. GLOBAL FALLBACK
      for (final countryEntry in jsonIndex.entries) {
        final map = countryEntry.value;
        if (map.containsKey(searchKey)) return map[searchKey]!;
@@ -46,16 +48,14 @@ String resolveChannelLogoUrl({
        if (searchKey.length > 3) {
          for (final entry in map.entries) {
            final jk = entry.key;
-           if (jk.contains(searchKey) || searchKey.contains(jk)) {
-             return entry.value;
-           }
+           if (jk.contains(searchKey) || searchKey.contains(jk)) return entry.value;
          }
        }
      }
 
-     // 3. AT-ANY-COST GLOBAL FALLBACK (Ignore symbols, search globally)
+     // 3. AT-ANY-COST GLOBAL FALLBACK
      final atAnyCostKey = _normalizeForAtAnyCostLookup(channelName);
-     if (atAnyCostKey.isNotEmpty) {
+     if (atAnyCostKey.isNotEmpty && atAnyCostKey.length > 2) {
        for (final countryEntry in jsonIndex.entries) {
          final map = countryEntry.value;
          for (final entry in map.entries) {
@@ -83,38 +83,51 @@ String _normalizeCountryForLookup(String country) {
       .trim();
 }
 
-String _normalizeForAtAnyCostLookup(String name) {
-  if (name.isEmpty) return '';
-  var n = name.toLowerCase();
-  // 1. Remove extensions first
-  n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
-  // 2. Remove EVERYTHING except alphanumeric
-  return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+String _countryToIso(String country) {
+  const map = {
+    'honduras': 'hn',
+    'mexico': 'mx',
+    'spain': 'es',
+    'unitedstates': 'us',
+    'argentina': 'ar',
+    'colombia': 'co',
+    'chile': 'cl',
+    'peru': 'pe',
+  };
+  return map[country] ?? country;
 }
 
-String _normalizeForJsonLookup(String name) {
+String _sharedNormalize(String name) {
   if (name.isEmpty) return '';
   var n = name.toLowerCase();
 
-  // 1. Handle IPTV specific prefixes and symbols (HON|, HN:, TV-)
-  // We look for common separators and take the last part
+  // 1. Remove common IPTV prefixes/separators (| , : , / , - , \ )
   final parts = n.split(RegExp(r'[|:/\-\\]'));
   if (parts.length > 1) {
     n = parts.last.trim();
   }
 
-  // 2. Remove common country identifiers if still present at the START
-  n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc)\b'), '');
+  // 2. Remove common country identifiers at the START (word boundary)
+  n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc|canal|tv)\b'), '');
 
   // 3. Remove common quality noise
-  n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam)\b'), ' ');
+  n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam|plus|extra)\b'), ' ');
 
   // 4. Remove country extensions at the end (common in JSON)
   n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
 
-  // 5. Final cleaning: keep letters and numbers only
+  // 5. Final cleaning: keep letters and numbers only, remove spaces
   return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
+
+String _normalizeForAtAnyCostLookup(String name) {
+  if (name.isEmpty) return '';
+  var n = name.toLowerCase();
+  // Most aggressive cleanup: only letters and numbers, ignore everything else
+  return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
+}
+
+String _normalizeForJsonLookup(String name) => _sharedNormalize(name);
 
 String resolveChannelLogoRepositoryUrl({required String channelName}) {
   final key = _normalizeChannelName(channelName);

@@ -100,33 +100,49 @@ class LogoResolverNotifier extends StateNotifier<Map<String, Map<String, String>
     }
   }
 
-  String _normalizeCountry(String country) {
-    return country.toLowerCase()
-        .replaceAll(RegExp(r'[^a-z]'), '')
-        .trim();
+  String _countryToIso(String country) {
+    const map = {
+      'honduras': 'hn',
+      'mexico': 'mx',
+      'spain': 'es',
+      'unitedstates': 'us',
+      'argentina': 'ar',
+      'colombia': 'co',
+      'chile': 'cl',
+      'peru': 'pe',
+    };
+    return map[country] ?? country;
   }
 
+  String _normalizeCountry(String country) {
+    final normalized = country.toLowerCase()
+        .replaceAll(RegExp(r'[^a-z]'), '')
+        .trim();
+    return _countryToIso(normalized);
+  }
 
-  String _normalizeForLookup(String name) {
+  String _sharedNormalize(String name) {
     if (name.isEmpty) return '';
     var n = name.toLowerCase();
 
-    // 1. Handle IPTV specific prefixes and symbols (HON|, HN:, TV-)
+    // 1. Remove common IPTV prefixes/separators (| , : , / , - , \ )
     final parts = n.split(RegExp(r'[|:/\-\\]'));
     if (parts.length > 1) {
       n = parts.last.trim();
     }
 
-    // 2. Remove common country identifiers at the START
-    n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc)\b'), '');
+    // 2. Remove common country identifiers at the START (word boundary)
+    n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|mex|us|usa|latam|latino|televicentro|tvc|canal|tv)\b'), '');
 
     // 3. Remove common quality noise
-    n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam)\b'), ' ');
+    n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265|intl|latin|latam|plus|extra)\b'), ' ');
 
     // 4. Remove country extensions at the end (common in JSON)
     n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
 
-    // 5. Final cleaning: keep letters and numbers only
+    // 5. Final cleaning: keep letters and numbers only, remove spaces
     return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
   }
+
+  String _normalizeForLookup(String name) => _sharedNormalize(name);
 }
