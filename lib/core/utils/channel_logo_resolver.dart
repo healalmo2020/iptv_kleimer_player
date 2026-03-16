@@ -11,63 +11,37 @@ String resolveChannelLogoUrl({
   // 2. Server icon URL (may be broken or wrong, used as fallback)
   // 3. Manual repository fallback (last resort)
 
-  // 1. Try JSON index with country filter - STRICT MODE (highest priority)
-  if (jsonIndex != null && jsonIndex.isNotEmpty && country != null && country.isNotEmpty) {
-    final countryKey = _normalizeCountryForLookup(country);
-    
-    if (kDebugMode) {
-      print('[RESOLVER-DEBUG] Querying for country: "$country" -> Key: "$countryKey" (Found in Index: ${jsonIndex.containsKey(countryKey)})');
-    }
-    
-    final countryMap = jsonIndex[countryKey];
+  // 1. Try Country-Specific Search (Highest Accuracy)
+  if (jsonIndex != null && jsonIndex.isNotEmpty) {
+     final countryKey = country != null ? _normalizeCountryForLookup(country) : null;
+     
+     if (countryKey != null && jsonIndex.containsKey(countryKey)) {
+        final countryMap = jsonIndex[countryKey]!;
+        final key = _normalizeForJsonLookup(channelName);
+        
+        // Match exact or fuzzy within country
+        final match = countryMap[key];
+        if (match != null) return match;
 
-    if (countryMap != null && countryMap.isNotEmpty) {
-      final key = _normalizeForJsonLookup(channelName);
-      
-      if (kDebugMode && countryKey == 'honduras') {
-         print('[RESOLVER-DEBUG] Normalized key: "$key"');
-      }
-
-      // Layer 1: Exact Match (O(1)) in Country
-      final exactUrl = countryMap[key];
-      if (exactUrl != null && exactUrl.isNotEmpty) {
-        if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Match FOUND in Honduras: $exactUrl');
-        return exactUrl;
-      }
-
-      // Layer 2: Fuzzy Match (O(n)) in Country
-      for (final entry in countryMap.entries) {
-        final jsonKey = entry.key;
-        if (key.length > 2 && jsonKey.length > 2) {
-          if (jsonKey.contains(key) || key.contains(jsonKey)) {
-            if (kDebugMode && countryKey == 'honduras') print('[RESOLVER-DEBUG] Fuzzy Match FOUND in Honduras: ${entry.value}');
-            return entry.value;
-          }
+        for (final entry in countryMap.entries) {
+          if (key.length > 2 && entry.key.contains(key)) return entry.value;
         }
-      }
-      if (kDebugMode && countryKey == 'honduras') {
-        print('[RESOLVER-DEBUG] No match found in Honduras map.');
-      }
-    } else {
-      if (kDebugMode && countryKey == 'honduras') {
-        print('[RESOLVER-DEBUG] Honduras map is NULL or EMPTY.');
-        print('[RESOLVER-DEBUG] Available keys in index: ${jsonIndex.keys.toList()}');
-      }
-    }
+     }
 
-    // Layer 3: GLOBAL FALLBACK (Last Resort)
-    // If we didn't find it in the specific country, search EVERYWHERE else.
-    // This handles cases where a channel is in a country category but our JSON has it elsewhere.
-    final globalKey = _normalizeForJsonLookup(channelName);
-    for (var otherCountryEntry in jsonIndex.entries) {
-      if (otherCountryEntry.key == countryKey) continue; // Skip what we already searched
-      
-      final otherMap = otherCountryEntry.value;
-      if (otherMap.containsKey(globalKey)) {
-        if (kDebugMode) print('[RESOLVER-DEBUG] !!! GLOBAL MATCH FOUND for "$channelName" in "${otherCountryEntry.key}": ${otherMap[globalKey]}');
-        return otherMap[globalKey]!;
-      }
-    }
+     // 2. GLOBAL FALLBACK (Search in all countries)
+     // This handles cases where country deduction fails or the channel is displaced.
+     final globalKey = _normalizeForJsonLookup(channelName);
+     for (final countryEntry in jsonIndex.entries) {
+       final map = countryEntry.value;
+       if (map.containsKey(globalKey)) {
+         if (kDebugMode) print('[LOGO-RESOLVER] Global hit for $channelName in ${countryEntry.key}');
+         return map[globalKey]!;
+       }
+       // Last ditch fuzzy global
+       for (final entry in map.entries) {
+         if (globalKey.length > 3 && entry.key == globalKey) return entry.value;
+       }
+     }
   }
 
   // 2. Fall back to server-provided icon URL (may be broken, but worth trying)
@@ -90,28 +64,23 @@ String _normalizeForJsonLookup(String name) {
   if (name.isEmpty) return '';
   var n = name.toLowerCase();
 
-  // 1. Extract part after separators (IPTV usually uses |, :, or - as prefix dividers)
-  final separatorIndex = n.lastIndexOf(RegExp(r'[|:\-]'));
-  if (separatorIndex != -1 && separatorIndex < n.length - 1) {
-    n = n.substring(separatorIndex + 1).trim();
+  // 1. Handle IPTV specific prefixes and symbols (HON|, HN:, TV-)
+  // We look for common separators and take the last part
+  final parts = n.split(RegExp(r'[|:/\-\\]'));
+  if (parts.length > 1) {
+    n = parts.last.trim();
   }
 
-  // 2. Remove common country prefix markers if they still exist (e.g., "HON ", "HN ")
-  n = n.replaceFirst(RegExp(r'^(hon|hn|es|mx|us|usa|latam|latino|la)\s+'), '');
+  // 2. Remove common country identifiers if still present
+  n = n.replaceFirst(RegExp(r'^(hon|hnd|hn|es|esp|mx|us|usa|latam|latino|televicentro|tvc)\b'), '');
 
-  // 3. Remove common noise keywords at word boundaries
-  n = n.replaceAll(
-    RegExp(r'\b(hd|fhd|uhd|4k|sd|latam|latino|latinos|la|mx|es|us|pr|ar|br|cl|co|pe|uy|ve|ec|bo|pa|do|int|intl|international)\b'),
-    ' ',
-  );
+  // 3. Remove common quality noise
+  n = n.replaceAll(RegExp(r'\b(hd|fhd|uhd|4k|sd|1080p|720p|h264|h265)\b'), ' ');
 
-  // 4. Remove country extensions at the END (common in our JSON)
-  n = n.replaceFirst(
-    RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'),
-    '',
-  );
+  // 4. Remove country extensions at the end (common in JSON)
+  n = n.replaceFirst(RegExp(r'\.(hn|mx|es|us|ar|co|cl|pe|uy|ve|ec|bo|pa|do|ca|uk|br|pt|de|fr|gr|it)$'), '');
 
-  // 5. Final cleaning: keep only alphanumeric
+  // 5. Final cleaning: keep letters and numbers only
   return n.replaceAll(RegExp(r'[^a-z0-9]'), '').trim();
 }
 
